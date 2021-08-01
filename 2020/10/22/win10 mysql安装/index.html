@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+  <!-- 元数据 -->
+  <meta charset="utf-8">
+  <link rel="icon" href="">
+  <title>win10 mysql安装 | Welcome to C1yas0's Blog</title>
+  <meta name="author" content="C1yas0" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  
+    <meta name="keywords" content="配置" />
+  
+  <meta name="description" content="首先送上mysql压缩包 12链接：https:&#x2F;&#x2F;pan.baidu.com&#x2F;s&#x2F;15xNVjde_RCKz8TbZykvTTA 提取码：7s6f   1.解压后将mysql文件夹移动到C:&#x2F;Windows&#x2F;System32 内2.以管理员身份运行命令提示符保证开头为C:&#x2F;Windows&#x2F;System323.依次输入 1cd mysql  1cd bin 4.输入 1mysqld install">
+<meta property="og:type" content="article">
+<meta property="og:title" content="win10 mysql安装">
+<meta property="og:url" content="http://example.com/2020/10/22/win10%20mysql%E5%AE%89%E8%A3%85/index.html">
+<meta property="og:site_name" content="Welcome to C1yas0&#39;s Blog">
+<meta property="og:description" content="首先送上mysql压缩包 12链接：https:&#x2F;&#x2F;pan.baidu.com&#x2F;s&#x2F;15xNVjde_RCKz8TbZykvTTA 提取码：7s6f   1.解压后将mysql文件夹移动到C:&#x2F;Windows&#x2F;System32 内2.以管理员身份运行命令提示符保证开头为C:&#x2F;Windows&#x2F;System323.依次输入 1cd mysql  1cd bin 4.输入 1mysqld install">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2020/10/22/win10%20mysql%E5%AE%89%E8%A3%85/https:/ae04.alicdn.com/kf/H75bd45fdae524eb183c49bf9f6cba69eA.png">
+<meta property="article:published_time" content="2020-10-22T16:33:55.000Z">
+<meta property="article:modified_time" content="2021-08-01T04:28:35.801Z">
+<meta property="article:author" content="C1yas0">
+<meta property="article:tag" content="配置">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2020/10/22/win10%20mysql%E5%AE%89%E8%A3%85/https:/ae04.alicdn.com/kf/H75bd45fdae524eb183c49bf9f6cba69eA.png">
+<meta name="twitter:site" content="@null">
+  
+  <!-- 站点验证相关 -->
+  
+    
+    
+    
+  
+  <!-- 样式表文件 -->
+  <link rel="stylesheet" id="kratos-css" href="/css/kratosr.min.css" type="text/css" media="all">
+  
+    <link rel="stylesheet" id="highlight-css" href="/css/highlight/night-eighties.min.css" type="text/css" media="all">
+  
+  
+  <link rel="stylesheet" id="fontawe-css" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" type="text/css" media="all">
+  <link rel="stylesheet" id="nprogress-css" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" type="text/css" media="all">
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+  
+  
+    <link rel="stylesheet" id="darkmode-css" href="/css/kr-dark.min.css" type="text/css" media="all">
+  
+  <!-- 不得不预先加载的一些JS文件 -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  
+    <script src="https://cdn.jsdelivr.net/npm/qrcode_js@1.0.0/qrcode.min.js"></script>
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+    <body class="custom-background">
+        <div id="kratos-wrapper">
+    <div id="kratos-page">
+        <div id="kratos-header">
+            <header id="kratos-desktop-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="nav-header">
+                        <nav id="kratos-menu-wrap">
+                            <ul id="kratos-primary-menu" class="sf-menu">
+                                
+                                    
+                                        <li><a href="/"><i class="fa fa-home"></i>首页</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/archives/"><i class="fa fa-file"></i>档案馆</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/friends/"><i class="fa fa-paw"></i>好伙伴</a></li>
+                                    
+                                
+                                    
+                                        <li>
+                                            <a><i class="fa fa-link"></i>链接</a>
+                                            <ul class="sub-menu">
+                                                
+                                                    
+                                                
+                                                    
+                                                        <li><a target="_blank" rel="noopener" href="https://github.com/Ciyaso">作者博客</a></li>
+                                                    
+                                                
+                                                    
+                                                        <li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_46706771?spm=1000.2115.3001.5343">CSDN</a></li>
+                                                    
+                                                
+                                            </ul>
+                                        </li>
+                                    
+                                
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+            <header id="kratos-mobile-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="color-logo"><a href="/">Welcome to C1yas0&#39;s Blog</a></div>
+                    <div class="nav-toggle">
+                        <a class="kratos-nav-toggle js-kratos-nav-toggle">
+                            <i></i>
+                        </a>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="kratos-start kratos-hero-2">
+            <!-- <div class="kratos-overlay"></div> -->
+            <div class="kratos-cover kratos-cover-2 text-center">
+                <div class="desc desc2 animate-box">
+                    <a href="/">
+                        <h2>Welcome to C1yas0&#39;s Blog</h2> <br />
+                        <span></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="kratos-blog-post">
+            <div class="container">
+                <div id="main" class="row">
+                    
+
+        
+
+            <section class="col-md-8">
+
+        
+
+            <article>
+    <div class="kratos-hentry kratos-post-inner clearfix">
+        <div class="kratos-post-content">
+            <h2 class="title-h2 text-center">win10 mysql安装</h2>
+            <p>首先送上mysql压缩包</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">链接：https://pan.baidu.com/s/15xNVjde_RCKz8TbZykvTTA </span><br><span class="line">提取码：7s6f </span><br></pre></td></tr></table></figure>
+
+<p>1.<br>解压后将mysql文件夹移动到C:/Windows/System32 内<br><img src="https://img-blog.csdnimg.cn/20201022121410229.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70#pic_center" alt="图1"><br>2.<br>以管理员身份运行命令提示符<br><img src="https://img-blog.csdnimg.cn/20201022121503718.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"><br>保证开头为C:/Windows/System32<br><img src="https://img-blog.csdnimg.cn/20201022121537874.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"><br>3.<br>依次输入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> mysql</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> bin</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20201022121726451.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"><br>4.<br>输入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqld install</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20201022121750965.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"><br>PS:由于我之前已经安装了mysql服务，所以系统提示已经存在</p>
+<p>5.<br>输入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqld --initialize --console</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20201022121951345.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"><br>此时要注意在 root@localhost 后有一串密码一定要记下来！</p>
+<p>6.<br>输入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqld --install [服务名]</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20201022122215432.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"><br>PS:由于我之前建立了服务 “233”所以系统提示已经存在<br>7.<br>输入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net start mysql</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20201022122430648.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"><br>显示MySQL 服务已经启动成功，说明mysql已经成功安装</p>
+<p>8.<br>输入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
+<p>显示输入密码，然后我们就需要输入之前要求记录的密码（注意大小写）<br><img src="https://img-blog.csdnimg.cn/20201022122733902.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"></p>
+<p>输入后显示Welcome to the MySQL monitor.说明登录成功</p>
+<p>9.<br>测试一下发现要求我们修改一下密码<br><img src="https://img-blog.csdnimg.cn/20201022122938641.png#pic_center" alt="在这里插入图片描述"><br>输入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alter user user() identified by <span class="string">&quot;root&quot;</span>;</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20201022123057497.png#pic_center" alt="在这里插入图片描述"><br>这一步我们执行了改密码操作，将密码改为了 root （把root改成别的也可以），以后登录密码就也为root了。<br>再次测试一下<br><img src="https://img-blog.csdnimg.cn/20201022123121806.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"><br>发现mysql成功运行。这样我们的mysql就彻底安装完成。<br>PS:以后运行mysql也需要与管理员系统运行命令提示符。</p>
+
+        </div>
+        <footer class="kratos-entry-footer clearfix">
+            <div class="footer-tag clearfix">
+                <div class="pull-date">
+                <span>最后编辑：2021-08-01</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+</article>
+
+        
+
+            </section>
+
+        
+
+                
+            
+
+<section id="kratos-widget-area" class="col-md-4 hidden-xs hidden-sm">
+    <!-- 文章和页面根据splitter来分割，没有的话就从头开始设置为sticky -->
+    
+    
+                <aside id="krw-about" class="widget widget-kratos-about clearfix">
+    <div class="photo-background"></div>
+    <div class="photo-wrapper clearfix">
+        <div class="photo-wrapper-tip text-center">
+            <img class="about-photo" src="/images/avatar.webp" />
+        </div>
+    </div>
+    <div class="textwidget">
+        <p class="text-center"></p>
+    </div>
+</aside>
+            
+                    <div class="sticky-area">
+                
+                
+  <aside id="krw-categories" class="widget widget-kratos-categories clearfix">
+    <h4 class="widget-title"><i class="fa fa-folder"></i>分类目录</h4>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/RCE/">RCE</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL%E6%B3%A8%E5%85%A5/">SQL注入</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Web/">Web</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%8A%A5%E5%91%8A/">技术报告</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">漏洞复现</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">环境配置</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="category-list-count">1</span></li></ul>
+  </aside>
+
+
+            
+                
+  <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
+    <h4 class="widget-title"><i class="fa fa-tags"></i>标签聚合</h4>
+      <div class="tag-clouds">
+        <a href="/tags/PHP/" style="font-size: 0.6em;">PHP</a> <a href="/tags/RCE/" style="font-size: 0.7em;">RCE</a> <a href="/tags/SSTI/" style="font-size: 0.6em;">SSTI</a> <a href="/tags/Tomcat/" style="font-size: 0.8em;">Tomcat</a> <a href="/tags/Weblogic/" style="font-size: 0.6em;">Weblogic</a> <a href="/tags/XXE/" style="font-size: 0.6em;">XXE</a> <a href="/tags/Xpath/" style="font-size: 0.6em;">Xpath</a> <a href="/tags/mysql/" style="font-size: 0.6em;">mysql</a> <a href="/tags/python/" style="font-size: 0.6em;">python</a> <a href="/tags/sql%E6%B3%A8%E5%85%A5/" style="font-size: 0.7em;">sql注入</a> <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" style="font-size: 0.6em;">代码审计</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 0.7em;">报告</a> <a href="/tags/%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/" style="font-size: 0.6em;">报错注入</a> <a href="/tags/%E9%85%8D%E7%BD%AE/" style="font-size: 0.8em;">配置</a>
+      </div>
+  </aside>
+
+            
+                
+  <aside id="krw-posts" class="widget widget-kratos-posts">
+  <h4 class="widget-title"><i class="fa fa-file"></i>最新文章</h4>
+  <div class="tab-content">
+      <ul class="list-group">
+        
+        
+          
+          
+            <a class="list-group-item" href="/2021/07/14/RCE%E6%80%BB%E7%BB%93/"><i class="fa  fa-book"></i> RCE总结</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/06/02/REC(%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E)%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8/"><i class="fa  fa-book"></i> REC(远程代码执行漏洞)原理及漏洞利用</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/05/03/Xpath%E5%9F%BA%E7%A1%80/"><i class="fa  fa-book"></i> Xpath基础</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/04/12/SSTI(%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5)%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8/"><i class="fa  fa-book"></i> SSTI(模板注入)漏洞利用</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/03/22/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%80%9D%E8%B7%AF%E8%AF%A6%E8%A7%A3/"><i class="fa  fa-book"></i> 代码审计思路详解</a>
+            
+          
+        
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+      </ul>
+  </div>
+  </aside>
+
+            
+    </div>
+</section>
+        
+        </div>
+    </div>
+</div>
+<footer>
+    <div id="footer"  class="ap-lrc"  >
+        <div class="kr-tool text-center">
+            <div class="tool">
+                
+                    <div class="box search-box">
+                        <a href="/search/">
+                            <span class="fa fa-search"></span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="box theme-box" id="darkmode-switch">
+                        <span class="fa fa-adjust"></span>
+                    </div>
+                
+                
+            </div>
+            <div class="box gotop-box">
+                <span class="fa fa-chevron-up"></span>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 footer-list text-center">
+                    <ul class="kratos-social-icons">
+                        
+                        <li><a href="mailto:ciyaso@163.com"><i class="fa fa-envelope"></i></a></li>
+                        
+                        
+                        
+                        
+                        
+                        <li><a target="_blank" rel="nofollow" href="https://github.com/Ciyaso"><i class="fa fa-github"></i></a></li>
+                        
+                    </ul>
+                    <ul class="kratos-copyright">
+                        <div>
+                            <li>&copy; 2021 Welcome to C1yas0's Blog 版权所有.</li>
+                            <li>本站已运行<span id="span_dt">Loading...</span></li>
+                        </div>
+                        <div>
+                            <li>Theme <a href="https://github.com/Candinya/Kratos-Rebirth" target="_blank">Kratos:Rebirth</a></li>
+                            <li>Site built with&nbsp;<i class="fa fa-heart throb" style="color:#d43f57"></i>&nbsp;by C1yas0.</li>
+                        </div>
+                        <div>
+                            <li>Powered by <a href="https://hexo.io" target="_blank" rel="nofollow">Hexo</a></li>
+                            <li>Hosted on <a href="https://github.io" target="_blank">Github Pages</a></li>
+                        </div>
+                        <div>
+                            
+                            
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+
+        <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.4/dist/js/bootstrap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+<script>const notMobile = (!(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)));</script>
+
+    <div>
+        <canvas id="snow"></canvas>
+        <script async type="text/javascript" src="/js/snow.min.js"></script>
+    </div>
+
+<script async src="/js/candy.min.js"></script>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+    <meting-js
+        server="netease"
+        type="playlist"
+        id="3204190542"
+        order="random"
+        fixed="true"
+    >
+    </meting-js>
+
+
+
+    <script defer src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script>
+<script defer src="/js/kratosr.min.js"></script>
+<script defer src="/js/pjax.min.js"></script>
+
+
+    <script defer src="/js/kr-dark.min.js"></script>
+
+
+
+<!-- Extra support for third-party plguins  -->
+
+
+    </body>
+</html>

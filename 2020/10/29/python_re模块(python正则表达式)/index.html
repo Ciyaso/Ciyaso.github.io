@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+  <!-- 元数据 -->
+  <meta charset="utf-8">
+  <link rel="icon" href="">
+  <title>python_re模块(python正则表达式) | Welcome to C1yas0's Blog</title>
+  <meta name="author" content="C1yas0" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  
+    <meta name="keywords" content="python" />
+  
+  <meta name="description" content="python_re模块Python中re模块主要功能是通过正则表达式是用来匹配处理字符串的 import re 导入该模块后，就可以使用该模块下的所有方法和属性 @[toc] 元字符常用的元字符   代码 解释说明    . 匹配除换行符以外的任意字符   \w 匹配字母或数字或下划线或汉字   \s 匹配任意的空白符   \d 匹配数字   \b 匹配数字与非字母数字的开始或结束   ^ 匹配字">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python_re模块(python正则表达式)">
+<meta property="og:url" content="http://example.com/2020/10/29/python_re%E6%A8%A1%E5%9D%97(python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F)/index.html">
+<meta property="og:site_name" content="Welcome to C1yas0&#39;s Blog">
+<meta property="og:description" content="python_re模块Python中re模块主要功能是通过正则表达式是用来匹配处理字符串的 import re 导入该模块后，就可以使用该模块下的所有方法和属性 @[toc] 元字符常用的元字符   代码 解释说明    . 匹配除换行符以外的任意字符   \w 匹配字母或数字或下划线或汉字   \s 匹配任意的空白符   \d 匹配数字   \b 匹配数字与非字母数字的开始或结束   ^ 匹配字">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2020/10/29/python_re%E6%A8%A1%E5%9D%97(python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F)/https:/ae03.alicdn.com/kf/H530674e39b99484b973a6471b834d2efw.png">
+<meta property="article:published_time" content="2020-10-29T15:31:55.000Z">
+<meta property="article:modified_time" content="2021-08-01T04:45:30.717Z">
+<meta property="article:author" content="C1yas0">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2020/10/29/python_re%E6%A8%A1%E5%9D%97(python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F)/https:/ae03.alicdn.com/kf/H530674e39b99484b973a6471b834d2efw.png">
+<meta name="twitter:site" content="@null">
+  
+  <!-- 站点验证相关 -->
+  
+    
+    
+    
+  
+  <!-- 样式表文件 -->
+  <link rel="stylesheet" id="kratos-css" href="/css/kratosr.min.css" type="text/css" media="all">
+  
+    <link rel="stylesheet" id="highlight-css" href="/css/highlight/night-eighties.min.css" type="text/css" media="all">
+  
+  
+  <link rel="stylesheet" id="fontawe-css" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" type="text/css" media="all">
+  <link rel="stylesheet" id="nprogress-css" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" type="text/css" media="all">
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+  
+  
+    <link rel="stylesheet" id="darkmode-css" href="/css/kr-dark.min.css" type="text/css" media="all">
+  
+  <!-- 不得不预先加载的一些JS文件 -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  
+    <script src="https://cdn.jsdelivr.net/npm/qrcode_js@1.0.0/qrcode.min.js"></script>
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+    <body class="custom-background">
+        <div id="kratos-wrapper">
+    <div id="kratos-page">
+        <div id="kratos-header">
+            <header id="kratos-desktop-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="nav-header">
+                        <nav id="kratos-menu-wrap">
+                            <ul id="kratos-primary-menu" class="sf-menu">
+                                
+                                    
+                                        <li><a href="/"><i class="fa fa-home"></i>首页</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/archives/"><i class="fa fa-file"></i>档案馆</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/friends/"><i class="fa fa-paw"></i>好伙伴</a></li>
+                                    
+                                
+                                    
+                                        <li>
+                                            <a><i class="fa fa-link"></i>链接</a>
+                                            <ul class="sub-menu">
+                                                
+                                                    
+                                                
+                                                    
+                                                        <li><a target="_blank" rel="noopener" href="https://github.com/Ciyaso">作者博客</a></li>
+                                                    
+                                                
+                                                    
+                                                        <li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_46706771?spm=1000.2115.3001.5343">CSDN</a></li>
+                                                    
+                                                
+                                            </ul>
+                                        </li>
+                                    
+                                
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+            <header id="kratos-mobile-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="color-logo"><a href="/">Welcome to C1yas0&#39;s Blog</a></div>
+                    <div class="nav-toggle">
+                        <a class="kratos-nav-toggle js-kratos-nav-toggle">
+                            <i></i>
+                        </a>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="kratos-start kratos-hero-2">
+            <!-- <div class="kratos-overlay"></div> -->
+            <div class="kratos-cover kratos-cover-2 text-center">
+                <div class="desc desc2 animate-box">
+                    <a href="/">
+                        <h2>Welcome to C1yas0&#39;s Blog</h2> <br />
+                        <span></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="kratos-blog-post">
+            <div class="container">
+                <div id="main" class="row">
+                    
+
+        
+
+            <section class="col-md-8">
+
+        
+
+            <article>
+    <div class="kratos-hentry kratos-post-inner clearfix">
+        <div class="kratos-post-content">
+            <h2 class="title-h2 text-center">python_re模块(python正则表达式)</h2>
+            <h1 id="python-re模块"><a href="#python-re模块" class="headerlink" title="python_re模块"></a>python_re模块</h1><p>Python中re模块主要功能是通过正则表达式是用来匹配处理字符串的</p>
+<p>import re 导入该模块后，就可以使用该模块下的所有方法和属性</p>
+<p>@[toc]</p>
+<h2 id="元字符"><a href="#元字符" class="headerlink" title="元字符"></a>元字符</h2><h3 id="常用的元字符"><a href="#常用的元字符" class="headerlink" title="常用的元字符"></a>常用的元字符</h3><table>
+<thead>
+<tr>
+<th align="center">代码</th>
+<th align="center">解释说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">.</td>
+<td align="center">匹配除换行符以外的任意字符</td>
+</tr>
+<tr>
+<td align="center">\w</td>
+<td align="center">匹配字母或数字或下划线或汉字</td>
+</tr>
+<tr>
+<td align="center">\s</td>
+<td align="center">匹配任意的空白符</td>
+</tr>
+<tr>
+<td align="center">\d</td>
+<td align="center">匹配数字</td>
+</tr>
+<tr>
+<td align="center">\b</td>
+<td align="center">匹配数字与非字母数字的开始或结束</td>
+</tr>
+<tr>
+<td align="center">^</td>
+<td align="center">匹配字符串的开始</td>
+</tr>
+<tr>
+<td align="center">$</td>
+<td align="center">匹配字符串的结束</td>
+</tr>
+<tr>
+<td align="center">|</td>
+<td align="center">匹配A或B</td>
+</tr>
+<tr>
+<td align="center">r</td>
+<td align="center">转换为原生字符</td>
+</tr>
+</tbody></table>
+<h4 id="w元字符"><a href="#w元字符" class="headerlink" title="\w元字符"></a>\w元字符</h4><h5 id="w匹配包括下划线在内任何字母数字汉字字符"><a href="#w匹配包括下划线在内任何字母数字汉字字符" class="headerlink" title="\w匹配包括下划线在内任何字母数字汉字字符"></a>\w匹配包括下划线在内任何字母数字汉字字符</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">str=&quot;我是E往无前的快乐风男- -__hasai&quot;</span><br><span class="line">print(re.findall(&quot;\w&quot;,str)) #匹配字符串下划线，汉字，字母，数字，返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印结果：[‘我’, ‘是’, ‘E’, ‘往’, ‘无’, ‘前’, ‘的’, ‘快’, ‘乐’, ‘风’, ‘男’, ‘<em>‘, ‘</em>‘, ‘h’, ‘a’, ‘s’, ‘a’, ‘i’]</p>
+<h5 id="W匹配非任何字母数字汉字字符包括下划线在内"><a href="#W匹配非任何字母数字汉字字符包括下划线在内" class="headerlink" title="\W匹配非任何字母数字汉字字符包括下划线在内"></a>\W匹配非任何字母数字汉字字符包括下划线在内</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">str=&quot;我是E往无前的快乐风男- -__hasai &quot;</span><br><span class="line">print(re.findall(&quot;\W&quot;,str)) #匹配字符串非下划线，汉字，字母，数字，返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印结果：[‘-‘, ‘ ‘, ‘-‘, ‘ ‘]</p>
+<h4 id="s元字符"><a href="#s元字符" class="headerlink" title="\s元字符"></a>\s元字符</h4><h5 id="s匹配任何空白字符，它相当于类-t-n-r-f-v"><a href="#s匹配任何空白字符，它相当于类-t-n-r-f-v" class="headerlink" title="\s匹配任何空白字符，它相当于类[\t\n\r\f\v]"></a>\s匹配任何空白字符，它相当于类[\t\n\r\f\v]</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">str5=&quot;1a\n \t 2b \f \v 3c&quot;</span><br><span class="line">print(re.findall(&quot;\s&quot;,str5)) #匹配字符串空白字符（\t\n\r\f\v），返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印结果：[‘\n’, ‘ ‘, ‘\t’, ‘ ‘, ‘ ‘, ‘\x0c’, ‘ ‘, ‘\x0b’, ‘ ‘, ‘ ‘]</p>
+<h5 id="S匹配任何非空白字符，它相当于类-t-n-r-f-v"><a href="#S匹配任何非空白字符，它相当于类-t-n-r-f-v" class="headerlink" title="\S匹配任何非空白字符，它相当于类[ ^\t\n\r\f\v]"></a>\S匹配任何非空白字符，它相当于类[ ^\t\n\r\f\v]</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">str5=&quot;1a\n \t 2b \f \v 3c &quot;</span><br><span class="line">print(re.findall(&quot;\S&quot;,str5)) #匹配字符串非空白字符（\t\n\r\f\v），返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印结果：[‘1’, ‘a’, ‘2’, ‘b’, ‘3’, ‘c’]</p>
+<h5 id="w匹配包括下划线在内任何字母数字汉字字符-1"><a href="#w匹配包括下划线在内任何字母数字汉字字符-1" class="headerlink" title="\w匹配包括下划线在内任何字母数字汉字字符"></a>\w匹配包括下划线在内任何字母数字汉字字符</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">str=&quot;我是E往无前的快乐风男- -__hasai&quot;</span><br><span class="line">print(re.findall(&quot;\w&quot;,str)) #匹配字符串下划线，汉字，字母，数字，返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印结果：[‘我’, ‘是’, ‘E’, ‘往’, ‘无’, ‘前’, ‘的’, ‘快’, ‘乐’, ‘风’, ‘男’, ‘<em>‘, ‘</em>‘, ‘h’, ‘a’, ‘s’, ‘a’, ‘i’]</p>
+<h5 id="W匹配非任何字母数字汉字字符包括下划线在内-1"><a href="#W匹配非任何字母数字汉字字符包括下划线在内-1" class="headerlink" title="\W匹配非任何字母数字汉字字符包括下划线在内"></a>\W匹配非任何字母数字汉字字符包括下划线在内</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">str=&quot;我是E往无前的快乐风男- -__hasai &quot;</span><br><span class="line">print(re.findall(&quot;\W&quot;,str)) #匹配字符串非下划线，汉字，字母，数字，返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印结果：[‘-‘, ‘ ‘, ‘-‘, ‘ ‘]</p>
+<h4 id="d元字符"><a href="#d元字符" class="headerlink" title="\d元字符"></a>\d元字符</h4><h5 id="d-匹配任何十进制数，它相当于类-0-9"><a href="#d-匹配任何十进制数，它相当于类-0-9" class="headerlink" title="\d 匹配任何十进制数，它相当于类[0-9]"></a>\d 匹配任何十进制数，它相当于类[0-9]</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">str4=&quot;11aa22bb33cc44dd&quot;</span><br><span class="line">print(re.findall(&quot;\d&quot;,str4)) #匹配字符串所有的数字，返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印结果：[‘1’,’1’,’2’,’2’,’3’,’3’,’4’,’4’]</p>
+<h5 id="d-如果需要匹配一位或者多位数的数字时用"><a href="#d-如果需要匹配一位或者多位数的数字时用" class="headerlink" title="\d+如果需要匹配一位或者多位数的数字时用"></a>\d+如果需要匹配一位或者多位数的数字时用</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">str4=&quot;11aa22bb33cc44dd&quot;</span><br><span class="line">print(re.findall(&quot;\d+&quot;,str4)) #匹配字符串中一位或多位数字，返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印结果：[‘11’,’22’,’33’,’44’]</p>
+<h5 id="D匹配任何非数字字符，它相当于类-0-9"><a href="#D匹配任何非数字字符，它相当于类-0-9" class="headerlink" title="\D匹配任何非数字字符，它相当于类  [ ^0-9]"></a>\D匹配任何非数字字符，它相当于类  [ ^0-9]</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">str=&quot;11aa22bb33cc44dd &quot;</span><br><span class="line">print(re.findall(&quot;\D&quot;,str)) #匹配字符串中非数字，返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印结果：[‘aa’, ‘bb’, ‘cc’, ‘dd’]</p>
+<h4 id="b元字符"><a href="#b元字符" class="headerlink" title="\b元字符"></a>\b元字符</h4><h5 id="b元字符-表示字母数字与非字母数字的边界，-非字母数字与字母数字的边界"><a href="#b元字符-表示字母数字与非字母数字的边界，-非字母数字与字母数字的边界" class="headerlink" title="\b元字符 表示字母数字与非字母数字的边界，   非字母数字与字母数字的边界"></a>\b元字符 表示字母数字与非字母数字的边界，   非字母数字与字母数字的边界</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import re </span><br><span class="line">str=&quot;+=123! _abc123. 123.123abc. 123&quot;</span><br><span class="line">print(re.split(&#x27;123\\b&#x27;,str)) #分割数字与非字母数字，123abc由于不符合\b的要求所以没有被分割</span><br></pre></td></tr></table></figure>
+
+<p>打印结果：[‘+=’, ‘! _abc’, ‘. ‘, ‘.123abc. ‘, ‘’]</p>
+<h5 id="B元字符-表示字母数字与字母数字的边界，非字母数字与非字母数字的边界"><a href="#B元字符-表示字母数字与字母数字的边界，非字母数字与非字母数字的边界" class="headerlink" title="\B元字符 表示字母数字与字母数字的边界，非字母数字与非字母数字的边界"></a>\B元字符 表示字母数字与字母数字的边界，非字母数字与非字母数字的边界</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import re </span><br><span class="line">str=&quot;+=123! _abc123. 123.123abc. 123&quot;</span><br><span class="line">print(re.split(&#x27;123\\B&#x27;,str)) #分割数字与字母数字,123abc由于符合\B的要求所以被分割</span><br></pre></td></tr></table></figure>
+
+<p>打印结果：[‘+=123! _abc123. 123.’, ‘abc. 123’]</p>
+<h4 id="元字符-1"><a href="#元字符-1" class="headerlink" title="^元字符"></a>^元字符</h4><h5 id="元字符-以什么开头"><a href="#元字符-以什么开头" class="headerlink" title="^元字符 以什么开头"></a>^元字符 以什么开头</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">str=&quot;E无反顾,E往直前,面对疾风吧&quot;</span><br><span class="line">print(re.findall(&quot;^面对疾风吧&quot;,str)) #字符串开始位置与匹配规则符合就匹配且打印匹配内容，否则不匹配，返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘面对疾风吧’]</p>
+<h5 id="元字符-如果写到-字符集里就是反取"><a href="#元字符-如果写到-字符集里就是反取" class="headerlink" title="^元字符  如果写到[]字符集里就是反取"></a>^元字符  如果写到[]字符集里就是反取</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">str=&quot;E无反顾,E往直前,面对疾风吧&quot;</span><br><span class="line">print(re.findall(&quot;[^A-Z]&quot;,str)) #反取，匹配出除字母外的字符，返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘无’, ‘反’, ‘顾’, ‘,’, ‘往’, ‘直’, ‘前’, ‘面’, ‘对’, ‘疾’, ‘风’, ‘吧’]</p>
+<h4 id="元字符-2"><a href="#元字符-2" class="headerlink" title="$元字符"></a>$元字符</h4><h5 id="元字符-以什么结尾"><a href="#元字符-以什么结尾" class="headerlink" title="$元字符  以什么结尾"></a>$元字符  以什么结尾</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line">str=&quot;E无反顾,E往直前,面对疾风吧&quot;</span><br><span class="line">print(re.findall(&quot;吧$&quot;,str1)) #字符串结束位置与则符合就匹配，否则不匹配，返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘吧’]</p>
+<h4 id="元字符-3"><a href="#元字符-3" class="headerlink" title="|元字符"></a>|元字符</h4><h5 id="或，或就是前后其中一个符合就匹配"><a href="#或，或就是前后其中一个符合就匹配" class="headerlink" title="|或，或就是前后其中一个符合就匹配"></a>|或，或就是前后其中一个符合就匹配</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">str=&quot;a3a3ddd&quot;</span><br><span class="line">print(re.findall(&quot;a|d+&quot;,str)) #匹配|前后一个字符均可</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘a’, ‘a’, ‘ddd’]</p>
+<h4 id="r元字符"><a href="#r元字符" class="headerlink" title="r元字符"></a>r元字符</h4><h5 id="r原生字符"><a href="#r原生字符" class="headerlink" title="r原生字符"></a>r原生字符</h5><p>将在python里有特殊意义的字符如\b，转换成原生字符（就是去除它在python的特殊意义），不然会给正则表达式有冲突，为了避免这种冲突可以在规则前加原始字符r</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line">str=re.match(&quot;c:\\b&quot;,&quot;c:\\b\\c\\d&quot;).group()</span><br><span class="line">print(str)</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：报错</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line">str=re.match(r&quot;c:\\b&quot;,&quot;c:\\b\\c\\d&quot;).group()</span><br><span class="line">print(str)</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：c:\b</p>
+<h3 id="常用的限定符"><a href="#常用的限定符" class="headerlink" title="常用的限定符"></a>常用的限定符</h3><table>
+<thead>
+<tr>
+<th align="center">代码</th>
+<th align="center">解释说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">*</td>
+<td align="center">重复零次或更多次，优先更多</td>
+</tr>
+<tr>
+<td align="center">+</td>
+<td align="center">爱重复一次或更多，优先更多</td>
+</tr>
+<tr>
+<td align="center">?</td>
+<td align="center">重复零次后一次，优先一次</td>
+</tr>
+<tr>
+<td align="center">{}</td>
+<td align="center">匹配范围</td>
+</tr>
+<tr>
+<td align="center">[]</td>
+<td align="center">字符集</td>
+</tr>
+</tbody></table>
+<h4 id="元字符-4"><a href="#元字符-4" class="headerlink" title="*元字符"></a>*元字符</h4><h5 id="元字符-匹配其前面的一个字符0次或多次"><a href="#元字符-匹配其前面的一个字符0次或多次" class="headerlink" title="* 元字符  匹配其前面的一个字符0次或多次"></a>* 元字符  匹配其前面的一个字符0次或多次</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">Str=&quot;我嘤我嘤嘤我嘤嘤嘤&quot;</span><br><span class="line">print(re.findall(&quot;嘤*&quot;,str)) #星号前面的一个字符可以是0次或多次，返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘’, ‘嘤’, ‘’, ‘嘤嘤’, ‘’, ‘嘤嘤嘤’, ‘’]</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">Str=&quot;我嘤我嘤嘤我嘤嘤嘤&quot;</span><br><span class="line">print(re.findall(&quot;我嘤*&quot;,str)) #星号前面的一个字符可以是0次或多次，返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘我嘤’, ‘我嘤嘤’,’我嘤嘤嘤’]</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">Str=&quot;我嘤我嘤嘤我嘤嘤嘤&quot;</span><br><span class="line">print(re.findall(&quot;s*&quot;,str)) #星号前面的一个字符可以是0次或多次，返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘’,’’,’’,’’,’’,’’,’’,’’,’’,’’]]</p>
+<h4 id="元字符-5"><a href="#元字符-5" class="headerlink" title="+ 元字符"></a>+ 元字符</h4><h5 id="元字符-匹配其前面的一个字符1次或多次"><a href="#元字符-匹配其前面的一个字符1次或多次" class="headerlink" title="+ 元字符  匹配其前面的一个字符1次或多次"></a>+ <strong>元字符</strong>  匹配其前面的一个字符1次或多次</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">Str=&quot;我嘤我嘤嘤我嘤嘤嘤&quot;</span><br><span class="line">print(re.findall(&quot;嘤+&quot;,str)) #加号前面的一个字符可以是1次或多次，返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘嘤’, ‘嘤嘤’, ‘嘤嘤嘤’]</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">Str=&quot;我嘤我嘤嘤我嘤嘤嘤&quot;</span><br><span class="line">print(re.findall(&quot;嘤嘤+&quot;,str)) #加号配前面的一个字符可以是1次或多次，返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘嘤嘤’, ‘嘤嘤嘤’]</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">Str=&quot;我嘤我嘤嘤我嘤嘤嘤&quot;</span><br><span class="line">print(re.findall(&quot;s+&quot;,str)) #加号配前面的一个字符可以是1次或多次，返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[]</p>
+<h4 id="元字符-6"><a href="#元字符-6" class="headerlink" title="?元字符"></a>?元字符</h4><h5 id="元字符-匹配其前面的一个字符0次或1次"><a href="#元字符-匹配其前面的一个字符0次或1次" class="headerlink" title="?元字符 匹配其前面的一个字符0次或1次"></a>?元字符 匹配其前面的一个字符0次或1次</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">str=&quot;我嘤我嘤嘤我嘤嘤嘤&quot;</span><br><span class="line">print(re.findall(&quot;嘤?&quot;,str)) #问号前面的一个字符可以是0次或1次，返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘’, ‘嘤’, ‘’, ‘嘤’, ‘嘤’, ‘’, ‘嘤’, ‘嘤’, ‘嘤’, ‘’]</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">str=&quot;我嘤我嘤嘤我嘤嘤嘤&quot;</span><br><span class="line">print(re.findall(&quot;我嘤?&quot;,str)) #问号前面的一个字符可以是0次或1次，返回值是list</span><br></pre></td></tr></table></figure>
+
+
+<p>打印内容：[‘我嘤’,’我嘤’,’我嘤’] </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">str=&quot;我嘤我嘤嘤我嘤嘤嘤&quot;</span><br><span class="line">print(re.findall(&quot;s?&quot;,str)) #问号前面的一个字符可以是0次或1次，返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘’,’’,’’,’’,’’,’’,’’,’’,’’,’’]</p>
+<h4 id="元字符-7"><a href="#元字符-7" class="headerlink" title="{}元字符"></a>{}元字符</h4><h5 id="n-匹配前一个字符n次"><a href="#n-匹配前一个字符n次" class="headerlink" title="{n}匹配前一个字符n次"></a>{n}匹配前一个字符n次</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">str=&quot;我嘤我嘤嘤我嘤嘤嘤&quot;</span><br><span class="line">print(re.findall(&quot;嘤&#123;2&#125;&quot;,str)) #匹配前一个字符2次，返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘嘤嘤’,’嘤嘤’]</p>
+<h5 id="n-匹配前一个字符n次或多次"><a href="#n-匹配前一个字符n次或多次" class="headerlink" title="{n,}匹配前一个字符n次或多次"></a>{n,}匹配前一个字符n次或多次</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">str=&quot;我嘤我嘤嘤我嘤嘤嘤&quot;</span><br><span class="line">print(re.findall(&quot;嘤&#123;1,&#125;&quot;,str)) #匹配前一个字符1次或更多次，返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘嘤’,’嘤嘤’,’嘤嘤嘤’]</p>
+<h5 id="n-m-匹配前一个字符n至m次，若省略m，则匹配n至无限次"><a href="#n-m-匹配前一个字符n至m次，若省略m，则匹配n至无限次" class="headerlink" title="{n,m}匹配前一个字符n至m次，若省略m，则匹配n至无限次"></a>{n,m}匹配前一个字符n至m次，若省略m，则匹配n至无限次</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">str=&quot;我嘤我嘤嘤我嘤嘤嘤&quot;</span><br><span class="line">print(re.findall(&quot;嘤&#123;1,2&#125;&quot;,str)) #匹配前一个字符1-2次，返回值是list</span><br></pre></td></tr></table></figure>
+
+
+<p>打印内容：[‘嘤’,’嘤嘤’,’嘤嘤’,’嘤’]</p>
+<h5 id="0-匹配前一个字符0或多次-等同于-元字符"><a href="#0-匹配前一个字符0或多次-等同于-元字符" class="headerlink" title="{0,}匹配前一个字符0或多次,等同于*元字符"></a>{0,}匹配前一个字符0或多次,等同于*元字符</h5><h5 id="匹配前一个字符1次或无限次-等同于-元字符"><a href="#匹配前一个字符1次或无限次-等同于-元字符" class="headerlink" title="{+,}匹配前一个字符1次或无限次,等同于+元字符"></a>{+,}匹配前一个字符1次或无限次,等同于+元字符</h5><h5 id="0-1-匹配前一个字符0次或1次-等同于-元字符"><a href="#0-1-匹配前一个字符0次或1次-等同于-元字符" class="headerlink" title="{0,1}匹配前一个字符0次或1次,等同于?元字符"></a>{0,1}匹配前一个字符0次或1次,等同于?元字符</h5><h4 id="元字符-8"><a href="#元字符-8" class="headerlink" title="[]元字符"></a>[]元字符</h4><h5 id="元字符，字符集"><a href="#元字符，字符集" class="headerlink" title="[]元字符，字符集"></a>[]元字符，字符集</h5><p>需要字符串里完全符合，匹配规则，就匹配，（规则里的[]]元字符）对应位置是[]里的任意一个字符就匹配</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">str=&quot;我是快乐的小学生,我是快乐的风男&quot;</span><br><span class="line">print(re.findall(&quot;我是快乐的[小学生,风男]&quot;,str)) #匹配字符后，只有符合[]中任意字符均可，返回值是list</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘我是快乐的小’, ‘我是快乐的风’]</p>
+<h2 id="函数模块"><a href="#函数模块" class="headerlink" title="函数模块"></a>函数模块</h2><h3 id="match-函数"><a href="#match-函数" class="headerlink" title="match()函数"></a>match()函数</h3><h4 id="match，从头匹配一个符合规则的字符串，从起始位置开始匹配，匹配成功返回一个对象，未匹配成功返回None"><a href="#match，从头匹配一个符合规则的字符串，从起始位置开始匹配，匹配成功返回一个对象，未匹配成功返回None" class="headerlink" title="match，从头匹配一个符合规则的字符串，从起始位置开始匹配，匹配成功返回一个对象，未匹配成功返回None"></a>match，从头匹配一个符合规则的字符串，从起始位置开始匹配，匹配成功返回一个对象，未匹配成功返回None</h4><h4 id="match-pattern-string-flags-0"><a href="#match-pattern-string-flags-0" class="headerlink" title="match(pattern, string, flags=0)"></a>match(pattern, string, flags=0)</h4><h4 id="pattern：-正则模型"><a href="#pattern：-正则模型" class="headerlink" title="pattern： 正则模型"></a>pattern： 正则模型</h4><h4 id="string-：-要匹配的字符串"><a href="#string-：-要匹配的字符串" class="headerlink" title="string ： 要匹配的字符串"></a>string ： 要匹配的字符串</h4><h4 id="falgs-：-匹配模式"><a href="#falgs-：-匹配模式" class="headerlink" title="falgs ： 匹配模式"></a>falgs ： 匹配模式</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">str=&quot;hello egon bcd egon lge egon acd 19&quot;</span><br><span class="line">r1=re.match(&quot;h\w+&quot;,str) #match，从起始位置开始匹配，匹配成功返回一个对象，未匹配成功返回None,非字母，汉字，数字及下划线分割</span><br><span class="line">print(r1.group()) # 获取匹配到的所有结果，不管有没有分组将匹配到的全部拿出来</span><br><span class="line">打印内容：hello</span><br><span class="line">print(r1.groups()) # 获取模型中匹配到的分组结果，只拿出匹配到的字符串中分组部分的结果</span><br><span class="line">打印内容：()</span><br><span class="line">print(r1.groupdict())  # 获取模型中匹配到的分组结果，只拿出匹配到的字符串中分组部分定义了key的组结果</span><br><span class="line">打印内容：&#123;&#125;</span><br><span class="line">r2=re.match(&quot;h(\w+)&quot;,str) #match，从起始位置开始匹配，匹配成功返回一个对象，未匹配成功返回None</span><br><span class="line">print(r2.group())</span><br><span class="line">打印内容：hello</span><br><span class="line">print(r2.groups())</span><br><span class="line">打印内容：(&#x27;ello&#x27;,)</span><br><span class="line">print(r2.groupdict())</span><br><span class="line">打印内容：&#123;&#125;</span><br><span class="line">r3=re.match(&quot;(?P&lt;n1&gt;h)(?P&lt;n2&gt;\w+)&quot;,str)  #?P&lt;&gt;定义组里匹配内容的key(键)，&lt;&gt;里面写key名称，值就是匹配到的内容</span><br><span class="line">print(r3.group())</span><br><span class="line">打印内容：hello</span><br><span class="line">print(r3.groups())</span><br><span class="line">打印内容：(&#x27;h&#x27;, &#x27;ello&#x27;)</span><br><span class="line">print(r3.groupdict())</span><br><span class="line">打印内容：&#123;&#x27;n1&#x27;: &#x27;h&#x27;, &#x27;n2&#x27;: &#x27;ello&#x27;&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="search-函数"><a href="#search-函数" class="headerlink" title="search()函数"></a>search()函数</h3><h4 id="search-浏览全部字符串，匹配第一符合规则的字符串，浏览整个字符串去匹配第一个，未匹配成功返回None"><a href="#search-浏览全部字符串，匹配第一符合规则的字符串，浏览整个字符串去匹配第一个，未匹配成功返回None" class="headerlink" title="search,浏览全部字符串，匹配第一符合规则的字符串，浏览整个字符串去匹配第一个，未匹配成功返回None"></a>search,浏览全部字符串，匹配第一符合规则的字符串，浏览整个字符串去匹配第一个，未匹配成功返回None</h4><h4 id="search-pattern-string-flags-0"><a href="#search-pattern-string-flags-0" class="headerlink" title="search(pattern, string, flags=0)"></a>search(pattern, string, flags=0)</h4><h4 id="pattern：-正则模型-1"><a href="#pattern：-正则模型-1" class="headerlink" title="pattern： 正则模型"></a>pattern： 正则模型</h4><h4 id="string-：-要匹配的字符串-1"><a href="#string-：-要匹配的字符串-1" class="headerlink" title="string ： 要匹配的字符串"></a>string ： 要匹配的字符串</h4><h4 id="falgs-：-匹配模式-1"><a href="#falgs-：-匹配模式-1" class="headerlink" title="falgs ： 匹配模式"></a>falgs ： 匹配模式</h4><p>注意：match()函数 与 search()函数基本是一样的功能，不一样的就是match()匹配字符串开始位置的一个符合规则的字符串，search()是在字符串全局匹配第一个合规则的字符串</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">str=&quot;hello egon bcd egon lge egon acd 19&quot;</span><br><span class="line">r1=re.search(&quot;h\w+&quot;,str) #match，从起始位置开始匹配，匹配成功返回一个对象，未匹配成功返回None,非字母，汉字，数字及下划线分割</span><br><span class="line">print(r1.group()) # 获取匹配到的所有结果，不管有没有分组将匹配到的全部拿出来</span><br><span class="line">打印内容：hello</span><br><span class="line">print(r1.groups()) # 获取模型中匹配到的分组结果，只拿出匹配到的字符串中分组部分的结果</span><br><span class="line">打印内容：()</span><br><span class="line">print(r1.groupdict())  # 获取模型中匹配到的分组结果，只拿出匹配到的字符串中分组部分定义了key的组结果</span><br><span class="line">打印内容：&#123;&#125;</span><br><span class="line">r2=re.search(&quot;h(\w+)&quot;,str) #match，从起始位置开始匹配，匹配成功返回一个对象，未匹配成功返回None</span><br><span class="line">print(r2.group())</span><br><span class="line">打印内容：hello</span><br><span class="line">print(r2.groups())</span><br><span class="line">打印内容：(&#x27;ello&#x27;,)</span><br><span class="line">print(r2.groupdict())</span><br><span class="line">打印内容：&#123;&#125;</span><br><span class="line">r3=re.search(&quot;(?P&lt;n1&gt;h)(?P&lt;n2&gt;\w+)&quot;,str)  #?P&lt;&gt;定义组里匹配内容的key(键)，&lt;&gt;里面写key名称，值就是匹配到的内容</span><br><span class="line">print(r3.group())</span><br><span class="line">打印内容：hello</span><br><span class="line">print(r3.groups())</span><br><span class="line">打印内容：(&#x27;h&#x27;, &#x27;ello&#x27;)</span><br><span class="line">print(r3.groupdict())</span><br><span class="line">打印内容：&#123;&#x27;n1&#x27;: &#x27;h&#x27;, &#x27;n2&#x27;: &#x27;ello&#x27;&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="findall-函数"><a href="#findall-函数" class="headerlink" title="findall()函数"></a>findall()函数</h3><h4 id="findall-pattern-string-flags-0"><a href="#findall-pattern-string-flags-0" class="headerlink" title="findall(pattern, string, flags=0)"></a>findall(pattern, string, flags=0)</h4><h4 id="pattern：-正则模型-2"><a href="#pattern：-正则模型-2" class="headerlink" title="pattern： 正则模型"></a>pattern： 正则模型</h4><h4 id="string-：-要匹配的字符串-2"><a href="#string-：-要匹配的字符串-2" class="headerlink" title="string ： 要匹配的字符串"></a>string ： 要匹配的字符串</h4><h4 id="falgs-：-匹配模式-2"><a href="#falgs-：-匹配模式-2" class="headerlink" title="falgs ： 匹配模式"></a>falgs ： 匹配模式</h4><p>浏览全部字符串，匹配所有合规则的字符串，匹配到的字符串放到一个列表中，未匹配成功返回空列表</p>
+<p>注意：一旦匹配成，再次匹配，是从前一次匹配成功的，后面一位开始的，也可以理解为匹配成功的字符串，不在参与下次匹配</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line">r=re.findall(&quot;\d+\w\d+&quot;,&quot;a2b3c4d5&quot;) #浏览全部字符串，匹配所有合规则的字符串，匹配到的字符串方到一个列表中</span><br><span class="line">print(r)</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘2b3’, ‘4d5’] #匹配成功的字符串，不再参与下次匹配，所以3c4也符合规则但是没有匹配到<br>注意：如果没写匹配规则，也就是空规则，返回的是一个比原始字符串多一位的，空字符串列表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line">r=re.findall(&quot;&quot;,&quot;a2b3c4d5&quot;) #浏览全部字符串，匹配所有合规则的字符串，匹配到的字符串方到一个列表中</span><br><span class="line">print(r)</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘’, ‘’, ‘’, ‘’, ‘’, ‘’, ‘’, ‘’, ‘’] #如果没有写匹配规则，也就是空规则，返回的是一个比原始字符串多一位的空字符串列表，如上是8个字符，返回是9个空字符<br>注意：正则匹配到空字符的情况，如果规则里只有一个组，而组后面是<em>就表示组里的内容可以是0个或者多过，这样组里就有了两个意思，一个意思是匹配组里的内容，二个意思是匹配组里0内容（即是空白）所以尽量避免用</em>否则会有可能匹配出空字符串<br>注意：正则只拿组里最后一位，如果规则里只有一个组，匹配到的字符串里在拿组内容是，拿的是匹配到的内容最后一位</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line">r=re.findall(&quot;(ca)*&quot;,&quot;ca2b3caa4d5&quot;) #浏览全部字符串，匹配所有合规则的字符串，匹配到的字符串方到一个列表中</span><br><span class="line">print(r)</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘ca’, ‘’, ‘’, ‘’, ‘ca’, ‘’, ‘’, ‘’, ‘’, ‘’]#用*号会匹配出空字符</p>
+<p>无分组：匹配所有合规则的字符串，匹配到的字符串放到一个列表中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line">r=re.findall(&quot;a\w+&quot;,&quot;ca2b3 caa4d5&quot;) #浏览全部字符串，匹配所有合规则的字符串，匹配到的字符串方到一个列表中</span><br><span class="line">print(r)</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘a2b3’, ‘aa4d5’]#匹配所有合规则的字符串，匹配到的字符串放入列表</p>
+<p>有分组：只将匹配到的字符串里，组的部分放到列表里返回，相当于groups()方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line">r9=re.findall(&quot;a(\w+)&quot;,&quot;ca2b3 caa4d5&quot;) #有分组：只将匹配到的字符串里，组的部分放到列表里返回</span><br><span class="line">print(r9)</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘2b3’, ‘a4d5’]#返回匹配到组里的内容返回</p>
+<p>多个分组：只将匹配到的字符串里，组的部分放到一个元组中，最后将所有元组放到一个列表里返相当于在group()结果里再将组的部分，分别，拿出来放入一个元组，最后将所有元组放入一个列表返回</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line">r=re.findall(&quot;(a)(\w+)&quot;,&quot;ca2b3 caa4d5&quot;) #有多分组：只将匹配到的字符串里，组的部分放到一个元组中，最后将所有元组放到一个列表里返回</span><br><span class="line">print(r)</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[(‘a’, ‘2b3’), (‘a’, ‘a4d5’)]#返回的是多维数组</p>
+<p>分组中有分组：只将匹配到的字符串里，组的部分放到一个元组中，先将包含有组的组，看作一个整体也就是一个组，把这个整体组放入一个元组里，然后在把组里的组放入一个元组，最后将所有组放入一个列表返回</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line">r=re.findall(&quot;(a)(\w+(b))&quot;,&quot;ca2b3 caa4b5&quot;) #分组中有分组：只将匹配到的字符串里，组的部分放到一个元组中，先将包含有组的组，看作一个整体也就是一个组，把这个整体组放入一个元组里，然后在把组里的组放入一个元组，最后将所有组放入一个列表返回</span><br><span class="line">print(r)</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[(‘a’, ‘2b’, ‘b’), (‘a’, ‘a4b’, ‘b’)]#返回的是多维数组</p>
+<p>注意:在有分组的情况下findall()函数，不只拿分组里的字符串，拿所有匹配到的字符串，注意?:只用于不是返回正则对象的函数如findall()</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line">r=re.findall(&quot;a(?:\w+)&quot;,&quot;a2b3 a4b5 edd&quot;) #?:在有分组的情况下，不只拿分组里的字符串，拿所有匹配到的字符串，注意?:只用于不是返回正则对象的函数如findall()</span><br><span class="line">print(r)</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘a2b3’, ‘a4b5’]</p>
+<h3 id="split-函数"><a href="#split-函数" class="headerlink" title="split()函数"></a>split()函数</h3><h4 id="根据正则匹配分割字符串，返回分割后的一个列表"><a href="#根据正则匹配分割字符串，返回分割后的一个列表" class="headerlink" title="根据正则匹配分割字符串，返回分割后的一个列表"></a>根据正则匹配分割字符串，返回分割后的一个列表</h4><h4 id="split-pattern-string-maxsplit-0-flags-0"><a href="#split-pattern-string-maxsplit-0-flags-0" class="headerlink" title="split(pattern, string, maxsplit=0, flags=0)"></a>split(pattern, string, maxsplit=0, flags=0)</h4><h4 id="pattern：正则模型"><a href="#pattern：正则模型" class="headerlink" title="pattern：正则模型"></a>pattern：正则模型</h4><h4 id="string-：要匹配的字符串"><a href="#string-：要匹配的字符串" class="headerlink" title="string ：要匹配的字符串"></a>string ：要匹配的字符串</h4><h4 id="maxsplit：指定分割个数"><a href="#maxsplit：指定分割个数" class="headerlink" title="maxsplit：指定分割个数"></a>maxsplit：指定分割个数</h4><h4 id="flags：匹配模式"><a href="#flags：匹配模式" class="headerlink" title="flags：匹配模式"></a>flags：匹配模式</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">r=re.split(&quot;a\w&quot;,&quot;sdfadfdfadsfsfafsff&quot;)</span><br><span class="line">print(r)</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘sdf’, ‘fdf’, ‘sfsf’, ‘sff’]</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">r=re.split(&quot;a\w&quot;,&quot;sdfadfdfadsfsfafsff&quot;,maxsplit=2)</span><br><span class="line">print(r)</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：[‘sdf’, ‘fdf’, ‘sfsfafsff’]</p>
+<h3 id="sub-函数"><a href="#sub-函数" class="headerlink" title="sub()函数"></a>sub()函数</h3><h4 id="替换匹配成功的指定位置字符串"><a href="#替换匹配成功的指定位置字符串" class="headerlink" title="替换匹配成功的指定位置字符串"></a>替换匹配成功的指定位置字符串</h4><h4 id="sub-pattern-repl-string-count-0-flags-0"><a href="#sub-pattern-repl-string-count-0-flags-0" class="headerlink" title="sub(pattern, repl, string, count=0, flags=0)"></a>sub(pattern, repl, string, count=0, flags=0)</h4><h4 id="pattern：正则模型-1"><a href="#pattern：正则模型-1" class="headerlink" title="pattern：正则模型"></a>pattern：正则模型</h4><h4 id="repl：要替换的字符串"><a href="#repl：要替换的字符串" class="headerlink" title="repl：要替换的字符串"></a>repl：要替换的字符串</h4><h4 id="string：要匹配的字符串"><a href="#string：要匹配的字符串" class="headerlink" title="string：要匹配的字符串"></a>string：要匹配的字符串</h4><h4 id="count：指定匹配个数"><a href="#count：指定匹配个数" class="headerlink" title="count：指定匹配个数"></a>count：指定匹配个数</h4><h4 id="flags：匹配模式-1"><a href="#flags：匹配模式-1" class="headerlink" title="flags：匹配模式"></a>flags：匹配模式</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">r=re.sub(&quot;a\w&quot;,&quot;b&quot;,&quot;aaaaaaaaaa&quot;)</span><br><span class="line">print(r)</span><br></pre></td></tr></table></figure>
+
+<p>打印内容：bbbbb</p>
+<h3 id="subn-函数"><a href="#subn-函数" class="headerlink" title="subn()函数"></a>subn()函数</h3><h4 id="替换匹配成功的指定位置字符串-并且返回替换次数，可以用两个变量分别接受"><a href="#替换匹配成功的指定位置字符串-并且返回替换次数，可以用两个变量分别接受" class="headerlink" title="替换匹配成功的指定位置字符串,并且返回替换次数，可以用两个变量分别接受"></a>替换匹配成功的指定位置字符串,并且返回替换次数，可以用两个变量分别接受</h4><h4 id="subn-pattern-repl-string-count-0-flags-0"><a href="#subn-pattern-repl-string-count-0-flags-0" class="headerlink" title="subn(pattern, repl, string, count=0, flags=0)"></a>subn(pattern, repl, string, count=0, flags=0)</h4><h4 id="pattern：正则模型-2"><a href="#pattern：正则模型-2" class="headerlink" title="pattern：正则模型"></a>pattern：正则模型</h4><h4 id="repl-：要替换的字符串"><a href="#repl-：要替换的字符串" class="headerlink" title="repl  ：要替换的字符串"></a>repl  ：要替换的字符串</h4><h4 id="string-：要匹配的字符串-1"><a href="#string-：要匹配的字符串-1" class="headerlink" title="string ：要匹配的字符串"></a>string ：要匹配的字符串</h4><h4 id="count-：指定匹配个数"><a href="#count-：指定匹配个数" class="headerlink" title="count ：指定匹配个数"></a>count ：指定匹配个数</h4><h4 id="flags-：匹配模式"><a href="#flags-：匹配模式" class="headerlink" title="flags ：匹配模式"></a>flags ：匹配模式</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">a,b=re.subn(&quot;a\w&quot;,&quot;b&quot;,&quot;aaaaaaaaaa&quot;) </span><br><span class="line">#替换匹配成功的指定位置字符串,并且返回替换次数，可以用两个变量分别接受print(a)</span><br><span class="line">#返回替换后的字符串</span><br><span class="line">打印内容：bbbbb</span><br><span class="line">print(b) #返回替换次数</span><br><span class="line">打印内容：5</span><br></pre></td></tr></table></figure>
+
+        </div>
+        <footer class="kratos-entry-footer clearfix">
+            <div class="footer-tag clearfix">
+                <div class="pull-date">
+                <span>最后编辑：2021-08-01</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+</article>
+
+        
+
+            </section>
+
+        
+
+                
+            
+
+<section id="kratos-widget-area" class="col-md-4 hidden-xs hidden-sm">
+    <!-- 文章和页面根据splitter来分割，没有的话就从头开始设置为sticky -->
+    
+    
+                <aside id="krw-about" class="widget widget-kratos-about clearfix">
+    <div class="photo-background"></div>
+    <div class="photo-wrapper clearfix">
+        <div class="photo-wrapper-tip text-center">
+            <img class="about-photo" src="/images/avatar.webp" />
+        </div>
+    </div>
+    <div class="textwidget">
+        <p class="text-center"></p>
+    </div>
+</aside>
+            
+                    <div class="sticky-area">
+                
+                    <aside id="krw-toc" class="widget widget-kratos-toc clearfix">
+    <div class="photo-background"></div>
+    <h4 class="widget-title no-after">
+        <i class="fa fa-compass"></i>
+        文章目录
+        <span class="toc-progress-bar"></span>
+    </h4>
+    <div class="textwidget">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#python-re%E6%A8%A1%E5%9D%97"><span class="toc-text">python_re模块</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%83%E5%AD%97%E7%AC%A6"><span class="toc-text">元字符</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E5%85%83%E5%AD%97%E7%AC%A6"><span class="toc-text">常用的元字符</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#w%E5%85%83%E5%AD%97%E7%AC%A6"><span class="toc-text">\w元字符</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#w%E5%8C%B9%E9%85%8D%E5%8C%85%E6%8B%AC%E4%B8%8B%E5%88%92%E7%BA%BF%E5%9C%A8%E5%86%85%E4%BB%BB%E4%BD%95%E5%AD%97%E6%AF%8D%E6%95%B0%E5%AD%97%E6%B1%89%E5%AD%97%E5%AD%97%E7%AC%A6"><span class="toc-text">\w匹配包括下划线在内任何字母数字汉字字符</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#W%E5%8C%B9%E9%85%8D%E9%9D%9E%E4%BB%BB%E4%BD%95%E5%AD%97%E6%AF%8D%E6%95%B0%E5%AD%97%E6%B1%89%E5%AD%97%E5%AD%97%E7%AC%A6%E5%8C%85%E6%8B%AC%E4%B8%8B%E5%88%92%E7%BA%BF%E5%9C%A8%E5%86%85"><span class="toc-text">\W匹配非任何字母数字汉字字符包括下划线在内</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#s%E5%85%83%E5%AD%97%E7%AC%A6"><span class="toc-text">\s元字符</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#s%E5%8C%B9%E9%85%8D%E4%BB%BB%E4%BD%95%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6%EF%BC%8C%E5%AE%83%E7%9B%B8%E5%BD%93%E4%BA%8E%E7%B1%BB-t-n-r-f-v"><span class="toc-text">\s匹配任何空白字符，它相当于类[\t\n\r\f\v]</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#S%E5%8C%B9%E9%85%8D%E4%BB%BB%E4%BD%95%E9%9D%9E%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6%EF%BC%8C%E5%AE%83%E7%9B%B8%E5%BD%93%E4%BA%8E%E7%B1%BB-t-n-r-f-v"><span class="toc-text">\S匹配任何非空白字符，它相当于类[ ^\t\n\r\f\v]</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#w%E5%8C%B9%E9%85%8D%E5%8C%85%E6%8B%AC%E4%B8%8B%E5%88%92%E7%BA%BF%E5%9C%A8%E5%86%85%E4%BB%BB%E4%BD%95%E5%AD%97%E6%AF%8D%E6%95%B0%E5%AD%97%E6%B1%89%E5%AD%97%E5%AD%97%E7%AC%A6-1"><span class="toc-text">\w匹配包括下划线在内任何字母数字汉字字符</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#W%E5%8C%B9%E9%85%8D%E9%9D%9E%E4%BB%BB%E4%BD%95%E5%AD%97%E6%AF%8D%E6%95%B0%E5%AD%97%E6%B1%89%E5%AD%97%E5%AD%97%E7%AC%A6%E5%8C%85%E6%8B%AC%E4%B8%8B%E5%88%92%E7%BA%BF%E5%9C%A8%E5%86%85-1"><span class="toc-text">\W匹配非任何字母数字汉字字符包括下划线在内</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#d%E5%85%83%E5%AD%97%E7%AC%A6"><span class="toc-text">\d元字符</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#d-%E5%8C%B9%E9%85%8D%E4%BB%BB%E4%BD%95%E5%8D%81%E8%BF%9B%E5%88%B6%E6%95%B0%EF%BC%8C%E5%AE%83%E7%9B%B8%E5%BD%93%E4%BA%8E%E7%B1%BB-0-9"><span class="toc-text">\d 匹配任何十进制数，它相当于类[0-9]</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#d-%E5%A6%82%E6%9E%9C%E9%9C%80%E8%A6%81%E5%8C%B9%E9%85%8D%E4%B8%80%E4%BD%8D%E6%88%96%E8%80%85%E5%A4%9A%E4%BD%8D%E6%95%B0%E7%9A%84%E6%95%B0%E5%AD%97%E6%97%B6%E7%94%A8"><span class="toc-text">\d+如果需要匹配一位或者多位数的数字时用</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#D%E5%8C%B9%E9%85%8D%E4%BB%BB%E4%BD%95%E9%9D%9E%E6%95%B0%E5%AD%97%E5%AD%97%E7%AC%A6%EF%BC%8C%E5%AE%83%E7%9B%B8%E5%BD%93%E4%BA%8E%E7%B1%BB-0-9"><span class="toc-text">\D匹配任何非数字字符，它相当于类  [ ^0-9]</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#b%E5%85%83%E5%AD%97%E7%AC%A6"><span class="toc-text">\b元字符</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#b%E5%85%83%E5%AD%97%E7%AC%A6-%E8%A1%A8%E7%A4%BA%E5%AD%97%E6%AF%8D%E6%95%B0%E5%AD%97%E4%B8%8E%E9%9D%9E%E5%AD%97%E6%AF%8D%E6%95%B0%E5%AD%97%E7%9A%84%E8%BE%B9%E7%95%8C%EF%BC%8C-%E9%9D%9E%E5%AD%97%E6%AF%8D%E6%95%B0%E5%AD%97%E4%B8%8E%E5%AD%97%E6%AF%8D%E6%95%B0%E5%AD%97%E7%9A%84%E8%BE%B9%E7%95%8C"><span class="toc-text">\b元字符 表示字母数字与非字母数字的边界，   非字母数字与字母数字的边界</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#B%E5%85%83%E5%AD%97%E7%AC%A6-%E8%A1%A8%E7%A4%BA%E5%AD%97%E6%AF%8D%E6%95%B0%E5%AD%97%E4%B8%8E%E5%AD%97%E6%AF%8D%E6%95%B0%E5%AD%97%E7%9A%84%E8%BE%B9%E7%95%8C%EF%BC%8C%E9%9D%9E%E5%AD%97%E6%AF%8D%E6%95%B0%E5%AD%97%E4%B8%8E%E9%9D%9E%E5%AD%97%E6%AF%8D%E6%95%B0%E5%AD%97%E7%9A%84%E8%BE%B9%E7%95%8C"><span class="toc-text">\B元字符 表示字母数字与字母数字的边界，非字母数字与非字母数字的边界</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%83%E5%AD%97%E7%AC%A6-1"><span class="toc-text">^元字符</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%85%83%E5%AD%97%E7%AC%A6-%E4%BB%A5%E4%BB%80%E4%B9%88%E5%BC%80%E5%A4%B4"><span class="toc-text">^元字符 以什么开头</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%85%83%E5%AD%97%E7%AC%A6-%E5%A6%82%E6%9E%9C%E5%86%99%E5%88%B0-%E5%AD%97%E7%AC%A6%E9%9B%86%E9%87%8C%E5%B0%B1%E6%98%AF%E5%8F%8D%E5%8F%96"><span class="toc-text">^元字符  如果写到[]字符集里就是反取</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%83%E5%AD%97%E7%AC%A6-2"><span class="toc-text">$元字符</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%85%83%E5%AD%97%E7%AC%A6-%E4%BB%A5%E4%BB%80%E4%B9%88%E7%BB%93%E5%B0%BE"><span class="toc-text">$元字符  以什么结尾</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%83%E5%AD%97%E7%AC%A6-3"><span class="toc-text">|元字符</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%88%96%EF%BC%8C%E6%88%96%E5%B0%B1%E6%98%AF%E5%89%8D%E5%90%8E%E5%85%B6%E4%B8%AD%E4%B8%80%E4%B8%AA%E7%AC%A6%E5%90%88%E5%B0%B1%E5%8C%B9%E9%85%8D"><span class="toc-text">|或，或就是前后其中一个符合就匹配</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#r%E5%85%83%E5%AD%97%E7%AC%A6"><span class="toc-text">r元字符</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#r%E5%8E%9F%E7%94%9F%E5%AD%97%E7%AC%A6"><span class="toc-text">r原生字符</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E9%99%90%E5%AE%9A%E7%AC%A6"><span class="toc-text">常用的限定符</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%83%E5%AD%97%E7%AC%A6-4"><span class="toc-text">*元字符</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%85%83%E5%AD%97%E7%AC%A6-%E5%8C%B9%E9%85%8D%E5%85%B6%E5%89%8D%E9%9D%A2%E7%9A%84%E4%B8%80%E4%B8%AA%E5%AD%97%E7%AC%A60%E6%AC%A1%E6%88%96%E5%A4%9A%E6%AC%A1"><span class="toc-text">* 元字符  匹配其前面的一个字符0次或多次</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%83%E5%AD%97%E7%AC%A6-5"><span class="toc-text">+ 元字符</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%85%83%E5%AD%97%E7%AC%A6-%E5%8C%B9%E9%85%8D%E5%85%B6%E5%89%8D%E9%9D%A2%E7%9A%84%E4%B8%80%E4%B8%AA%E5%AD%97%E7%AC%A61%E6%AC%A1%E6%88%96%E5%A4%9A%E6%AC%A1"><span class="toc-text">+ 元字符  匹配其前面的一个字符1次或多次</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%83%E5%AD%97%E7%AC%A6-6"><span class="toc-text">?元字符</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%85%83%E5%AD%97%E7%AC%A6-%E5%8C%B9%E9%85%8D%E5%85%B6%E5%89%8D%E9%9D%A2%E7%9A%84%E4%B8%80%E4%B8%AA%E5%AD%97%E7%AC%A60%E6%AC%A1%E6%88%961%E6%AC%A1"><span class="toc-text">?元字符 匹配其前面的一个字符0次或1次</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%83%E5%AD%97%E7%AC%A6-7"><span class="toc-text">{}元字符</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#n-%E5%8C%B9%E9%85%8D%E5%89%8D%E4%B8%80%E4%B8%AA%E5%AD%97%E7%AC%A6n%E6%AC%A1"><span class="toc-text">{n}匹配前一个字符n次</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#n-%E5%8C%B9%E9%85%8D%E5%89%8D%E4%B8%80%E4%B8%AA%E5%AD%97%E7%AC%A6n%E6%AC%A1%E6%88%96%E5%A4%9A%E6%AC%A1"><span class="toc-text">{n,}匹配前一个字符n次或多次</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#n-m-%E5%8C%B9%E9%85%8D%E5%89%8D%E4%B8%80%E4%B8%AA%E5%AD%97%E7%AC%A6n%E8%87%B3m%E6%AC%A1%EF%BC%8C%E8%8B%A5%E7%9C%81%E7%95%A5m%EF%BC%8C%E5%88%99%E5%8C%B9%E9%85%8Dn%E8%87%B3%E6%97%A0%E9%99%90%E6%AC%A1"><span class="toc-text">{n,m}匹配前一个字符n至m次，若省略m，则匹配n至无限次</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#0-%E5%8C%B9%E9%85%8D%E5%89%8D%E4%B8%80%E4%B8%AA%E5%AD%97%E7%AC%A60%E6%88%96%E5%A4%9A%E6%AC%A1-%E7%AD%89%E5%90%8C%E4%BA%8E-%E5%85%83%E5%AD%97%E7%AC%A6"><span class="toc-text">{0,}匹配前一个字符0或多次,等同于*元字符</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8C%B9%E9%85%8D%E5%89%8D%E4%B8%80%E4%B8%AA%E5%AD%97%E7%AC%A61%E6%AC%A1%E6%88%96%E6%97%A0%E9%99%90%E6%AC%A1-%E7%AD%89%E5%90%8C%E4%BA%8E-%E5%85%83%E5%AD%97%E7%AC%A6"><span class="toc-text">{+,}匹配前一个字符1次或无限次,等同于+元字符</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#0-1-%E5%8C%B9%E9%85%8D%E5%89%8D%E4%B8%80%E4%B8%AA%E5%AD%97%E7%AC%A60%E6%AC%A1%E6%88%961%E6%AC%A1-%E7%AD%89%E5%90%8C%E4%BA%8E-%E5%85%83%E5%AD%97%E7%AC%A6"><span class="toc-text">{0,1}匹配前一个字符0次或1次,等同于?元字符</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%83%E5%AD%97%E7%AC%A6-8"><span class="toc-text">[]元字符</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%85%83%E5%AD%97%E7%AC%A6%EF%BC%8C%E5%AD%97%E7%AC%A6%E9%9B%86"><span class="toc-text">[]元字符，字符集</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E6%A8%A1%E5%9D%97"><span class="toc-text">函数模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#match-%E5%87%BD%E6%95%B0"><span class="toc-text">match()函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#match%EF%BC%8C%E4%BB%8E%E5%A4%B4%E5%8C%B9%E9%85%8D%E4%B8%80%E4%B8%AA%E7%AC%A6%E5%90%88%E8%A7%84%E5%88%99%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2%EF%BC%8C%E4%BB%8E%E8%B5%B7%E5%A7%8B%E4%BD%8D%E7%BD%AE%E5%BC%80%E5%A7%8B%E5%8C%B9%E9%85%8D%EF%BC%8C%E5%8C%B9%E9%85%8D%E6%88%90%E5%8A%9F%E8%BF%94%E5%9B%9E%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1%EF%BC%8C%E6%9C%AA%E5%8C%B9%E9%85%8D%E6%88%90%E5%8A%9F%E8%BF%94%E5%9B%9ENone"><span class="toc-text">match，从头匹配一个符合规则的字符串，从起始位置开始匹配，匹配成功返回一个对象，未匹配成功返回None</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#match-pattern-string-flags-0"><span class="toc-text">match(pattern, string, flags&#x3D;0)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#pattern%EF%BC%9A-%E6%AD%A3%E5%88%99%E6%A8%A1%E5%9E%8B"><span class="toc-text">pattern： 正则模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#string-%EF%BC%9A-%E8%A6%81%E5%8C%B9%E9%85%8D%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-text">string ： 要匹配的字符串</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#falgs-%EF%BC%9A-%E5%8C%B9%E9%85%8D%E6%A8%A1%E5%BC%8F"><span class="toc-text">falgs ： 匹配模式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#search-%E5%87%BD%E6%95%B0"><span class="toc-text">search()函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#search-%E6%B5%8F%E8%A7%88%E5%85%A8%E9%83%A8%E5%AD%97%E7%AC%A6%E4%B8%B2%EF%BC%8C%E5%8C%B9%E9%85%8D%E7%AC%AC%E4%B8%80%E7%AC%A6%E5%90%88%E8%A7%84%E5%88%99%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2%EF%BC%8C%E6%B5%8F%E8%A7%88%E6%95%B4%E4%B8%AA%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8E%BB%E5%8C%B9%E9%85%8D%E7%AC%AC%E4%B8%80%E4%B8%AA%EF%BC%8C%E6%9C%AA%E5%8C%B9%E9%85%8D%E6%88%90%E5%8A%9F%E8%BF%94%E5%9B%9ENone"><span class="toc-text">search,浏览全部字符串，匹配第一符合规则的字符串，浏览整个字符串去匹配第一个，未匹配成功返回None</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#search-pattern-string-flags-0"><span class="toc-text">search(pattern, string, flags&#x3D;0)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#pattern%EF%BC%9A-%E6%AD%A3%E5%88%99%E6%A8%A1%E5%9E%8B-1"><span class="toc-text">pattern： 正则模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#string-%EF%BC%9A-%E8%A6%81%E5%8C%B9%E9%85%8D%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2-1"><span class="toc-text">string ： 要匹配的字符串</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#falgs-%EF%BC%9A-%E5%8C%B9%E9%85%8D%E6%A8%A1%E5%BC%8F-1"><span class="toc-text">falgs ： 匹配模式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#findall-%E5%87%BD%E6%95%B0"><span class="toc-text">findall()函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#findall-pattern-string-flags-0"><span class="toc-text">findall(pattern, string, flags&#x3D;0)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#pattern%EF%BC%9A-%E6%AD%A3%E5%88%99%E6%A8%A1%E5%9E%8B-2"><span class="toc-text">pattern： 正则模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#string-%EF%BC%9A-%E8%A6%81%E5%8C%B9%E9%85%8D%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2-2"><span class="toc-text">string ： 要匹配的字符串</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#falgs-%EF%BC%9A-%E5%8C%B9%E9%85%8D%E6%A8%A1%E5%BC%8F-2"><span class="toc-text">falgs ： 匹配模式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#split-%E5%87%BD%E6%95%B0"><span class="toc-text">split()函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B9%E6%8D%AE%E6%AD%A3%E5%88%99%E5%8C%B9%E9%85%8D%E5%88%86%E5%89%B2%E5%AD%97%E7%AC%A6%E4%B8%B2%EF%BC%8C%E8%BF%94%E5%9B%9E%E5%88%86%E5%89%B2%E5%90%8E%E7%9A%84%E4%B8%80%E4%B8%AA%E5%88%97%E8%A1%A8"><span class="toc-text">根据正则匹配分割字符串，返回分割后的一个列表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#split-pattern-string-maxsplit-0-flags-0"><span class="toc-text">split(pattern, string, maxsplit&#x3D;0, flags&#x3D;0)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#pattern%EF%BC%9A%E6%AD%A3%E5%88%99%E6%A8%A1%E5%9E%8B"><span class="toc-text">pattern：正则模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#string-%EF%BC%9A%E8%A6%81%E5%8C%B9%E9%85%8D%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-text">string ：要匹配的字符串</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#maxsplit%EF%BC%9A%E6%8C%87%E5%AE%9A%E5%88%86%E5%89%B2%E4%B8%AA%E6%95%B0"><span class="toc-text">maxsplit：指定分割个数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#flags%EF%BC%9A%E5%8C%B9%E9%85%8D%E6%A8%A1%E5%BC%8F"><span class="toc-text">flags：匹配模式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sub-%E5%87%BD%E6%95%B0"><span class="toc-text">sub()函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9B%BF%E6%8D%A2%E5%8C%B9%E9%85%8D%E6%88%90%E5%8A%9F%E7%9A%84%E6%8C%87%E5%AE%9A%E4%BD%8D%E7%BD%AE%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-text">替换匹配成功的指定位置字符串</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sub-pattern-repl-string-count-0-flags-0"><span class="toc-text">sub(pattern, repl, string, count&#x3D;0, flags&#x3D;0)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#pattern%EF%BC%9A%E6%AD%A3%E5%88%99%E6%A8%A1%E5%9E%8B-1"><span class="toc-text">pattern：正则模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#repl%EF%BC%9A%E8%A6%81%E6%9B%BF%E6%8D%A2%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-text">repl：要替换的字符串</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#string%EF%BC%9A%E8%A6%81%E5%8C%B9%E9%85%8D%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-text">string：要匹配的字符串</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#count%EF%BC%9A%E6%8C%87%E5%AE%9A%E5%8C%B9%E9%85%8D%E4%B8%AA%E6%95%B0"><span class="toc-text">count：指定匹配个数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#flags%EF%BC%9A%E5%8C%B9%E9%85%8D%E6%A8%A1%E5%BC%8F-1"><span class="toc-text">flags：匹配模式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#subn-%E5%87%BD%E6%95%B0"><span class="toc-text">subn()函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9B%BF%E6%8D%A2%E5%8C%B9%E9%85%8D%E6%88%90%E5%8A%9F%E7%9A%84%E6%8C%87%E5%AE%9A%E4%BD%8D%E7%BD%AE%E5%AD%97%E7%AC%A6%E4%B8%B2-%E5%B9%B6%E4%B8%94%E8%BF%94%E5%9B%9E%E6%9B%BF%E6%8D%A2%E6%AC%A1%E6%95%B0%EF%BC%8C%E5%8F%AF%E4%BB%A5%E7%94%A8%E4%B8%A4%E4%B8%AA%E5%8F%98%E9%87%8F%E5%88%86%E5%88%AB%E6%8E%A5%E5%8F%97"><span class="toc-text">替换匹配成功的指定位置字符串,并且返回替换次数，可以用两个变量分别接受</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#subn-pattern-repl-string-count-0-flags-0"><span class="toc-text">subn(pattern, repl, string, count&#x3D;0, flags&#x3D;0)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#pattern%EF%BC%9A%E6%AD%A3%E5%88%99%E6%A8%A1%E5%9E%8B-2"><span class="toc-text">pattern：正则模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#repl-%EF%BC%9A%E8%A6%81%E6%9B%BF%E6%8D%A2%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-text">repl  ：要替换的字符串</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#string-%EF%BC%9A%E8%A6%81%E5%8C%B9%E9%85%8D%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2-1"><span class="toc-text">string ：要匹配的字符串</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#count-%EF%BC%9A%E6%8C%87%E5%AE%9A%E5%8C%B9%E9%85%8D%E4%B8%AA%E6%95%B0"><span class="toc-text">count ：指定匹配个数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#flags-%EF%BC%9A%E5%8C%B9%E9%85%8D%E6%A8%A1%E5%BC%8F"><span class="toc-text">flags ：匹配模式</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+</aside>
+                
+                
+  <aside id="krw-categories" class="widget widget-kratos-categories clearfix">
+    <h4 class="widget-title"><i class="fa fa-folder"></i>分类目录</h4>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/RCE/">RCE</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL%E6%B3%A8%E5%85%A5/">SQL注入</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Web/">Web</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%8A%A5%E5%91%8A/">技术报告</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">漏洞复现</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">环境配置</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="category-list-count">1</span></li></ul>
+  </aside>
+
+
+            
+                
+  <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
+    <h4 class="widget-title"><i class="fa fa-tags"></i>标签聚合</h4>
+      <div class="tag-clouds">
+        <a href="/tags/PHP/" style="font-size: 0.6em;">PHP</a> <a href="/tags/RCE/" style="font-size: 0.7em;">RCE</a> <a href="/tags/SSTI/" style="font-size: 0.6em;">SSTI</a> <a href="/tags/Tomcat/" style="font-size: 0.8em;">Tomcat</a> <a href="/tags/Weblogic/" style="font-size: 0.6em;">Weblogic</a> <a href="/tags/XXE/" style="font-size: 0.6em;">XXE</a> <a href="/tags/Xpath/" style="font-size: 0.6em;">Xpath</a> <a href="/tags/mysql/" style="font-size: 0.6em;">mysql</a> <a href="/tags/python/" style="font-size: 0.6em;">python</a> <a href="/tags/sql%E6%B3%A8%E5%85%A5/" style="font-size: 0.7em;">sql注入</a> <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" style="font-size: 0.6em;">代码审计</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 0.7em;">报告</a> <a href="/tags/%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/" style="font-size: 0.6em;">报错注入</a> <a href="/tags/%E9%85%8D%E7%BD%AE/" style="font-size: 0.8em;">配置</a>
+      </div>
+  </aside>
+
+            
+                
+  <aside id="krw-posts" class="widget widget-kratos-posts">
+  <h4 class="widget-title"><i class="fa fa-file"></i>最新文章</h4>
+  <div class="tab-content">
+      <ul class="list-group">
+        
+        
+          
+          
+            <a class="list-group-item" href="/2021/07/14/RCE%E6%80%BB%E7%BB%93/"><i class="fa  fa-book"></i> RCE总结</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/06/02/REC(%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E)%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8/"><i class="fa  fa-book"></i> REC(远程代码执行漏洞)原理及漏洞利用</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/05/03/Xpath%E5%9F%BA%E7%A1%80/"><i class="fa  fa-book"></i> Xpath基础</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/04/12/SSTI(%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5)%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8/"><i class="fa  fa-book"></i> SSTI(模板注入)漏洞利用</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/03/22/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%80%9D%E8%B7%AF%E8%AF%A6%E8%A7%A3/"><i class="fa  fa-book"></i> 代码审计思路详解</a>
+            
+          
+        
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+      </ul>
+  </div>
+  </aside>
+
+            
+    </div>
+</section>
+        
+        </div>
+    </div>
+</div>
+<footer>
+    <div id="footer"  class="ap-lrc"  >
+        <div class="kr-tool text-center">
+            <div class="tool">
+                
+                    <div class="box search-box">
+                        <a href="/search/">
+                            <span class="fa fa-search"></span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="box theme-box" id="darkmode-switch">
+                        <span class="fa fa-adjust"></span>
+                    </div>
+                
+                
+            </div>
+            <div class="box gotop-box">
+                <span class="fa fa-chevron-up"></span>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 footer-list text-center">
+                    <ul class="kratos-social-icons">
+                        
+                        <li><a href="mailto:ciyaso@163.com"><i class="fa fa-envelope"></i></a></li>
+                        
+                        
+                        
+                        
+                        
+                        <li><a target="_blank" rel="nofollow" href="https://github.com/Ciyaso"><i class="fa fa-github"></i></a></li>
+                        
+                    </ul>
+                    <ul class="kratos-copyright">
+                        <div>
+                            <li>&copy; 2021 Welcome to C1yas0's Blog 版权所有.</li>
+                            <li>本站已运行<span id="span_dt">Loading...</span></li>
+                        </div>
+                        <div>
+                            <li>Theme <a href="https://github.com/Candinya/Kratos-Rebirth" target="_blank">Kratos:Rebirth</a></li>
+                            <li>Site built with&nbsp;<i class="fa fa-heart throb" style="color:#d43f57"></i>&nbsp;by C1yas0.</li>
+                        </div>
+                        <div>
+                            <li>Powered by <a href="https://hexo.io" target="_blank" rel="nofollow">Hexo</a></li>
+                            <li>Hosted on <a href="https://github.io" target="_blank">Github Pages</a></li>
+                        </div>
+                        <div>
+                            
+                            
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+
+        <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.4/dist/js/bootstrap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+<script>const notMobile = (!(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)));</script>
+
+    <div>
+        <canvas id="snow"></canvas>
+        <script async type="text/javascript" src="/js/snow.min.js"></script>
+    </div>
+
+<script async src="/js/candy.min.js"></script>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+    <meting-js
+        server="netease"
+        type="playlist"
+        id="3204190542"
+        order="random"
+        fixed="true"
+    >
+    </meting-js>
+
+
+
+    <script defer src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script>
+<script defer src="/js/kratosr.min.js"></script>
+<script defer src="/js/pjax.min.js"></script>
+
+
+    <script defer src="/js/kr-dark.min.js"></script>
+
+
+
+<!-- Extra support for third-party plguins  -->
+
+
+    </body>
+</html>

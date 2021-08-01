@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+  <!-- 元数据 -->
+  <meta charset="utf-8">
+  <link rel="icon" href="">
+  <title>PHP开发环境的搭建及编辑工具的破译和使用 | Welcome to C1yas0's Blog</title>
+  <meta name="author" content="C1yas0" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  
+    <meta name="keywords" content="PHP" />
+  
+  <meta name="description" content="一、PHPStudy安装说明1、安装步骤（附截图）(1)百度搜索PHPstudy。  图1.1 (2)进入官网选择合适的版本，设置下载路径，进行下载 。  图1.2  图1.3 (3)解压压缩包，运行程序，设置安装路径，安装PHPstudy。  图1.4 2、启动、停止、重启(1)启动PHPstudy：安装路径会生成一个新的文件夹phpstudy_pro。 图 1.5 进入文件夹phpstudy_">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP开发环境的搭建及编辑工具的破译和使用">
+<meta property="og:url" content="http://example.com/2020/08/05/PHP%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E7%9A%84%E6%90%AD%E5%BB%BA%E5%8F%8A%E7%BC%96%E8%BE%91%E5%B7%A5%E5%85%B7%E7%9A%84%E7%A0%B4%E8%AF%91%E5%92%8C%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="Welcome to C1yas0&#39;s Blog">
+<meta property="og:description" content="一、PHPStudy安装说明1、安装步骤（附截图）(1)百度搜索PHPstudy。  图1.1 (2)进入官网选择合适的版本，设置下载路径，进行下载 。  图1.2  图1.3 (3)解压压缩包，运行程序，设置安装路径，安装PHPstudy。  图1.4 2、启动、停止、重启(1)启动PHPstudy：安装路径会生成一个新的文件夹phpstudy_pro。 图 1.5 进入文件夹phpstudy_">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2020/08/05/PHP%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E7%9A%84%E6%90%AD%E5%BB%BA%E5%8F%8A%E7%BC%96%E8%BE%91%E5%B7%A5%E5%85%B7%E7%9A%84%E7%A0%B4%E8%AF%91%E5%92%8C%E4%BD%BF%E7%94%A8/https:/ae04.alicdn.com/kf/H75bd45fdae524eb183c49bf9f6cba69eA.png">
+<meta property="article:published_time" content="2020-08-06T03:26:05.000Z">
+<meta property="article:modified_time" content="2021-08-01T04:28:15.493Z">
+<meta property="article:author" content="C1yas0">
+<meta property="article:tag" content="PHP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2020/08/05/PHP%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E7%9A%84%E6%90%AD%E5%BB%BA%E5%8F%8A%E7%BC%96%E8%BE%91%E5%B7%A5%E5%85%B7%E7%9A%84%E7%A0%B4%E8%AF%91%E5%92%8C%E4%BD%BF%E7%94%A8/https:/ae04.alicdn.com/kf/H75bd45fdae524eb183c49bf9f6cba69eA.png">
+<meta name="twitter:site" content="@null">
+  
+  <!-- 站点验证相关 -->
+  
+    
+    
+    
+  
+  <!-- 样式表文件 -->
+  <link rel="stylesheet" id="kratos-css" href="/css/kratosr.min.css" type="text/css" media="all">
+  
+    <link rel="stylesheet" id="highlight-css" href="/css/highlight/night-eighties.min.css" type="text/css" media="all">
+  
+  
+  <link rel="stylesheet" id="fontawe-css" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" type="text/css" media="all">
+  <link rel="stylesheet" id="nprogress-css" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" type="text/css" media="all">
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+  
+  
+    <link rel="stylesheet" id="darkmode-css" href="/css/kr-dark.min.css" type="text/css" media="all">
+  
+  <!-- 不得不预先加载的一些JS文件 -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  
+    <script src="https://cdn.jsdelivr.net/npm/qrcode_js@1.0.0/qrcode.min.js"></script>
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+    <body class="custom-background">
+        <div id="kratos-wrapper">
+    <div id="kratos-page">
+        <div id="kratos-header">
+            <header id="kratos-desktop-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="nav-header">
+                        <nav id="kratos-menu-wrap">
+                            <ul id="kratos-primary-menu" class="sf-menu">
+                                
+                                    
+                                        <li><a href="/"><i class="fa fa-home"></i>首页</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/archives/"><i class="fa fa-file"></i>档案馆</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/friends/"><i class="fa fa-paw"></i>好伙伴</a></li>
+                                    
+                                
+                                    
+                                        <li>
+                                            <a><i class="fa fa-link"></i>链接</a>
+                                            <ul class="sub-menu">
+                                                
+                                                    
+                                                
+                                                    
+                                                        <li><a target="_blank" rel="noopener" href="https://github.com/Ciyaso">作者博客</a></li>
+                                                    
+                                                
+                                                    
+                                                        <li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_46706771?spm=1000.2115.3001.5343">CSDN</a></li>
+                                                    
+                                                
+                                            </ul>
+                                        </li>
+                                    
+                                
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+            <header id="kratos-mobile-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="color-logo"><a href="/">Welcome to C1yas0&#39;s Blog</a></div>
+                    <div class="nav-toggle">
+                        <a class="kratos-nav-toggle js-kratos-nav-toggle">
+                            <i></i>
+                        </a>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="kratos-start kratos-hero-2">
+            <!-- <div class="kratos-overlay"></div> -->
+            <div class="kratos-cover kratos-cover-2 text-center">
+                <div class="desc desc2 animate-box">
+                    <a href="/">
+                        <h2>Welcome to C1yas0&#39;s Blog</h2> <br />
+                        <span></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="kratos-blog-post">
+            <div class="container">
+                <div id="main" class="row">
+                    
+
+        
+
+            <section class="col-md-8">
+
+        
+
+            <article>
+    <div class="kratos-hentry kratos-post-inner clearfix">
+        <div class="kratos-post-content">
+            <h2 class="title-h2 text-center">PHP开发环境的搭建及编辑工具的破译和使用</h2>
+            <p>一、PHPStudy安装说明<br>1、安装步骤（附截图）<br>(1)百度搜索PHPstudy。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805225829833.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图1.1</p>
+<p>(2)进入官网选择合适的版本，设置下载路径，进行下载 。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805225916486.png" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图1.2</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805225924470.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图1.3</p>
+<p>(3)解压压缩包，运行程序，设置安装路径，安装PHPstudy。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805230000507.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图1.4</p>
+<p>2、启动、停止、重启<br>(1)启动PHPstudy：安装路径会生成一个新的文件夹phpstudy_pro。<br><img src="https://img-blog.csdnimg.cn/20200805230059982.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图 1.5</p>
+<p>进入文件夹phpstudy_pro&gt;COM找到应用程序phpstudy_pro.exe即可启动PHPstudy。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805230120719.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图1.6</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805230132440.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图1.7</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805230145355.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图1.8</p>
+<p>(3)重启Apache，Mysql：如果使用过程中PHP环境出现问题可以尝试重启Apache，Mysql解决问题，按相对应的启按钮即可(参考图1.8)</p>
+<p>(4)停止Apache，Mysql：按相对应的停止按钮即可(参考图 1.8)<br>3.检测环境是否配置成功(详见Editplus 5使用说明书)</p>
+<p>二、EditPlis 5使用说明<br>1.Editplus 5的下载与安装：百度搜索Editplus 5选择合适的版本进行下载并安装。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805230424645.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图 2.1</p>
+<p>2.PHP文件的创建与运行<br>(1)新建PHP文件：在目录处找到phpstudy_pro&gt;WWW文件夹(图2.2)，在WWW文件夹下，Editplus 5在左下角空白处右键创(图2.3)，为php文件命名。【注意：①文件尾缀为.php ②文件名只能为英文或拼音】</p>
+<p>图 2.2</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805230507244.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图 2.3</p>
+<p>(2)运行PHP文件：启动Apache，Mysql，在新建的php文件中输入代码(图2.4)并保存文件，打开浏览器，在网址输入栏内输入127.0.0.1/test.php或localhost/test.php回车进入网址(图2.5)，得到输出结果(图 2.6)【注意：输入网址的开头不能有 http://】如果输出结果为hello wirld!说明Apache，Mysql环境配置成功。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805230544300.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.4</p>
+<p><img src="https://img-blog.csdnimg.cn/2020080523064449.png" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.5</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805230651344.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.6</p>
+<p>三、Dreamweaver CS6使用说明<br>1.Dreamweaver CS6 安装与破译<br>(1)下载所有需要下载的组件<br>链接：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1vDKOeOvZMnYp7HeqnWifYQ">https://pan.baidu.com/s/1vDKOeOvZMnYp7HeqnWifYQ</a><br>提取码：3rc4</p>
+<p>(2)解压压缩包，断开网络，运行Dreamweaver_12_LS3Setup.exe，安装Dreamweaver CS6(图2.7)。点击忽略(图2.8)，点击试用(图2.9)完成安装。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805231029516.png" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.7</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805231051242.png" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.8</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805231120645.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.9</p>
+<p>(2)启动Dreamweaver CS6发现提醒有试用期限(图2.10)。关闭应用程序，找到 破译补丁&gt;32&gt;amtlib.dll(图2.11)将其复制，比如PS CS6 64bit其目录在“C:\Program Files\Adobe\Adobe Photoshop CS6 (64 Bit)”，找到相应的32bit或64bit文件夹，将“amtlib”覆盖掉相应软件的源文件。再次启动Dreamweaver CS6，发现不再提示试用，且产品注册变成灰色(图2.12)，说明破译成功。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805231156182.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.11</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805231212771.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.12</p>
+<p>2.创建HTML文件并运行<br>(1)创建文件：左上角&gt;文件&gt;新建，选择空白页&gt;html&gt;无 创建文件(图2.13)。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805231241382.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.13</p>
+<p>(3)保存与运行：启动Apache，Mysql，输入需要的代码(图2.14)，另存为(图2.15)，【注意：一定要将文件保存到…/phostudy_pro&gt;WWW 之内】，打开浏览器，在网址输入栏内输入127.0.0.1/test.html或localhost/test.html回车进入网址，得到输出结果(图 2.16)【注意：输入网址的开头不能有 http://】</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805231307178.png" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.14</p>
+<p><img src="https://img-blog.csdnimg.cn/202008052313349.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.15</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805231418642.png" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.16</p>
+<p>3.Dreamwear CS6 基本介绍<br>(1)四个视图：<br>①代码(图2.17)<br>显示我们所设计的网页的源码，如果对html熟悉可以直接通过此视图直接设计网页。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805231453264.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.17</p>
+<p>②拆分<br>让软件分屏同时显示代码和设计(2.18)或代码和实时视图(2.19),方便操作。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805231514297.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.18</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805231532126.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.19</p>
+<p>③设计(图2.20)<br>从网页层面直观设计网页，比输入代码更加方便快速且出错也会减少，但在网页设计最后通常要用代码来充实细节。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805231608693.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.20</p>
+<p>④实时视图(图2.21)<br>直接展现出网页设计的结果，相当于在浏览器内运行。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805231842668.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.21</p>
+<p>(2)属性面板的使用<br>在视图&gt;设计 之中选择一个元素在DW下方会显示其属性面板，可以直接更改元素的属性，比如更改文字的颜色，大小(图2.22)(图2.23)；更改图片的长宽(图2.24)。不同种类元素的属性面本是不同的。元素的属性也可以直接通过代码更改，但是属性面板更加简便直观(图2.25)。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805231930402.png" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.22</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805232324728.png" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.23</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805231958724.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.24</p>
+<p><img src="https://img-blog.csdnimg.cn/2020080523201852.png" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.25</p>
+<p>(3)插入-表单<br>插入&gt;表单&gt;表单(图2.26) 即可插入一个表单，也可以通过出入代码的方法插入表单(图2.27)</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805232039763.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.26</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805232100142.png" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.27</p>
+<p>(4)插入-表单对象<br>插入表单后进入视图代码，在action中输入表单对象即可插入(图2.28)。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805232129859.png" alt="å¨è¿éæå¥å¾çæè¿°"></p>
+<p>图2.28</p>
+
+        </div>
+        <footer class="kratos-entry-footer clearfix">
+            <div class="footer-tag clearfix">
+                <div class="pull-date">
+                <span>最后编辑：2021-08-01</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+</article>
+
+        
+
+            </section>
+
+        
+
+                
+            
+
+<section id="kratos-widget-area" class="col-md-4 hidden-xs hidden-sm">
+    <!-- 文章和页面根据splitter来分割，没有的话就从头开始设置为sticky -->
+    
+    
+                <aside id="krw-about" class="widget widget-kratos-about clearfix">
+    <div class="photo-background"></div>
+    <div class="photo-wrapper clearfix">
+        <div class="photo-wrapper-tip text-center">
+            <img class="about-photo" src="/images/avatar.webp" />
+        </div>
+    </div>
+    <div class="textwidget">
+        <p class="text-center"></p>
+    </div>
+</aside>
+            
+                    <div class="sticky-area">
+                
+                
+  <aside id="krw-categories" class="widget widget-kratos-categories clearfix">
+    <h4 class="widget-title"><i class="fa fa-folder"></i>分类目录</h4>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/RCE/">RCE</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL%E6%B3%A8%E5%85%A5/">SQL注入</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Web/">Web</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%8A%A5%E5%91%8A/">技术报告</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">漏洞复现</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">环境配置</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="category-list-count">1</span></li></ul>
+  </aside>
+
+
+            
+                
+  <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
+    <h4 class="widget-title"><i class="fa fa-tags"></i>标签聚合</h4>
+      <div class="tag-clouds">
+        <a href="/tags/PHP/" style="font-size: 0.6em;">PHP</a> <a href="/tags/RCE/" style="font-size: 0.7em;">RCE</a> <a href="/tags/SSTI/" style="font-size: 0.6em;">SSTI</a> <a href="/tags/Tomcat/" style="font-size: 0.8em;">Tomcat</a> <a href="/tags/Weblogic/" style="font-size: 0.6em;">Weblogic</a> <a href="/tags/XXE/" style="font-size: 0.6em;">XXE</a> <a href="/tags/Xpath/" style="font-size: 0.6em;">Xpath</a> <a href="/tags/mysql/" style="font-size: 0.6em;">mysql</a> <a href="/tags/python/" style="font-size: 0.6em;">python</a> <a href="/tags/sql%E6%B3%A8%E5%85%A5/" style="font-size: 0.7em;">sql注入</a> <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" style="font-size: 0.6em;">代码审计</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 0.7em;">报告</a> <a href="/tags/%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/" style="font-size: 0.6em;">报错注入</a> <a href="/tags/%E9%85%8D%E7%BD%AE/" style="font-size: 0.8em;">配置</a>
+      </div>
+  </aside>
+
+            
+                
+  <aside id="krw-posts" class="widget widget-kratos-posts">
+  <h4 class="widget-title"><i class="fa fa-file"></i>最新文章</h4>
+  <div class="tab-content">
+      <ul class="list-group">
+        
+        
+          
+          
+            <a class="list-group-item" href="/2021/07/14/RCE%E6%80%BB%E7%BB%93/"><i class="fa  fa-book"></i> RCE总结</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/06/02/REC(%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E)%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8/"><i class="fa  fa-book"></i> REC(远程代码执行漏洞)原理及漏洞利用</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/05/03/Xpath%E5%9F%BA%E7%A1%80/"><i class="fa  fa-book"></i> Xpath基础</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/04/12/SSTI(%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5)%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8/"><i class="fa  fa-book"></i> SSTI(模板注入)漏洞利用</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/03/22/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%80%9D%E8%B7%AF%E8%AF%A6%E8%A7%A3/"><i class="fa  fa-book"></i> 代码审计思路详解</a>
+            
+          
+        
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+      </ul>
+  </div>
+  </aside>
+
+            
+    </div>
+</section>
+        
+        </div>
+    </div>
+</div>
+<footer>
+    <div id="footer"  class="ap-lrc"  >
+        <div class="kr-tool text-center">
+            <div class="tool">
+                
+                    <div class="box search-box">
+                        <a href="/search/">
+                            <span class="fa fa-search"></span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="box theme-box" id="darkmode-switch">
+                        <span class="fa fa-adjust"></span>
+                    </div>
+                
+                
+            </div>
+            <div class="box gotop-box">
+                <span class="fa fa-chevron-up"></span>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 footer-list text-center">
+                    <ul class="kratos-social-icons">
+                        
+                        <li><a href="mailto:ciyaso@163.com"><i class="fa fa-envelope"></i></a></li>
+                        
+                        
+                        
+                        
+                        
+                        <li><a target="_blank" rel="nofollow" href="https://github.com/Ciyaso"><i class="fa fa-github"></i></a></li>
+                        
+                    </ul>
+                    <ul class="kratos-copyright">
+                        <div>
+                            <li>&copy; 2021 Welcome to C1yas0's Blog 版权所有.</li>
+                            <li>本站已运行<span id="span_dt">Loading...</span></li>
+                        </div>
+                        <div>
+                            <li>Theme <a href="https://github.com/Candinya/Kratos-Rebirth" target="_blank">Kratos:Rebirth</a></li>
+                            <li>Site built with&nbsp;<i class="fa fa-heart throb" style="color:#d43f57"></i>&nbsp;by C1yas0.</li>
+                        </div>
+                        <div>
+                            <li>Powered by <a href="https://hexo.io" target="_blank" rel="nofollow">Hexo</a></li>
+                            <li>Hosted on <a href="https://github.io" target="_blank">Github Pages</a></li>
+                        </div>
+                        <div>
+                            
+                            
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+
+        <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.4/dist/js/bootstrap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+<script>const notMobile = (!(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)));</script>
+
+    <div>
+        <canvas id="snow"></canvas>
+        <script async type="text/javascript" src="/js/snow.min.js"></script>
+    </div>
+
+<script async src="/js/candy.min.js"></script>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+    <meting-js
+        server="netease"
+        type="playlist"
+        id="3204190542"
+        order="random"
+        fixed="true"
+    >
+    </meting-js>
+
+
+
+    <script defer src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script>
+<script defer src="/js/kratosr.min.js"></script>
+<script defer src="/js/pjax.min.js"></script>
+
+
+    <script defer src="/js/kr-dark.min.js"></script>
+
+
+
+<!-- Extra support for third-party plguins  -->
+
+
+    </body>
+</html>

@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+  <!-- 元数据 -->
+  <meta charset="utf-8">
+  <link rel="icon" href="">
+  <title>代码审计思路详解 | Welcome to C1yas0's Blog</title>
+  <meta name="author" content="C1yas0" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  
+    <meta name="keywords" content="代码审计" />
+  
+  <meta name="description" content="代码审计概念代码审计定义代码审计（Code audit）是一种以发现程序错误，安全漏洞和违反程序规范为目标的源代码分析。软件代码审计是对编程项目中源代码的全面分析，旨在发现错误，安全漏洞或违反编程约定。 它是防御性编程范例的一个组成部分，它试图在软件发布之前减少错误。 代码审计对象php，java，C&#x2F;C++，C#，jsp，asp，net等等 代码审计工具所谓“工欲善其事，必先利其器”，好的代码审">
+<meta property="og:type" content="article">
+<meta property="og:title" content="代码审计思路详解">
+<meta property="og:url" content="http://example.com/2021/03/22/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%80%9D%E8%B7%AF%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Welcome to C1yas0&#39;s Blog">
+<meta property="og:description" content="代码审计概念代码审计定义代码审计（Code audit）是一种以发现程序错误，安全漏洞和违反程序规范为目标的源代码分析。软件代码审计是对编程项目中源代码的全面分析，旨在发现错误，安全漏洞或违反编程约定。 它是防御性编程范例的一个组成部分，它试图在软件发布之前减少错误。 代码审计对象php，java，C&#x2F;C++，C#，jsp，asp，net等等 代码审计工具所谓“工欲善其事，必先利其器”，好的代码审">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2021/03/22/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%80%9D%E8%B7%AF%E8%AF%A6%E8%A7%A3/https:/ae05.alicdn.com/kf/H289fba4162d84560baccadae67a1dbc6E.png">
+<meta property="article:published_time" content="2021-03-22T04:00:00.000Z">
+<meta property="article:modified_time" content="2021-08-01T05:26:21.478Z">
+<meta property="article:author" content="C1yas0">
+<meta property="article:tag" content="代码审计">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/03/22/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%80%9D%E8%B7%AF%E8%AF%A6%E8%A7%A3/https:/ae05.alicdn.com/kf/H289fba4162d84560baccadae67a1dbc6E.png">
+<meta name="twitter:site" content="@null">
+  
+  <!-- 站点验证相关 -->
+  
+    
+    
+    
+  
+  <!-- 样式表文件 -->
+  <link rel="stylesheet" id="kratos-css" href="/css/kratosr.min.css" type="text/css" media="all">
+  
+    <link rel="stylesheet" id="highlight-css" href="/css/highlight/night-eighties.min.css" type="text/css" media="all">
+  
+  
+  <link rel="stylesheet" id="fontawe-css" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" type="text/css" media="all">
+  <link rel="stylesheet" id="nprogress-css" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" type="text/css" media="all">
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+  
+  
+    <link rel="stylesheet" id="darkmode-css" href="/css/kr-dark.min.css" type="text/css" media="all">
+  
+  <!-- 不得不预先加载的一些JS文件 -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  
+    <script src="https://cdn.jsdelivr.net/npm/qrcode_js@1.0.0/qrcode.min.js"></script>
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+    <body class="custom-background">
+        <div id="kratos-wrapper">
+    <div id="kratos-page">
+        <div id="kratos-header">
+            <header id="kratos-desktop-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="nav-header">
+                        <nav id="kratos-menu-wrap">
+                            <ul id="kratos-primary-menu" class="sf-menu">
+                                
+                                    
+                                        <li><a href="/"><i class="fa fa-home"></i>首页</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/archives/"><i class="fa fa-file"></i>档案馆</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/friends/"><i class="fa fa-paw"></i>好伙伴</a></li>
+                                    
+                                
+                                    
+                                        <li>
+                                            <a><i class="fa fa-link"></i>链接</a>
+                                            <ul class="sub-menu">
+                                                
+                                                    
+                                                
+                                                    
+                                                        <li><a target="_blank" rel="noopener" href="https://github.com/Ciyaso">作者博客</a></li>
+                                                    
+                                                
+                                                    
+                                                        <li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_46706771?spm=1000.2115.3001.5343">CSDN</a></li>
+                                                    
+                                                
+                                            </ul>
+                                        </li>
+                                    
+                                
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+            <header id="kratos-mobile-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="color-logo"><a href="/">Welcome to C1yas0&#39;s Blog</a></div>
+                    <div class="nav-toggle">
+                        <a class="kratos-nav-toggle js-kratos-nav-toggle">
+                            <i></i>
+                        </a>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="kratos-start kratos-hero-2">
+            <!-- <div class="kratos-overlay"></div> -->
+            <div class="kratos-cover kratos-cover-2 text-center">
+                <div class="desc desc2 animate-box">
+                    <a href="/">
+                        <h2>Welcome to C1yas0&#39;s Blog</h2> <br />
+                        <span></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="kratos-blog-post">
+            <div class="container">
+                <div id="main" class="row">
+                    
+
+        
+
+            <section class="col-md-8">
+
+        
+
+            <article>
+    <div class="kratos-hentry kratos-post-inner clearfix">
+        <div class="kratos-post-content">
+            <h2 class="title-h2 text-center">代码审计思路详解</h2>
+            <h1 id="代码审计概念"><a href="#代码审计概念" class="headerlink" title="代码审计概念"></a>代码审计概念</h1><h2 id="代码审计定义"><a href="#代码审计定义" class="headerlink" title="代码审计定义"></a>代码审计定义</h2><p>代码审计（Code audit）是一种以发现程序错误，安全漏洞和违反程序规范为目标的源代码分析。软件代码审计是对编程项目中源代码的全面分析，旨在发现错误，安全漏洞或违反编程约定。 它是防御性编程范例的一个组成部分，它试图在软件发布之前减少错误。</p>
+<h2 id="代码审计对象"><a href="#代码审计对象" class="headerlink" title="代码审计对象"></a>代码审计对象</h2><p>php，java，C/C++，C#，jsp，asp，net等等</p>
+<h1 id="代码审计工具"><a href="#代码审计工具" class="headerlink" title="代码审计工具"></a>代码审计工具</h1><p>所谓“工欲善其事，必先利其器”，好的代码审计辅助工具可能让我的的代码审计事半功倍。</p>
+<h2 id="PHP"><a href="#PHP" class="headerlink" title="PHP"></a>PHP</h2><h3 id="Seay"><a href="#Seay" class="headerlink" title="Seay"></a>Seay</h3><p><img src="https://img-blog.csdnimg.cn/20210430163744259.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70"></p>
+<ol>
+<li><p>  一键自动化白盒审计，当发现可以漏洞后，会在下方列表框显示漏洞信息。</p>
+</li>
+<li><p> 代码调试，方便审计过程中测试代码。</p>
+</li>
+<li><p> 正则编码，支持MD5、UR1、Base64、Hex、ASCII、Unicode等多种编码解码转换功能。</p>
+</li>
+<li><p>  自定义插件及规则</p>
+</li>
+</ol>
+<h3 id="RIPS"><a href="#RIPS" class="headerlink" title="RIPS"></a>RIPS</h3><p>在这里插入图片描述</p>
+<ol>
+<li><p>  能够检测XSS、SQL注入、文件泄露、本地/远程文件包含、远程命令执行以及更多种类型的漏洞。</p>
+</li>
+<li><p>  有5种级别选项用于显示以及辅助调试扫描结果。</p>
+</li>
+<li><p>  标记存在漏洞的代码行。</p>
+</li>
+<li><p>  对变量高亮显示。</p>
+</li>
+<li><p>  在用户定义函数上悬停光标可以显示函数调用。</p>
+</li>
+<li><p>  在函数定义和调用之间灵活跳转。</p>
+</li>
+<li><p>  详细列出所有用户定义函数（包括定义和调用）、所有程序入口点（用户输入）和所有扫描过文件（包括include的文件）。</p>
+</li>
+<li><p>  以可视化的图表展示源代码文件、包含文件、函数及其调用。</p>
+</li>
+<li><p>  仅用几个鼠标点击就可以使用CURL创建针对检测到漏洞的EXP实例。</p>
+</li>
+<li><p> 详细列出每个漏洞的描述、举例、PoC、补丁和安全函数。</p>
+</li>
+<li><p> 7种不同的语法高亮显示模式。</p>
+</li>
+<li><p> 使用自顶向下或者自底向上的方式追溯显示扫描结果。</p>
+</li>
+<li><p> 一个支持PHP的本地服务器和浏览器即可满足使用需求。</p>
+</li>
+<li><p> 正则搜索功能。</p>
+</li>
+</ol>
+<h3 id="Fortify-SCA"><a href="#Fortify-SCA" class="headerlink" title="Fortify SCA"></a>Fortify SCA</h3><p><img src="https://img-blog.csdnimg.cn/20210430163828191.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>分析过程中与它特有的软件安全漏洞规则进行全面的匹配、搜索，在最终的漏洞结果中，包括详细的漏洞心理，以及漏洞相关的安全知识说明</p>
+<h2 id="JAVA"><a href="#JAVA" class="headerlink" title="JAVA"></a>JAVA</h2><h3 id="FindBugs-IDEA"><a href="#FindBugs-IDEA" class="headerlink" title="FindBugs IDEA"></a>FindBugs IDEA</h3><p><img src="https://img-blog.csdnimg.cn/20210430163843540.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>能发现规范和bug的，只能静态分析</p>
+<h4 id="Android-Lint"><a href="#Android-Lint" class="headerlink" title="Android Lint"></a>Android Lint</h4><p><img src="https://img-blog.csdnimg.cn/20210430163901428.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>它会给出所有在这个项目中不规范的编码、多余的资源、可能的bug、或者其它的一些问题，然后会给出修改的建议供我们参考。</p>
+<h2 id="C"><a href="#C" class="headerlink" title="C++"></a>C++</h2><h3 id="Flawfinder"><a href="#Flawfinder" class="headerlink" title="Flawfinder"></a>Flawfinder</h3><p><img src="https://img-blog.csdnimg.cn/20210430163920142.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>Flawfinder是一个C/C代码的开源安全审查工具，采用内建语法缺陷数据库，能够标记类似缓冲溢出、格式字符串、竞争条件、随机数获取方面的问题。Flawfinder是一个非常简单的工具，采用的算法也不复杂，可以看做是一个基于词典的源代码静态分析器。</p>
+<h2 id="其他语言"><a href="#其他语言" class="headerlink" title="其他语言"></a>其他语言</h2><h3 id="JS"><a href="#JS" class="headerlink" title="JS"></a>JS</h3><p>eslint、NodeJsScan</p>
+<h3 id="Go"><a href="#Go" class="headerlink" title="Go"></a>Go</h3><p>goint、go tool vet、gas</p>
+<h3 id="Python"><a href="#Python" class="headerlink" title="Python"></a>Python</h3><p>pylint、bandit、py-find-injection、pyt</p>
+<h3 id="多种语言的安全代码检查工具"><a href="#多种语言的安全代码检查工具" class="headerlink" title="多种语言的安全代码检查工具"></a>多种语言的安全代码检查工具</h3><p>sonar</p>
+<h3 id="商业代码审计工具"><a href="#商业代码审计工具" class="headerlink" title="商业代码审计工具"></a>商业代码审计工具</h3><h4 id="静态分析工具"><a href="#静态分析工具" class="headerlink" title="静态分析工具"></a>静态分析工具</h4><p>​            RISP，VCG，Fortify SCA</p>
+<h4 id="动态分析工具"><a href="#动态分析工具" class="headerlink" title="动态分析工具"></a>动态分析工具</h4><p>​            360的sky wolf，鸟哥的taint</p>
+<h1 id="代码审计思路"><a href="#代码审计思路" class="headerlink" title="代码审计思路"></a>代码审计思路</h1><h2 id="1）根据敏感关键字回溯参数传递过程"><a href="#1）根据敏感关键字回溯参数传递过程" class="headerlink" title="1）根据敏感关键字回溯参数传递过程"></a>1）根据敏感关键字回溯参数传递过程</h2><p>根据敏感函数来你想追踪参数的传递过程，是目前使用的最多的一种方式，因为大多数漏洞是由于函数的使用不当造成的。</p>
+<p>优点：只需要搜索相应的敏感关键字，即可快速地挖掘想要的漏洞，可定向挖掘、高效、高质量。</p>
+<p>缺点：由于没有通读代码，对程序的整体，对程序的整体框架了解不够深入，在挖掘漏洞时定位需要花费一定时间、无法挖掘逻辑漏洞</p>
+<h3 id="PHP代码审计—-敏感函数"><a href="#PHP代码审计—-敏感函数" class="headerlink" title="PHP代码审计—-敏感函数"></a>PHP代码审计—-敏感函数</h3><h4 id="一，预定义的变量-常规外部提交的变量"><a href="#一，预定义的变量-常规外部提交的变量" class="headerlink" title="一，预定义的变量[常规外部提交的变量]"></a>一，预定义的变量[常规外部提交的变量]</h4><p>   除$_GET $_POST $_COOKIE的提交外，还来源于 $_SERVER $_ENV $_SESSION等</p>
+<h4 id="二，regist-globle-on（未初始化的变量）"><a href="#二，regist-globle-on（未初始化的变量）" class="headerlink" title="二，regist_globle=on（未初始化的变量）"></a>二，regist_globle=on（未初始化的变量）</h4><p>   当on的时候，传递的值会被直接注册为全局变量直接使用。而off时，我们需要到特定的数组   得到他，php&gt;4.2.0 default 关闭。</p>
+<h4 id="三，变量覆盖（未被初始化的覆盖的前定义的变量）"><a href="#三，变量覆盖（未被初始化的覆盖的前定义的变量）" class="headerlink" title="三，变量覆盖（未被初始化的覆盖的前定义的变量）"></a>三，变量覆盖（未被初始化的覆盖的前定义的变量）</h4><p>   如 $$ 使用不当，遍历初始化变量，extract() ，parse_str() 等</p>
+<h4 id="四，变量的传递存储（中转的变量）"><a href="#四，变量的传递存储（中转的变量）" class="headerlink" title="四，变量的传递存储（中转的变量）"></a>四，变量的传递存储（中转的变量）</h4><p>存储于数据库，文件，（如配置，缓存文件等）</p>
+<h5 id="1，文件包含漏洞（包含任意文件）"><a href="#1，文件包含漏洞（包含任意文件）" class="headerlink" title="1，文件包含漏洞（包含任意文件）"></a>1，文件包含漏洞（包含任意文件）</h5><p>require，include,require_once,include_once</p>
+<h5 id="2，代码执行-执行任意代码"><a href="#2，代码执行-执行任意代码" class="headerlink" title="2，代码执行(执行任意代码)"></a>2，代码执行(执行任意代码)</h5><p>eval() 字符串当作代码来执行</p>
+<p>assert() 调试函数，检查第一个断言是否为FALSE。（把传入的字符串作为php代码执行）</p>
+<p>preg_replace()（preg_replace(/“xxxx”/e)) 执行正则表达式，实现搜索和替换功能。/e修正符使preg_replace()将其中的replacement参数当作PHP代码</p>
+<p>create_function() 创建一个匿名函数，并返回都独一无二的函数名。</p>
+<h5 id="3，命令执行（执行任意命令漏洞）"><a href="#3，命令执行（执行任意命令漏洞）" class="headerlink" title="3，命令执行（执行任意命令漏洞）"></a>3，命令执行（执行任意命令漏洞）</h5><p>exec() 执行一个外部程序</p>
+<p>passthru() 执行外部程序并显示原始输出</p>
+<p>proc_open() 执行一个命令，并且打开用来输入/输出的文件指针</p>
+<p>shell_exec() 通过shell环境执行命令，并且将完整的输出以字符串的方式返回</p>
+<p>system() 执行外部程序，并且显示输出</p>
+<p>popen() 通过popen()的参数传递一条命令，并且对popen()所打开的文件进行执行</p>
+<h5 id="4-漏洞挖掘时SQL注入漏洞和XSS漏洞需注意的关键字"><a href="#4-漏洞挖掘时SQL注入漏洞和XSS漏洞需注意的关键字" class="headerlink" title="4.漏洞挖掘时SQL注入漏洞和XSS漏洞需注意的关键字"></a>4.漏洞挖掘时SQL注入漏洞和XSS漏洞需注意的关键字</h5><h6 id="SQL注入漏洞"><a href="#SQL注入漏洞" class="headerlink" title="SQL注入漏洞"></a><strong>SQL注入漏洞</strong></h6><p> <strong>出现位置</strong></p>
+<p>   登录界面、获取HTTP开头(user-agent/client-ip)、订单处理等</p>
+<p>  <strong>普通注入</strong></p>
+<p>​    <strong>关键字</strong></p>
+<p>​      select from<br>​      mysql_connect<br>​      mysql_query<br>​      mysql_fetch_row<br>​      update<br>​      insert<br>​      delete</p>
+<h6 id="宽字节注入"><a href="#宽字节注入" class="headerlink" title="宽字节注入"></a><strong>宽字节注入</strong></h6><p> <strong>出现位置</strong></p>
+<p>  文章发表、评论回复、留言、资料设置等</p>
+<p>  <strong>关键字</strong></p>
+<p>   SET NAMES<br>    character_set_client=gbk<br>    mysql_set_charset(‘gbk’)</p>
+<h6 id="二次urldecode注入"><a href="#二次urldecode注入" class="headerlink" title="二次urldecode注入"></a><strong>二次urldecode注入</strong></h6><p> <strong>关键字</strong></p>
+<p>  urldecode<br>   rawurldecode</p>
+<h6 id="XSS漏洞"><a href="#XSS漏洞" class="headerlink" title="XSS漏洞"></a><strong>XSS漏洞</strong></h6><p> <strong>关键字</strong></p>
+<p>  print<br>   print_r<br>   echo<br>   printf<br>   sprintf<br>   die<br>   var_dump<br>   var_export</p>
+<h3 id="Java代码审计—-敏感函数"><a href="#Java代码审计—-敏感函数" class="headerlink" title="Java代码审计—-敏感函数"></a>Java代码审计—-敏感函数</h3><h4 id="命令执行函数"><a href="#命令执行函数" class="headerlink" title="命令执行函数"></a>命令执行函数</h4><p>GroovyShell.evaluate()</p>
+<p>Runtime.getRuntime()</p>
+<p>.exec()</p>
+<p>ProcessBuilder()</p>
+<p>.start()</p>
+<h4 id="文件上传函数"><a href="#文件上传函数" class="headerlink" title="文件上传函数"></a>文件上传函数</h4><p>ServletFileUpload()</p>
+<p>FileItemStream()</p>
+<p>MultipartFile() </p>
+<h4 id="SSRF函数"><a href="#SSRF函数" class="headerlink" title="SSRF函数"></a>SSRF函数</h4><p>在Java中分为两类：</p>
+<p>一类只支持http,https协议，如HttpURLConnection、HttpClient、Request、okhttp；一类支持所有协议如URLConnection、URL。</p>
+<p>HttpURLConnection.getInputStream()</p>
+<p>URLConnection.getInputStream()</p>
+<p>Request.Get.execute()</p>
+<p>Request.Post.execute()</p>
+<p>URL.openStream()</p>
+<p>ImageIO.read()</p>
+<p>OkHttpClient.newCall.execute()</p>
+<p>HttpClents.execute()</p>
+<p>HttpClent.execute()</p>
+<h4 id="CORS跨域漏洞CORS跨域设置"><a href="#CORS跨域漏洞CORS跨域设置" class="headerlink" title="CORS跨域漏洞CORS跨域设置"></a>CORS跨域漏洞CORS跨域设置</h4><p>response.setHeader(“Access-Control-Allow-Origin”,”*”);</p>
+<p>response.setHeader(“Access-Control-Allow-Credentials”,”true”);</p>
+<p>或者</p>
+<p>@CrossOrigin(“*”)</p>
+<h4 id="Jsonp劫持"><a href="#Jsonp劫持" class="headerlink" title="Jsonp劫持"></a>Jsonp劫持</h4><p>jsonp跨域设置</p>
+<p>response.setHeader(“Access-Control-Allow-Origin”,”*”);</p>
+<p>callback</p>
+<h4 id="反序列化"><a href="#反序列化" class="headerlink" title="反序列化"></a>反序列化</h4><p>readObject</p>
+<h4 id="杂项"><a href="#杂项" class="headerlink" title="杂项"></a>杂项</h4><p>out</p>
+<h4 id="XSS漏洞-1"><a href="#XSS漏洞-1" class="headerlink" title="XSS漏洞"></a>XSS漏洞</h4><p>当out.print(“”);可控的时候，就会导致XSS漏洞。Requests</p>
+<p>Response</p>
+<p>Session</p>
+<h4 id="session失效时间问题"><a href="#session失效时间问题" class="headerlink" title="session失效时间问题"></a><strong>session失效时间问题</strong></h4><p>session.setMaxInactiveInterval();</p>
+<h4 id="用户退出，session未销毁问题"><a href="#用户退出，session未销毁问题" class="headerlink" title="用户退出，session未销毁问题"></a><strong>用户退出，session未销毁问题</strong></h4><p>session.invalidate(); //销毁所有的Web应用</p>
+<p>sessionsession.removeAttribute(); //移除指定的Web应用</p>
+<p>sessionapplication</p>
+<p>pageContent</p>
+<h2 id="2）查找可控变量，正向追踪变量传递过程"><a href="#2）查找可控变量，正向追踪变量传递过程" class="headerlink" title="2）查找可控变量，正向追踪变量传递过程"></a>2）查找可控变量，正向追踪变量传递过程</h2><p>查找可控变量，正向追踪变量传递的过程，查找可能存在安全漏洞的变量，从变量处发现安全问题</p>
+<p>常见的可操控变量：name、id、password、pwd、select、search等</p>
+<p>例如miniCMS中的search处，我们可以看到变量名为<code>search_term</code></p>
+<p><img src="https://img-blog.csdnimg.cn/20210430164000771.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>通过追踪，直到后台代码，发现没有进行任何过滤，存在反射型XSS</p>
+<p><img src="https://img-blog.csdnimg.cn/20210430164017622.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h2 id="3）寻找敏感功能点，通读功能点代码"><a href="#3）寻找敏感功能点，通读功能点代码" class="headerlink" title="3）寻找敏感功能点，通读功能点代码"></a>3）寻找敏感功能点，通读功能点代码</h2><p>通读功能点的代码，尤其关注于易出现漏洞的功能点</p>
+<p>如：文件上传、留言板、登录认证功能、找回密码等通过从敏感功能点入手来查找安全问题。</p>
+<h3 id="文件上传功能"><a href="#文件上传功能" class="headerlink" title="文件上传功能"></a>文件上传功能</h3><p>​    若后端程序没有严格地限制上传文件的格式，导致可以直接上传或者存在绕过的情况，除了文件上传漏洞。</p>
+<p>​    还有可能发生sql注入漏洞。因为程序员一般不会注意到对文件名进行过滤，但有需要把文件名存入到数据库内。</p>
+<h3 id="文件管理功能"><a href="#文件管理功能" class="headerlink" title="文件管理功能"></a>文件管理功能</h3><p>​    如果程序将文件名把或者文件路径直接在参数中传递，则很有可能存在任意文件操作的漏洞。</p>
+<p>​    还有可能发生xss漏洞，。程序会在页面中国输出文件名，而通常会疏忽对文件名的过滤，导致可能在数据库中存入带有尖括号等特殊  符号的文件名，最后显示在页面上的时候就会被执行。</p>
+<h3 id="登录认证功能"><a href="#登录认证功能" class="headerlink" title="登录认证功能"></a>登录认证功能</h3><p>​    登陆功能不是指一个登录过程，而是整个操作过程中的认证。</p>
+<p>​    目前的认证方式大多是基于Cookie和Session。</p>
+<p>​    如果Cookie信息没有加salt一类的东西，就有可能导致任意用户登录漏洞，只要知道用户的部分信息，即可生成认证令牌</p>
+<h3 id="找回密码功能"><a href="#找回密码功能" class="headerlink" title="找回密码功能"></a>找回密码功能</h3><p>​    找回密码虽然无法危害到服务器安全，但是可以重置管理员密码，也可以间接控制业务权限甚至拿到服务器权限。</p>
+<h2 id="4）直接通读全文代码"><a href="#4）直接通读全文代码" class="headerlink" title="4）直接通读全文代码"></a>4）直接通读全文代码</h2><p>通读全文代码并不是逐个读完文件就可以了，而是要有逻辑性、有目的性地选择文件进行审计。</p>
+<p><strong>逻辑性</strong></p>
+<p>​    通读全文代码首先要有一定的“开发者思维”，将自己想象为此软件的开发者，如果是我来设计这款软件我要实现什么功能，利用什函数结构，调用哪些接口，根据软件的功能性来分析每一个文件的作用，可以尝试画一个树状图来辅助自己理解软件的设计逻辑。</p>
+<p><strong>目的性</strong></p>
+<p>​    特别关注几类重要文件。</p>
+<h3 id="函数集文件"><a href="#函数集文件" class="headerlink" title="函数集文件"></a>函数集文件</h3><p>常见命名：fuctions、common</p>
+<p>​    这些文件里面是一些公共的函数，提供给其他文件统一调用，所以大多数文件都会在文件头部包含到其他文件。</p>
+<p>​    寻找这些文件一个比较好用的技巧是打开index.php或者一些功能性文件，在头部一般都能找到</p>
+<h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><p>常见命名：coming</p>
+<p>​    配置文件包括web程序运行必须的功能性配置选项以及数据库等配置信息。从这个文件可以了解程序的小部分功能，另外看这个文件的时候注意观察配置文件中参数值是用单引号还是用双引号括起来，如果用双引号，则很可能会存在代码执行漏洞。</p>
+<h3 id="安全过滤文件"><a href="#安全过滤文件" class="headerlink" title="安全过滤文件"></a>安全过滤文件</h3><p>常见命名：filter、safe、check</p>
+<p>​    这类文件主要是对参数进行过滤，比较常见的是针对SQL注入和XSS过滤，还有文件路径、执行的系统命令的参数，其他则相对少见</p>
+<h3 id="index文件"><a href="#index文件" class="headerlink" title="index文件"></a>index文件</h3><p>常见命名：index</p>
+<p>   index是一个程序的入口文件，所以通常我们只要读一遍index文件就可以大致了解整个程序的架构、运行的流程、包含到的文件，其中核心的文件又有哪些。</p>
+<p>参考文献《代码审计》尹毅 著</p>
+
+        </div>
+        <footer class="kratos-entry-footer clearfix">
+            <div class="footer-tag clearfix">
+                <div class="pull-date">
+                <span>最后编辑：2021-08-01</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+</article>
+
+        
+
+            </section>
+
+        
+
+                
+            
+
+<section id="kratos-widget-area" class="col-md-4 hidden-xs hidden-sm">
+    <!-- 文章和页面根据splitter来分割，没有的话就从头开始设置为sticky -->
+    
+    
+                <aside id="krw-about" class="widget widget-kratos-about clearfix">
+    <div class="photo-background"></div>
+    <div class="photo-wrapper clearfix">
+        <div class="photo-wrapper-tip text-center">
+            <img class="about-photo" src="/images/avatar.webp" />
+        </div>
+    </div>
+    <div class="textwidget">
+        <p class="text-center"></p>
+    </div>
+</aside>
+            
+                    <div class="sticky-area">
+                
+                    <aside id="krw-toc" class="widget widget-kratos-toc clearfix">
+    <div class="photo-background"></div>
+    <h4 class="widget-title no-after">
+        <i class="fa fa-compass"></i>
+        文章目录
+        <span class="toc-progress-bar"></span>
+    </h4>
+    <div class="textwidget">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A6%82%E5%BF%B5"><span class="toc-text">代码审计概念</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AE%9A%E4%B9%89"><span class="toc-text">代码审计定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AF%B9%E8%B1%A1"><span class="toc-text">代码审计对象</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%B7%A5%E5%85%B7"><span class="toc-text">代码审计工具</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP"><span class="toc-text">PHP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Seay"><span class="toc-text">Seay</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RIPS"><span class="toc-text">RIPS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Fortify-SCA"><span class="toc-text">Fortify SCA</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JAVA"><span class="toc-text">JAVA</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#FindBugs-IDEA"><span class="toc-text">FindBugs IDEA</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Android-Lint"><span class="toc-text">Android Lint</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#C"><span class="toc-text">C++</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Flawfinder"><span class="toc-text">Flawfinder</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E8%AF%AD%E8%A8%80"><span class="toc-text">其他语言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#JS"><span class="toc-text">JS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Go"><span class="toc-text">Go</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Python"><span class="toc-text">Python</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E7%A7%8D%E8%AF%AD%E8%A8%80%E7%9A%84%E5%AE%89%E5%85%A8%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5%E5%B7%A5%E5%85%B7"><span class="toc-text">多种语言的安全代码检查工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%95%86%E4%B8%9A%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%B7%A5%E5%85%B7"><span class="toc-text">商业代码审计工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7"><span class="toc-text">静态分析工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7"><span class="toc-text">动态分析工具</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%80%9D%E8%B7%AF"><span class="toc-text">代码审计思路</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%EF%BC%89%E6%A0%B9%E6%8D%AE%E6%95%8F%E6%84%9F%E5%85%B3%E9%94%AE%E5%AD%97%E5%9B%9E%E6%BA%AF%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92%E8%BF%87%E7%A8%8B"><span class="toc-text">1）根据敏感关键字回溯参数传递过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PHP%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E2%80%94-%E6%95%8F%E6%84%9F%E5%87%BD%E6%95%B0"><span class="toc-text">PHP代码审计—-敏感函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%EF%BC%8C%E9%A2%84%E5%AE%9A%E4%B9%89%E7%9A%84%E5%8F%98%E9%87%8F-%E5%B8%B8%E8%A7%84%E5%A4%96%E9%83%A8%E6%8F%90%E4%BA%A4%E7%9A%84%E5%8F%98%E9%87%8F"><span class="toc-text">一，预定义的变量[常规外部提交的变量]</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%EF%BC%8Cregist-globle-on%EF%BC%88%E6%9C%AA%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E5%8F%98%E9%87%8F%EF%BC%89"><span class="toc-text">二，regist_globle&#x3D;on（未初始化的变量）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%EF%BC%8C%E5%8F%98%E9%87%8F%E8%A6%86%E7%9B%96%EF%BC%88%E6%9C%AA%E8%A2%AB%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E8%A6%86%E7%9B%96%E7%9A%84%E5%89%8D%E5%AE%9A%E4%B9%89%E7%9A%84%E5%8F%98%E9%87%8F%EF%BC%89"><span class="toc-text">三，变量覆盖（未被初始化的覆盖的前定义的变量）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%9B%EF%BC%8C%E5%8F%98%E9%87%8F%E7%9A%84%E4%BC%A0%E9%80%92%E5%AD%98%E5%82%A8%EF%BC%88%E4%B8%AD%E8%BD%AC%E7%9A%84%E5%8F%98%E9%87%8F%EF%BC%89"><span class="toc-text">四，变量的传递存储（中转的变量）</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1%EF%BC%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%88%E5%8C%85%E5%90%AB%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%EF%BC%89"><span class="toc-text">1，文件包含漏洞（包含任意文件）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2%EF%BC%8C%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C-%E6%89%A7%E8%A1%8C%E4%BB%BB%E6%84%8F%E4%BB%A3%E7%A0%81"><span class="toc-text">2，代码执行(执行任意代码)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3%EF%BC%8C%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%EF%BC%88%E6%89%A7%E8%A1%8C%E4%BB%BB%E6%84%8F%E5%91%BD%E4%BB%A4%E6%BC%8F%E6%B4%9E%EF%BC%89"><span class="toc-text">3，命令执行（执行任意命令漏洞）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%97%B6SQL%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%92%8CXSS%E6%BC%8F%E6%B4%9E%E9%9C%80%E6%B3%A8%E6%84%8F%E7%9A%84%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-text">4.漏洞挖掘时SQL注入漏洞和XSS漏洞需注意的关键字</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#SQL%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E"><span class="toc-text">SQL注入漏洞</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%AE%BD%E5%AD%97%E8%8A%82%E6%B3%A8%E5%85%A5"><span class="toc-text">宽字节注入</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E4%BA%8C%E6%AC%A1urldecode%E6%B3%A8%E5%85%A5"><span class="toc-text">二次urldecode注入</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#XSS%E6%BC%8F%E6%B4%9E"><span class="toc-text">XSS漏洞</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E2%80%94-%E6%95%8F%E6%84%9F%E5%87%BD%E6%95%B0"><span class="toc-text">Java代码审计—-敏感函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E5%87%BD%E6%95%B0"><span class="toc-text">命令执行函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%87%BD%E6%95%B0"><span class="toc-text">文件上传函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SSRF%E5%87%BD%E6%95%B0"><span class="toc-text">SSRF函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#CORS%E8%B7%A8%E5%9F%9F%E6%BC%8F%E6%B4%9ECORS%E8%B7%A8%E5%9F%9F%E8%AE%BE%E7%BD%AE"><span class="toc-text">CORS跨域漏洞CORS跨域设置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Jsonp%E5%8A%AB%E6%8C%81"><span class="toc-text">Jsonp劫持</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-text">反序列化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9D%82%E9%A1%B9"><span class="toc-text">杂项</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#XSS%E6%BC%8F%E6%B4%9E-1"><span class="toc-text">XSS漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#session%E5%A4%B1%E6%95%88%E6%97%B6%E9%97%B4%E9%97%AE%E9%A2%98"><span class="toc-text">session失效时间问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E9%80%80%E5%87%BA%EF%BC%8Csession%E6%9C%AA%E9%94%80%E6%AF%81%E9%97%AE%E9%A2%98"><span class="toc-text">用户退出，session未销毁问题</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%EF%BC%89%E6%9F%A5%E6%89%BE%E5%8F%AF%E6%8E%A7%E5%8F%98%E9%87%8F%EF%BC%8C%E6%AD%A3%E5%90%91%E8%BF%BD%E8%B8%AA%E5%8F%98%E9%87%8F%E4%BC%A0%E9%80%92%E8%BF%87%E7%A8%8B"><span class="toc-text">2）查找可控变量，正向追踪变量传递过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%EF%BC%89%E5%AF%BB%E6%89%BE%E6%95%8F%E6%84%9F%E5%8A%9F%E8%83%BD%E7%82%B9%EF%BC%8C%E9%80%9A%E8%AF%BB%E5%8A%9F%E8%83%BD%E7%82%B9%E4%BB%A3%E7%A0%81"><span class="toc-text">3）寻找敏感功能点，通读功能点代码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%8A%9F%E8%83%BD"><span class="toc-text">文件上传功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86%E5%8A%9F%E8%83%BD"><span class="toc-text">文件管理功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%99%BB%E5%BD%95%E8%AE%A4%E8%AF%81%E5%8A%9F%E8%83%BD"><span class="toc-text">登录认证功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%BE%E5%9B%9E%E5%AF%86%E7%A0%81%E5%8A%9F%E8%83%BD"><span class="toc-text">找回密码功能</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%EF%BC%89%E7%9B%B4%E6%8E%A5%E9%80%9A%E8%AF%BB%E5%85%A8%E6%96%87%E4%BB%A3%E7%A0%81"><span class="toc-text">4）直接通读全文代码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E9%9B%86%E6%96%87%E4%BB%B6"><span class="toc-text">函数集文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-text">配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E8%BF%87%E6%BB%A4%E6%96%87%E4%BB%B6"><span class="toc-text">安全过滤文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#index%E6%96%87%E4%BB%B6"><span class="toc-text">index文件</span></a></li></ol></li></ol></li></ol>
+    </div>
+</aside>
+                
+                
+  <aside id="krw-categories" class="widget widget-kratos-categories clearfix">
+    <h4 class="widget-title"><i class="fa fa-folder"></i>分类目录</h4>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/RCE/">RCE</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL%E6%B3%A8%E5%85%A5/">SQL注入</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Web/">Web</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%8A%A5%E5%91%8A/">技术报告</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">漏洞复现</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">环境配置</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="category-list-count">1</span></li></ul>
+  </aside>
+
+
+            
+                
+  <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
+    <h4 class="widget-title"><i class="fa fa-tags"></i>标签聚合</h4>
+      <div class="tag-clouds">
+        <a href="/tags/PHP/" style="font-size: 0.6em;">PHP</a> <a href="/tags/RCE/" style="font-size: 0.7em;">RCE</a> <a href="/tags/SSTI/" style="font-size: 0.6em;">SSTI</a> <a href="/tags/Tomcat/" style="font-size: 0.8em;">Tomcat</a> <a href="/tags/Weblogic/" style="font-size: 0.6em;">Weblogic</a> <a href="/tags/XXE/" style="font-size: 0.6em;">XXE</a> <a href="/tags/Xpath/" style="font-size: 0.6em;">Xpath</a> <a href="/tags/mysql/" style="font-size: 0.6em;">mysql</a> <a href="/tags/python/" style="font-size: 0.6em;">python</a> <a href="/tags/sql%E6%B3%A8%E5%85%A5/" style="font-size: 0.7em;">sql注入</a> <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" style="font-size: 0.6em;">代码审计</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 0.7em;">报告</a> <a href="/tags/%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/" style="font-size: 0.6em;">报错注入</a> <a href="/tags/%E9%85%8D%E7%BD%AE/" style="font-size: 0.8em;">配置</a>
+      </div>
+  </aside>
+
+            
+                
+  <aside id="krw-posts" class="widget widget-kratos-posts">
+  <h4 class="widget-title"><i class="fa fa-file"></i>最新文章</h4>
+  <div class="tab-content">
+      <ul class="list-group">
+        
+        
+          
+          
+            <a class="list-group-item" href="/2021/07/14/RCE%E6%80%BB%E7%BB%93/"><i class="fa  fa-book"></i> RCE总结</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/06/02/REC(%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E)%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8/"><i class="fa  fa-book"></i> REC(远程代码执行漏洞)原理及漏洞利用</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/05/03/Xpath%E5%9F%BA%E7%A1%80/"><i class="fa  fa-book"></i> Xpath基础</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/04/12/SSTI(%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5)%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8/"><i class="fa  fa-book"></i> SSTI(模板注入)漏洞利用</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/03/22/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%80%9D%E8%B7%AF%E8%AF%A6%E8%A7%A3/"><i class="fa  fa-book"></i> 代码审计思路详解</a>
+            
+          
+        
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+      </ul>
+  </div>
+  </aside>
+
+            
+    </div>
+</section>
+        
+        </div>
+    </div>
+</div>
+<footer>
+    <div id="footer"  class="ap-lrc"  >
+        <div class="kr-tool text-center">
+            <div class="tool">
+                
+                    <div class="box search-box">
+                        <a href="/search/">
+                            <span class="fa fa-search"></span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="box theme-box" id="darkmode-switch">
+                        <span class="fa fa-adjust"></span>
+                    </div>
+                
+                
+            </div>
+            <div class="box gotop-box">
+                <span class="fa fa-chevron-up"></span>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 footer-list text-center">
+                    <ul class="kratos-social-icons">
+                        
+                        <li><a href="mailto:ciyaso@163.com"><i class="fa fa-envelope"></i></a></li>
+                        
+                        
+                        
+                        
+                        
+                        <li><a target="_blank" rel="nofollow" href="https://github.com/Ciyaso"><i class="fa fa-github"></i></a></li>
+                        
+                    </ul>
+                    <ul class="kratos-copyright">
+                        <div>
+                            <li>&copy; 2021 Welcome to C1yas0's Blog 版权所有.</li>
+                            <li>本站已运行<span id="span_dt">Loading...</span></li>
+                        </div>
+                        <div>
+                            <li>Theme <a href="https://github.com/Candinya/Kratos-Rebirth" target="_blank">Kratos:Rebirth</a></li>
+                            <li>Site built with&nbsp;<i class="fa fa-heart throb" style="color:#d43f57"></i>&nbsp;by C1yas0.</li>
+                        </div>
+                        <div>
+                            <li>Powered by <a href="https://hexo.io" target="_blank" rel="nofollow">Hexo</a></li>
+                            <li>Hosted on <a href="https://github.io" target="_blank">Github Pages</a></li>
+                        </div>
+                        <div>
+                            
+                            
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+
+        <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.4/dist/js/bootstrap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+<script>const notMobile = (!(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)));</script>
+
+    <div>
+        <canvas id="snow"></canvas>
+        <script async type="text/javascript" src="/js/snow.min.js"></script>
+    </div>
+
+<script async src="/js/candy.min.js"></script>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+    <meting-js
+        server="netease"
+        type="playlist"
+        id="3204190542"
+        order="random"
+        fixed="true"
+    >
+    </meting-js>
+
+
+
+    <script defer src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script>
+<script defer src="/js/kratosr.min.js"></script>
+<script defer src="/js/pjax.min.js"></script>
+
+
+    <script defer src="/js/kr-dark.min.js"></script>
+
+
+
+<!-- Extra support for third-party plguins  -->
+
+
+    </body>
+</html>

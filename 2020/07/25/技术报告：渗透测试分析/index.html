@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+  <!-- 元数据 -->
+  <meta charset="utf-8">
+  <link rel="icon" href="">
+  <title>技术报告：渗透测试分析 | Welcome to C1yas0's Blog</title>
+  <meta name="author" content="C1yas0" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  
+    <meta name="keywords" content="报告" />
+  
+  <meta name="description" content="第1章  绪  论1.1渗透测试的介绍渗透测试是通过实际攻击进行安全测试与评估的方法（Pentratiion Testing,Pentest）,是一种通过模拟恶意攻击的技术与方法挫败目标系统安全措施，取得访问控制权，并发现具备业务影响后果安全隐患的一种安全测试与评估方法。 1.2web渗透测试目前的渗透测试主要是针对web的渗透测试，web渗透测试是从web脚本展开的，但是在整个测试过程中可能要测">
+<meta property="og:type" content="article">
+<meta property="og:title" content="技术报告：渗透测试分析">
+<meta property="og:url" content="http://example.com/2020/07/25/%E6%8A%80%E6%9C%AF%E6%8A%A5%E5%91%8A%EF%BC%9A%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="Welcome to C1yas0&#39;s Blog">
+<meta property="og:description" content="第1章  绪  论1.1渗透测试的介绍渗透测试是通过实际攻击进行安全测试与评估的方法（Pentratiion Testing,Pentest）,是一种通过模拟恶意攻击的技术与方法挫败目标系统安全措施，取得访问控制权，并发现具备业务影响后果安全隐患的一种安全测试与评估方法。 1.2web渗透测试目前的渗透测试主要是针对web的渗透测试，web渗透测试是从web脚本展开的，但是在整个测试过程中可能要测">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2020/07/25/%E6%8A%80%E6%9C%AF%E6%8A%A5%E5%91%8A%EF%BC%9A%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%88%86%E6%9E%90/https:/ae05.alicdn.com/kf/H67f8cdc0fc3c44a6981b2e35ea9653e7g.png">
+<meta property="article:published_time" content="2020-07-26T02:52:25.000Z">
+<meta property="article:modified_time" content="2021-08-01T04:36:25.723Z">
+<meta property="article:author" content="C1yas0">
+<meta property="article:tag" content="报告">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2020/07/25/%E6%8A%80%E6%9C%AF%E6%8A%A5%E5%91%8A%EF%BC%9A%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%88%86%E6%9E%90/https:/ae05.alicdn.com/kf/H67f8cdc0fc3c44a6981b2e35ea9653e7g.png">
+<meta name="twitter:site" content="@null">
+  
+  <!-- 站点验证相关 -->
+  
+    
+    
+    
+  
+  <!-- 样式表文件 -->
+  <link rel="stylesheet" id="kratos-css" href="/css/kratosr.min.css" type="text/css" media="all">
+  
+    <link rel="stylesheet" id="highlight-css" href="/css/highlight/night-eighties.min.css" type="text/css" media="all">
+  
+  
+  <link rel="stylesheet" id="fontawe-css" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" type="text/css" media="all">
+  <link rel="stylesheet" id="nprogress-css" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" type="text/css" media="all">
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+  
+  
+    <link rel="stylesheet" id="darkmode-css" href="/css/kr-dark.min.css" type="text/css" media="all">
+  
+  <!-- 不得不预先加载的一些JS文件 -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  
+    <script src="https://cdn.jsdelivr.net/npm/qrcode_js@1.0.0/qrcode.min.js"></script>
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+    <body class="custom-background">
+        <div id="kratos-wrapper">
+    <div id="kratos-page">
+        <div id="kratos-header">
+            <header id="kratos-desktop-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="nav-header">
+                        <nav id="kratos-menu-wrap">
+                            <ul id="kratos-primary-menu" class="sf-menu">
+                                
+                                    
+                                        <li><a href="/"><i class="fa fa-home"></i>首页</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/archives/"><i class="fa fa-file"></i>档案馆</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/friends/"><i class="fa fa-paw"></i>好伙伴</a></li>
+                                    
+                                
+                                    
+                                        <li>
+                                            <a><i class="fa fa-link"></i>链接</a>
+                                            <ul class="sub-menu">
+                                                
+                                                    
+                                                
+                                                    
+                                                        <li><a target="_blank" rel="noopener" href="https://github.com/Ciyaso">作者博客</a></li>
+                                                    
+                                                
+                                                    
+                                                        <li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_46706771?spm=1000.2115.3001.5343">CSDN</a></li>
+                                                    
+                                                
+                                            </ul>
+                                        </li>
+                                    
+                                
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+            <header id="kratos-mobile-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="color-logo"><a href="/">Welcome to C1yas0&#39;s Blog</a></div>
+                    <div class="nav-toggle">
+                        <a class="kratos-nav-toggle js-kratos-nav-toggle">
+                            <i></i>
+                        </a>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="kratos-start kratos-hero-2">
+            <!-- <div class="kratos-overlay"></div> -->
+            <div class="kratos-cover kratos-cover-2 text-center">
+                <div class="desc desc2 animate-box">
+                    <a href="/">
+                        <h2>Welcome to C1yas0&#39;s Blog</h2> <br />
+                        <span></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="kratos-blog-post">
+            <div class="container">
+                <div id="main" class="row">
+                    
+
+        
+
+            <section class="col-md-8">
+
+        
+
+            <article>
+    <div class="kratos-hentry kratos-post-inner clearfix">
+        <div class="kratos-post-content">
+            <h2 class="title-h2 text-center">技术报告：渗透测试分析</h2>
+            <h2 id="第1章-绪-论"><a href="#第1章-绪-论" class="headerlink" title="第1章  绪  论"></a>第1章  绪  论</h2><h3 id="1-1渗透测试的介绍"><a href="#1-1渗透测试的介绍" class="headerlink" title="1.1渗透测试的介绍"></a>1.1渗透测试的介绍</h3><p>渗透测试是通过实际攻击进行安全测试与评估的方法（Pentratiion Testing,Pentest）,是一种通过模拟恶意攻击的技术与方法挫败目标系统安全措施，取得访问控制权，并发现具备业务影响后果安全隐患的一种安全测试与评估方法。</p>
+<h3 id="1-2web渗透测试"><a href="#1-2web渗透测试" class="headerlink" title="1.2web渗透测试"></a>1.2web渗透测试</h3><p>目前的渗透测试主要是针对web的渗透测试，web渗透测试是从web脚本展开的，但是在整个测试过程中可能要测试四个方面：服务器（Apache、 Nginx、 IIS等），中间件（tomcat、jetty、apache hpptd、JBOSS、webloigc等），数据库（MySQL、SQL Server、数蚕数据库、Oracle数据库等），Web App（Web脚本程序）。</p>
+<h3 id="1-3渗透测试工程师"><a href="#1-3渗透测试工程师" class="headerlink" title="1.3渗透测试工程师"></a>1.3渗透测试工程师</h3><h4 id="1-3-1渗透测试工程师"><a href="#1-3-1渗透测试工程师" class="headerlink" title="1.3.1渗透测试工程师"></a>1.3.1渗透测试工程师</h4><p>拥有web测试技能的人通常称为渗透测试工程师。</p>
+<h4 id="1-3-2渗透测试工程师的技能"><a href="#1-3-2渗透测试工程师的技能" class="headerlink" title="1.3.2渗透测试工程师的技能"></a>1.3.2渗透测试工程师的技能</h4><p>​    一是程序员的开发思维，要掌握程序员究竟是如何开发当前应用程序，使用到哪些技术，以及他其中的一些逻辑是怎样来进行的。<br>二是模拟恶意攻击者的思路和方法，通过模拟攻击者的思路和方法，从而达到模拟的效果。<br>三是掌握足够的渗透测试技术，包含：数据库，asp.php.xss 等各种语言，Http等协议、代码审计、web渗透，脚本渗透、java,c++ 等。</p>
+<h2 id="第2章-相关技术与基础知识简介"><a href="#第2章-相关技术与基础知识简介" class="headerlink" title="第2章 相关技术与基础知识简介"></a>第2章 相关技术与基础知识简介</h2><h3 id="2-1web渗透测试步骤"><a href="#2-1web渗透测试步骤" class="headerlink" title="2.1web渗透测试步骤"></a>2.1web渗透测试步骤</h3><p>1.信息收集；收集目标所拥有的一切信息，包括泄露信息等等。<br>2.整站映射：针对于web脚本将其所有的技术探测到。<br>3.漏洞扫描：利用漏洞扫描器进行扫描，也可以自行编写对应的漏洞扫描器来进行对应的探测。<br>4.漏洞利用：利用扫描到的结果获取权限，还可能需要拓展成果继续提权。<br>5.测试报告：最后为用户提供一个测试报告，报告给出漏洞信息，验证信息，解决方法。</p>
+<h3 id="2-2基本渗透测试工具"><a href="#2-2基本渗透测试工具" class="headerlink" title="2.2基本渗透测试工具"></a>2.2基本渗透测试工具</h3><p>1.HTTP代理：是介于浏览器与服务器直接的中间桥梁，可以通过他来截取对应请求以及响应，同时可以查看对应数据包并进行修改。<br>常用工具：Burpsuite<br>2.网站爬虫：对测试的web app进行整个网站的爬取测试。<br>常用工具：ZAP、Burpsuite、Httrack<br>    Python工具：Scrapy<br>3.web漏洞扫描：针对web技术漏洞扫描。<br>    常用工具：Appscan，AWVS<br>  Python工具：工具W3af<br>4.目录探测：对web app不链接页面探测。<br>    常用工具：Dirb，wfuzz<br>5.特定任务：需要自动化探测与利用的步骤很多，某些新技术没有探测工具可以用简单高效的编程来开发安全工具,开发以使用Python开发安全工具为首选。</p>
+<h2 id="第3章漏洞检测实时演示"><a href="#第3章漏洞检测实时演示" class="headerlink" title="第3章漏洞检测实时演示"></a>第3章漏洞检测实时演示</h2><h3 id="3-1演示环境"><a href="#3-1演示环境" class="headerlink" title="3.1演示环境"></a>3.1演示环境</h3><p>本次演示环境为Windows7平台下的PyCharm。<br>检测目标以MS15-034为例。<br>综合严重的等级为严重。<br>如图3-1、图3-2所示：<br><img src="https://img-blog.csdnimg.cn/20200805224429433.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>图3-1 MS15-034执行摘要</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805224540833.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>图3-2 MS15-034漏洞信息</p>
+<h3 id="3-2演示步骤"><a href="#3-2演示步骤" class="headerlink" title="3.2演示步骤"></a>3.2演示步骤</h3><h4 id="3-2-1获取任意代码"><a href="#3-2-1获取任意代码" class="headerlink" title="3.2.1获取任意代码"></a>3.2.1获取任意代码</h4><p>在<a href="https://www.exploit-db.com搜索到对应的漏洞，找到HTTP请求,如图3-3、图3-4所示：">https://www.exploit-db.com搜索到对应的漏洞，找到HTTP请求,如图3-3、图3-4所示：</a><br><img src="https://img-blog.csdnimg.cn/20200805224600911.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>图3-3在exploit-db内搜查MS15-034</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;GET / HTTP/1.1\r\nHost: stuff\r\nRange: bytes=0-18446744073709551615\r\n\r\n&quot;</span>;</span><br></pre></td></tr></table></figure>
+<p>图3-4查找到HTTP请求</p>
+<h4 id="3-2-2分析漏洞原因"><a href="#3-2-2分析漏洞原因" class="headerlink" title="3.2.2分析漏洞原因"></a>3.2.2分析漏洞原因</h4><p>是因为发送了对应的HTTP请求，导致触发漏洞。</p>
+<h4 id="3-2-3-导入request模块"><a href="#3-2-3-导入request模块" class="headerlink" title="3.2.3 导入request模块"></a>3.2.3 导入request模块</h4><p>通过导入模块发送HTTP请求，并接收请求，如图3-5所示：<br><img src="https://img-blog.csdnimg.cn/20200805224655327.png" alt="在这里插入图片描述"><br>图3-5发送HTTP请求并接收请求</p>
+<h4 id="3-2-4搭建测试环境"><a href="#3-2-4搭建测试环境" class="headerlink" title="3.2.4搭建测试环境"></a>3.2.4搭建测试环境</h4><p>控制面板-&gt;打开或关闭Windows功能-&gt;勾画可承载的web核心以及信息服务，如图3-6、图3-7所示：<br><img src="https://img-blog.csdnimg.cn/20200805224706759.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>图3-6搭建测试环境<br><img src="https://img-blog.csdnimg.cn/20200805224718776.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>图3-7 80端口开放，IIS开启成功</p>
+<h4 id="3-2-5-判断中间件"><a href="#3-2-5-判断中间件" class="headerlink" title="3.2.5 判断中间件"></a>3.2.5 判断中间件</h4><p>如图3-8、图3-9、图3-10、图3-11所示：<br><img src="https://img-blog.csdnimg.cn/20200805224732543.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>图3-8获取IP地址</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805224744169.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>图3-9替换IP</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805224759664.png" alt="在这里插入图片描述"><br>图3-10获得响应头，发现Server</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805224814253.png" alt="在这里插入图片描述"><br>图3-11输出对应Server并获取值</p>
+<h4 id="3-2-6判断IIS值"><a href="#3-2-6判断IIS值" class="headerlink" title="3.2.6判断IIS值"></a>3.2.6判断IIS值</h4><p>Windows7，Windows2008 IIS是7.5，Windows2012 IIS是8.0为了扫描探测的准确性，我们需探测中间件的IIS值，用remote_serve 来存储对应的中间件，如图3-12、图3-13所示：<br><img src="https://img-blog.csdnimg.cn/20200805224828509.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>图3-12探测中间件IIS值</p>
+<p><img src="https://img-blog.csdnimg.cn/20200805224835676.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>图3-13储存中间件</p>
+<h4 id="3-2-7判断server类型"><a href="#3-2-7判断server类型" class="headerlink" title="3.2.7判断server类型"></a>3.2.7判断server类型</h4><p>如图3-14所示：<br><img src="https://img-blog.csdnimg.cn/20200805224845233.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>图3-14 判断server类型</p>
+<h4 id="3-2-8扫描漏洞"><a href="#3-2-8扫描漏洞" class="headerlink" title="3.2.8扫描漏洞"></a>3.2.8扫描漏洞</h4><p>如图3-15所示：<br><img src="https://img-blog.csdnimg.cn/20200805224854337.png" alt="在这里插入图片描述"><br>图3-15成功发现漏洞MS15-034</p>
+<h3 id="3-3源码分析"><a href="#3-3源码分析" class="headerlink" title="3.3源码分析"></a>3.3源码分析</h3><p>核心代码，如图3-16所示：<br><img src="https://img-blog.csdnimg.cn/20200805224903847.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>图3-16 核心代码</p>
+<h3 id="3-4与其他工具进行效果对比"><a href="#3-4与其他工具进行效果对比" class="headerlink" title="3.4与其他工具进行效果对比"></a>3.4与其他工具进行效果对比</h3><p>在linux系统中用kali对ms15-034进行集成，如图3-17所示：<br><img src="https://img-blog.csdnimg.cn/20200805224912151.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>图3-17 kali效果对比</p>
+<p>返回Target may be vulnerable证明漏洞确实存在，如图3-18所示：<br><img src="https://img-blog.csdnimg.cn/20200805224921364.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>图3-18 返回Target may be vulnerable</p>
+<h2 id="第4章渗透测试的意义"><a href="#第4章渗透测试的意义" class="headerlink" title="第4章渗透测试的意义"></a>第4章渗透测试的意义</h2><p>1.渗透测试能够通过识别安全问题来帮助一个单位了解当前的安全状况，促使许多单位开发操作规划来减少攻击或误用的威胁。<br>2.撰写良好的渗透测试结果可以帮助管理人员建立可靠的商业案例，以便证明所增加的安全性预算或者将安全性问题传达到高级管理层。<br>3.安全性不是某时刻的解决方案，而是需要严格评估的一个过程。安全性措施需要进行定期检查，才能发现新的威胁。渗透测试和公正的安全性分析可以使许多单位重视他们最需要的内部安全资源。此外，独立的安全审计也正迅速成为获得网络安全保险的一个要求。<br>4.现在符合规范和法律要求也是执行业务的一个必要条件，渗透测试工具可以帮助许多单位满足这些规范要求。<br>5.启动一个企业电子化项目的核心目标之一，是实现与战略伙伴、提供商、客户和其他电子化相关人员的紧密协作。要实现这个目标，许多单位有时会允许合作伙伴、提供商、B2B 交易中心、客户和其他相关人员使用可信连接方式来访问他们的网络。一个良好执行的渗透测试和安全性审计可以帮助许多单位发现这个复杂结构中的最脆弱链路，并保证所有连接的实体都拥有标准的安全性基线。<br>当拥有安全性实践和基础架构，渗透测试会对商业措施之间的反馈实施重要的验证，同时提供了一个以最小风险而成功实现的安全性框架。</p>
+
+        </div>
+        <footer class="kratos-entry-footer clearfix">
+            <div class="footer-tag clearfix">
+                <div class="pull-date">
+                <span>最后编辑：2021-08-01</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+</article>
+
+        
+
+            </section>
+
+        
+
+                
+            
+
+<section id="kratos-widget-area" class="col-md-4 hidden-xs hidden-sm">
+    <!-- 文章和页面根据splitter来分割，没有的话就从头开始设置为sticky -->
+    
+    
+                <aside id="krw-about" class="widget widget-kratos-about clearfix">
+    <div class="photo-background"></div>
+    <div class="photo-wrapper clearfix">
+        <div class="photo-wrapper-tip text-center">
+            <img class="about-photo" src="/images/avatar.webp" />
+        </div>
+    </div>
+    <div class="textwidget">
+        <p class="text-center"></p>
+    </div>
+</aside>
+            
+                    <div class="sticky-area">
+                
+                    <aside id="krw-toc" class="widget widget-kratos-toc clearfix">
+    <div class="photo-background"></div>
+    <h4 class="widget-title no-after">
+        <i class="fa fa-compass"></i>
+        文章目录
+        <span class="toc-progress-bar"></span>
+    </h4>
+    <div class="textwidget">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC1%E7%AB%A0-%E7%BB%AA-%E8%AE%BA"><span class="toc-text">第1章  绪  论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E7%9A%84%E4%BB%8B%E7%BB%8D"><span class="toc-text">1.1渗透测试的介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2web%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95"><span class="toc-text">1.2web渗透测试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%B7%A5%E7%A8%8B%E5%B8%88"><span class="toc-text">1.3渗透测试工程师</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-1%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%B7%A5%E7%A8%8B%E5%B8%88"><span class="toc-text">1.3.1渗透测试工程师</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-2%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9A%84%E6%8A%80%E8%83%BD"><span class="toc-text">1.3.2渗透测试工程师的技能</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC2%E7%AB%A0-%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%AE%80%E4%BB%8B"><span class="toc-text">第2章 相关技术与基础知识简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1web%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E6%AD%A5%E9%AA%A4"><span class="toc-text">2.1web渗透测试步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2%E5%9F%BA%E6%9C%AC%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7"><span class="toc-text">2.2基本渗透测试工具</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC3%E7%AB%A0%E6%BC%8F%E6%B4%9E%E6%A3%80%E6%B5%8B%E5%AE%9E%E6%97%B6%E6%BC%94%E7%A4%BA"><span class="toc-text">第3章漏洞检测实时演示</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1%E6%BC%94%E7%A4%BA%E7%8E%AF%E5%A2%83"><span class="toc-text">3.1演示环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2%E6%BC%94%E7%A4%BA%E6%AD%A5%E9%AA%A4"><span class="toc-text">3.2演示步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-1%E8%8E%B7%E5%8F%96%E4%BB%BB%E6%84%8F%E4%BB%A3%E7%A0%81"><span class="toc-text">3.2.1获取任意代码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-2%E5%88%86%E6%9E%90%E6%BC%8F%E6%B4%9E%E5%8E%9F%E5%9B%A0"><span class="toc-text">3.2.2分析漏洞原因</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-3-%E5%AF%BC%E5%85%A5request%E6%A8%A1%E5%9D%97"><span class="toc-text">3.2.3 导入request模块</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-4%E6%90%AD%E5%BB%BA%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83"><span class="toc-text">3.2.4搭建测试环境</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-5-%E5%88%A4%E6%96%AD%E4%B8%AD%E9%97%B4%E4%BB%B6"><span class="toc-text">3.2.5 判断中间件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-6%E5%88%A4%E6%96%ADIIS%E5%80%BC"><span class="toc-text">3.2.6判断IIS值</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-7%E5%88%A4%E6%96%ADserver%E7%B1%BB%E5%9E%8B"><span class="toc-text">3.2.7判断server类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-8%E6%89%AB%E6%8F%8F%E6%BC%8F%E6%B4%9E"><span class="toc-text">3.2.8扫描漏洞</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-text">3.3源码分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4%E4%B8%8E%E5%85%B6%E4%BB%96%E5%B7%A5%E5%85%B7%E8%BF%9B%E8%A1%8C%E6%95%88%E6%9E%9C%E5%AF%B9%E6%AF%94"><span class="toc-text">3.4与其他工具进行效果对比</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC4%E7%AB%A0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E7%9A%84%E6%84%8F%E4%B9%89"><span class="toc-text">第4章渗透测试的意义</span></a></li></ol>
+    </div>
+</aside>
+                
+                
+  <aside id="krw-categories" class="widget widget-kratos-categories clearfix">
+    <h4 class="widget-title"><i class="fa fa-folder"></i>分类目录</h4>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/RCE/">RCE</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL%E6%B3%A8%E5%85%A5/">SQL注入</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Web/">Web</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%8A%A5%E5%91%8A/">技术报告</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">漏洞复现</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">环境配置</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="category-list-count">1</span></li></ul>
+  </aside>
+
+
+            
+                
+  <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
+    <h4 class="widget-title"><i class="fa fa-tags"></i>标签聚合</h4>
+      <div class="tag-clouds">
+        <a href="/tags/PHP/" style="font-size: 0.6em;">PHP</a> <a href="/tags/RCE/" style="font-size: 0.7em;">RCE</a> <a href="/tags/SSTI/" style="font-size: 0.6em;">SSTI</a> <a href="/tags/Tomcat/" style="font-size: 0.8em;">Tomcat</a> <a href="/tags/Weblogic/" style="font-size: 0.6em;">Weblogic</a> <a href="/tags/XXE/" style="font-size: 0.6em;">XXE</a> <a href="/tags/Xpath/" style="font-size: 0.6em;">Xpath</a> <a href="/tags/mysql/" style="font-size: 0.6em;">mysql</a> <a href="/tags/python/" style="font-size: 0.6em;">python</a> <a href="/tags/sql%E6%B3%A8%E5%85%A5/" style="font-size: 0.7em;">sql注入</a> <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" style="font-size: 0.6em;">代码审计</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 0.7em;">报告</a> <a href="/tags/%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/" style="font-size: 0.6em;">报错注入</a> <a href="/tags/%E9%85%8D%E7%BD%AE/" style="font-size: 0.8em;">配置</a>
+      </div>
+  </aside>
+
+            
+                
+  <aside id="krw-posts" class="widget widget-kratos-posts">
+  <h4 class="widget-title"><i class="fa fa-file"></i>最新文章</h4>
+  <div class="tab-content">
+      <ul class="list-group">
+        
+        
+          
+          
+            <a class="list-group-item" href="/2021/07/14/RCE%E6%80%BB%E7%BB%93/"><i class="fa  fa-book"></i> RCE总结</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/06/02/REC(%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E)%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8/"><i class="fa  fa-book"></i> REC(远程代码执行漏洞)原理及漏洞利用</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/05/03/Xpath%E5%9F%BA%E7%A1%80/"><i class="fa  fa-book"></i> Xpath基础</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/04/12/SSTI(%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5)%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8/"><i class="fa  fa-book"></i> SSTI(模板注入)漏洞利用</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/03/22/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%80%9D%E8%B7%AF%E8%AF%A6%E8%A7%A3/"><i class="fa  fa-book"></i> 代码审计思路详解</a>
+            
+          
+        
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+      </ul>
+  </div>
+  </aside>
+
+            
+    </div>
+</section>
+        
+        </div>
+    </div>
+</div>
+<footer>
+    <div id="footer"  class="ap-lrc"  >
+        <div class="kr-tool text-center">
+            <div class="tool">
+                
+                    <div class="box search-box">
+                        <a href="/search/">
+                            <span class="fa fa-search"></span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="box theme-box" id="darkmode-switch">
+                        <span class="fa fa-adjust"></span>
+                    </div>
+                
+                
+            </div>
+            <div class="box gotop-box">
+                <span class="fa fa-chevron-up"></span>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 footer-list text-center">
+                    <ul class="kratos-social-icons">
+                        
+                        <li><a href="mailto:ciyaso@163.com"><i class="fa fa-envelope"></i></a></li>
+                        
+                        
+                        
+                        
+                        
+                        <li><a target="_blank" rel="nofollow" href="https://github.com/Ciyaso"><i class="fa fa-github"></i></a></li>
+                        
+                    </ul>
+                    <ul class="kratos-copyright">
+                        <div>
+                            <li>&copy; 2021 Welcome to C1yas0's Blog 版权所有.</li>
+                            <li>本站已运行<span id="span_dt">Loading...</span></li>
+                        </div>
+                        <div>
+                            <li>Theme <a href="https://github.com/Candinya/Kratos-Rebirth" target="_blank">Kratos:Rebirth</a></li>
+                            <li>Site built with&nbsp;<i class="fa fa-heart throb" style="color:#d43f57"></i>&nbsp;by C1yas0.</li>
+                        </div>
+                        <div>
+                            <li>Powered by <a href="https://hexo.io" target="_blank" rel="nofollow">Hexo</a></li>
+                            <li>Hosted on <a href="https://github.io" target="_blank">Github Pages</a></li>
+                        </div>
+                        <div>
+                            
+                            
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+
+        <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.4/dist/js/bootstrap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+<script>const notMobile = (!(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)));</script>
+
+    <div>
+        <canvas id="snow"></canvas>
+        <script async type="text/javascript" src="/js/snow.min.js"></script>
+    </div>
+
+<script async src="/js/candy.min.js"></script>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+    <meting-js
+        server="netease"
+        type="playlist"
+        id="3204190542"
+        order="random"
+        fixed="true"
+    >
+    </meting-js>
+
+
+
+    <script defer src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script>
+<script defer src="/js/kratosr.min.js"></script>
+<script defer src="/js/pjax.min.js"></script>
+
+
+    <script defer src="/js/kr-dark.min.js"></script>
+
+
+
+<!-- Extra support for third-party plguins  -->
+
+
+    </body>
+</html>

